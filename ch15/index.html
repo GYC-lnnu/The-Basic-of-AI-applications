@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第 15 讲 · 项目展示与总结（一） · 《人工智能应用基础》</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <a class="brand" href="../index.html">《人工智能应用基础》课程网站</a>
+      <span class="spacer"></span>
+      <a class="navlink" href="../index.html">课程首页</a>
+      <a class="navlink" href="../glossary.html">知识图谱</a>
+      <a class="navlink active" href="index.html">第 15 讲</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="breadcrumb"><a href="../index.html">课程首页</a> › 模块 F · 汇报篇 › 第 15 讲</div>
+    <h1>第 15 讲　项目展示与总结（一）</h1>
+    <div class="pill-row">
+      <span class="pill">模块 F · 汇报篇</span>
+      <span class="pill">能力主线：会集成</span>
+      <span class="pill gray">2 学时（90 分钟）</span>
+      <span class="pill gray">第 15 / 16 讲</span>
+    </div>
+    <p class="lead">本讲为项目展示：每个小组在其中一场完成路演答辩，把作品讲清楚，把人机协作的过程讲明白。</p>
+
+    <h2>一、本讲学习目标</h2>
+    <ol class="goals">
+      <li>按路演规则完成小组展示与答辩：时间达标、重点清晰、从容应对提问；</li>
+      <li>在展示中完整呈现<strong>人机协作过程</strong>：关键<a class="term"
+          href="../glossary.html#term-prompt">提示词（Prompt）</a>、迭代记录与人工把关点；</li>
+      <li>对照<strong>能力地图</strong>回顾五个阶段（会聊 → 会派 → 会调度 → 会创作 → 会集成），说清自己的作品用到了哪些；</li>
+      <li>作为评委，用"科学性 / 完成度 / 人机协作"三个维度给出有据可查的组间互评意见。</li>
+    </ol>
+
+
+    <h2>二、课前准备</h2>
+    <ul>
+      <li><strong>全组掐表彩排</strong>：按本班实际执行的时长（8+2 或大班 5+2）走一遍完整流程，逐页检查幻灯片与演示文件；超时的内容当场删；</li>
+      <li>准备"人机协作过程"三件套：<strong>关键提示词原文或截图</strong>、<strong>迭代记录</strong>（改了什么、为什么改）、<strong>人工把关点清单</strong>——它们是展示 15
+        分中 5 分的直接来源；</li>
+      <li>各位同学同步开始整理<strong>个人作品集</strong>与<a class="term" href="../glossary.html#term-log">AI 使用日志</a>：把前 14
+        讲的产出按讲次归入文件夹（第 16 讲课后要完整提交，要求见第 16 讲第八节）；</li>
+      <li><strong>设备冗余</strong>：展示文件用 U 盘与云端各存一份；视频类作品准备离线播放方案（教室电脑不一定联网，也可能缺播放器）；</li>
+      <li>了解评审安排：教师评分（作品 35 分 + 展示 15 分，维度见第五节）+ 组间互评（科学性 / 完成度 / 人机协作三个维度）；奖项设最佳作品、最佳提示词、最佳人机协作。</li>
+    </ul>
+
+    <h2>三、核心概念精讲</h2>
+
+    <h3>1. 回望来路：你的能力地图</h3>
+    <p>第 7 讲发布期末项目时我们说过：项目不是额外负担，而是课程的自然汇聚——第 11–14 讲的课堂产出就是项目素材，第 15–16
+      讲的展示只是把它讲出来。上台之前，先对齐这张"能力地图"：左列是全课程的能力主线，中列是覆盖讲次，右列是你应该已经攒下的产出物。</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>能力主线</th>
+            <th>覆盖讲次</th>
+            <th>你的产出物</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>会聊</strong>（提问与对话）</td>
+            <td>第 4–6 讲</td>
+            <td>提示词改写练习表、可复用提示词与迭代记录、AI 学习助手提示词集</td>
+          </tr>
+          <tr>
+            <td><strong>会派</strong>（规划与分解）</td>
+            <td>第 7 讲</td>
+            <td>期末选题说明书（组）、项目计划书 v1（组）、任务卡</td>
+          </tr>
+          <tr>
+            <td><strong>会调度</strong>（<a class="term" href="../glossary.html#term-agent">Agent</a> 协同）</td>
+            <td>第 8–10 讲</td>
+            <td>Agent 任务记录、实验数据 AI 报告、端到端协同作品</td>
+          </tr>
+          <tr>
+            <td><strong>会创作</strong>（多模态生成）</td>
+            <td>第 11–14 讲</td>
+            <td>项目核心文本、图像素材包、科普短视频、展示网页与小工具</td>
+          </tr>
+          <tr>
+            <td><strong>会集成</strong>（综合项目）</td>
+            <td>第 7–16 讲</td>
+            <td>期末作品集与项目展示</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>读表的方法比背表重要，问自己三个问题：<strong>哪一格产出最厚？</strong>——那可能就是你答辩时最该展示的强项；<strong>哪一格还偏薄？</strong>——趁第 16
+      讲前补齐归档；<strong>哪个产出被你反复用过？</strong>——那就是第 16 讲要说的"资产"。</p>
+
+    <h3>2. 展示评什么：先弄清评分维度再上台</h3>
+    <p>评分分两块，规则不同：<strong>作品分（35 分）</strong>评的是你们交上来的东西，<strong>展示分（15 分）</strong>评的是讲台上的 10
+      分钟。两者的维度与分值见第五节的评分表。这里只强调一个最容易误判的点：<strong>作品分 ≠ 展示分</strong>。作品再好，只放成品不讲过程，"人机协作过程呈现"的 5
+      分就拿不到；反过来，讲得再漂亮也补不回作品里缺的科学性。上台前，先对照评分表把"自己最弱的一格"找到，展示时主动补讲那一格。</p>
+
+    <h3>3. 把"人机协作过程"讲清楚：三件套</h3>
+    <p>展示 15 分里，"人机协作过程呈现"单独占 5 分——它不是让你念流水账，而是讲清三件事：<strong>下了什么关键指令、迭代改了什么、哪里必须人工把关</strong>。下面以选题方向
+      B（实验数据完整分析）的典型项目"单摆测重力加速度"为例，看"三件套"放到一页展示页上长什么样：</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>关键提示词（节选）</th>
+            <th>迭代记录</th>
+            <th>人工把关点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"读取 pendulum.csv，剔除 3σ 以外的异常摆动记录，计算各摆长下的平均周期与不确定度；绘制 T²–L 图并拟合直线，由斜率给出 g 及其不确定度。"</td>
+            <td>第 1 轮漏了异常值处理 → 追加"剔除 3σ 以外的数据点并单独列出被剔除的记录"；第 2 轮图上坐标轴没有单位 → 追加"坐标轴标注物理量与单位"。</td>
+            <td>抽一组数据手算均值对照（对拍）；核对拟合斜率与 4π²/g 的关系、检查 g 的数量级是否合理；逐图检查单位与有效数字。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>让评委看到"AI 干了什么"和"人守住了什么"。</p>
+
+    <h2 id="demo">四、物理场景案例演示</h2>
+    <p>下面两条提示词可以直接用于路演准备。先看它跑出来长什么样，再换成你自己的记录跑一遍。</p>
+
+    <div class="box box-demo">
+      <div class="box-title">🧪 提示词①：路演彩排——让 AI 扮演最挑剔的评委</div>
+      <pre><code>你是一名严格的项目评审。我们小组的期末项目是"单摆测重力加速度的
+完整数据分析"（选题方向 B），作品包含：数据清洗与计算说明、T²–L 图、
+Word 分析报告、汇报 PPT、展示网页。
+请从以下三个维度各提出 2 个尖锐但可回答的问题：
+1. 科学准确性（数据处理、不确定度、图表规范）；
+2. 完成度与集成度（各部分是否构成一个整体）；
+3. 人机分工（哪些环节必须人工把关，我们是否说清了）。
+只针对上面列出的作品内容提问；每题末尾用括号注明对应作品的
+哪一部分，单题不超过 40 字。
+先只提问，不要给答案；等我逐条回答后，再点评我答得怎么样。</code></pre>
+    </div>
+
+    <div class="box box-demo">
+      <div class="box-title">🧪 提示词②：把散落的记录整理成"人机协作时间线"</div>
+      <pre><code>下面是我们项目从选题到成品的 8 条关键操作记录（每条含提示词摘要
+与人工修改说明）：［粘贴你的记录］
+请整理成"人机协作时间线"表格，五列：阶段 / 我们做了什么 /
+AI 做了什么 / 人工把关点 / 产出物。
+要求：8 条记录逐条一行，不要合并；「人工把关点」一栏只写由人
+完成的动作（AI 的自查不算）；数字沿用记录原文，不改写、不取约数。
+</code></pre>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-title">⚠️ 展示的每一条记录都必须是真的</div>
+      <p>评委可能追问任何一条记录的细节，你都要答得上来。把 AI 编造的"过程"当成自己的过程讲，一旦被追问就会露馅，还会踩到学术诚信红线——宁可少展示一页，不要多讲一句假的。提示词②里"不要补写细节"那句约束，就是为了防这件事。
+      </p>
+    </div>
+
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）——提示词①：彩排题库与两轮演练</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <pre class="result-text">【第 1 轮】评委提问（6 题，只提问、不给答案）
+
+科学准确性
+  Q1 拟合直线的截距是多少？理论上应过原点，不为零怎么解释？（对应：T²–L 图）
+  Q2 周期是单次计时还是多次取平均？人工计时误差传到 g 上约百分之几？（对应：计算说明）
+
+完成度与集成度
+  Q3 PPT 与报告里的 g 是否同一口径？若差了一位有效数字，怎么解释？（对应：PPT / 报告）
+  Q4 从原始 CSV 到最终 g，哪些步骤是 AI 做的？换台电脑重跑结果能一致吗？（对应：计算说明）
+
+人机分工
+  Q5 AI 写的报告你们逐句核过吗？举一处被你们改正的不严谨之处，具体到哪节？（对应：报告）
+  Q6 随机抽一行原始数据，当场手算这组的 g，能与报告对上吗？（对应：计算说明）
+
+【第 2 轮】我们逐条作答（节选 3 条），评委逐条点评
+
+A1：b = -0.0005 s²，与 T² 的量级（约 2.4 s²）相比可忽略，在拟合误差范围内
+    视为过原点，与理论一致。
+    点评：过关——给出数量级对照，正是"可回答"的样子。
+    【人工补充】b 的数值来自第 10 讲的锁定结果，AI 的题目里并没有：
+    彩排前要先把本组的关键数字整理好随身带。
+
+A2：如实回答：计时方式与误差传播当场没说清，按课堂规则答"这点我们会后
+    核实"，已记入答辩准备清单。
+    点评：诚实处理正确——编造比答不出严重得多。建议会后把"怎么测的、
+    误差多大、怎么传到 g"算清，写成卡片带上台。
+
+A5：AI 初稿把"剔除 1 行"写成"删除异常数据"，没写依据；我们改成"剔除并
+    注明判据（T–L 组合矛盾），图中以空心点保留"。
+    点评：具体到原文改动——这是"人机协作过程"最有说服力的证据。</pre>
+      </div>
+    </details>
+
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）——提示词②：8 条记录 → 人机协作时间线</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <pre class="result-text">【输入】8 条关键操作记录（沿用第 9/10 讲真实演示数据，节选）
+ 1. 立项｜"读取数据包说明，生成任务分解表与验收清单"｜人工改为"逐环节
+    验收"，并加 2 处停等确认点
+ 2. 数据体检｜"三查（缺失 / 不可能值 / 组合矛盾）+ 逐行反算 g"｜第 1 轮漏了
+    组间比对，追加"先横向比对各组量级与范围"
+ 3. 异常处置（停等①）｜group3 摆长大 100 倍、group4 一行 T–L 矛盾，列处置
+    方案待确认｜人工核对原始记录：group3 按 cm 换算、group4 剔除 1 行
+ 4. 计算与锁定｜"逐点算 g + 最小二乘拟合 T²–L，两种算法对拍后锁定"｜人工
+    约定：锁定值只写一处文件，后续只引用不重算
+ 5. 对拍抽查｜"输出逐点 g 表格供抽查"｜人工手算 group1 第 4 行
+    （4π²×0.600/1.555² = 9.80）与表格一致，放行
+ 6. 绘图｜"绘 T²–L 散点与拟合线，标注物理量与单位，剔除点空心标注"｜
+    第 1 轮图内中文乱码，追加"指定中文字体（微软雅黑）"
+ 7. 报告｜"生成六节 Word 报告（含数据说明一节），生成后读回自查"｜人工
+    逐项复核自查清单（节数 / 表格 / 图 / 关键数值）
+ 8. PPT 与网页｜"生成 6 页汇报 PPT 与展示网页，关键数字一律从报告引用"｜
+    人工逐页核对 g = (9.79 ± 0.01) 口径一致
+
+【输出】人机协作时间线（模型输出为 8 行 × 5 列表格，此处逐行转排）
+
+① 立项规划｜我们：定选题、下达规划要求｜AI：生成任务分解表与验收清单
+   ｜人工把关：修订流程（改逐环节验收、加 2 处停等点）｜产出：任务分解表、验收清单
+② 数据体检｜我们：要求三查 + 逐行反算 g｜AI：执行体检、横向比对各组
+   ｜人工把关：第 1 轮漏组间比对 → 追加要求，复核体检结论｜产出：数据体检记录
+③ 异常处置｜我们：（停等①）等待处置方案｜AI：定位 2 处异常并给出方案
+   ｜人工把关：核对原始记录，确认 group3 按 cm 换算、group4 剔除 1 行
+   ｜产出：异常处置确认
+④ 计算锁定｜我们：要求两种算法对拍｜AI：逐点算 g、拟合 T²–L
+   ｜人工把关：约定锁定值只写一处文件，后续环节只引用不重算
+   ｜产出：锁定值 g = (9.79 ± 0.01)
+⑤ 对拍抽查｜我们：随机抽 1 行准备手算｜AI：输出逐点 g 表格
+   ｜人工把关：手算 group1 第 4 行 = 9.80，与表格一致后放行｜产出：逐点 g 表格
+⑥ 绘图｜我们：要求标注物理量与单位｜AI：绘散点与拟合线，剔除点空心标注
+   ｜人工把关：发现图内中文乱码，追加"指定中文字体"｜产出：T²–L 图
+⑦ 报告｜我们：要求含数据说明一节｜AI：生成 Word 报告并读回自查
+   ｜人工把关：逐项复核自查清单（节数 / 表格 / 图 / 关键数值）｜产出：实验报告 .docx
+⑧ PPT 与网页｜我们：要求数字一律从报告引用｜AI：生成 6 页 PPT 与展示网页
+   ｜人工把关：逐页核对 g 口径一致，无重算数字｜产出：汇报 .pptx、展示网页
+
+人工把关点共 8 处 —— 评委看到的不再是"AI 帮我们做完了"，而是"每一步谁做的、谁核的"。</pre>
+      </div>
+    </details>
+
+    <h2>五、课堂实操任务单</h2>
+
+    <div class="box box-warn">
+      <div class="box-title">⚠️ 路演规则（先读再上台）</div>
+      <ul>
+        <li>因选课人数 80 人以上，项目展示分<strong>两次课</strong>（第 15、16 讲）进行，每组只在本班分配的那一场上台；场次安排以教师现场宣布为准；</li>
+        <li>每组 <strong>8 分钟展示 + 2 分钟答辩</strong>；大班压缩为 <strong>5 分钟展示 + 2 分钟答辩</strong>，以教师现场宣布为准；</li>
+        <li>展示<strong>必须包含人机协作过程</strong>：至少 3 条关键提示词（或 1 轮完整迭代记录）+ 明确的人工把关点；</li>
+        <li>时间到即止，超时会被打断——彩排时掐表；</li>
+        <li>评分维度与课程考核方案一致（见下表）；未在本场展示的组，本讲任务是完成互评与观摩记录。</li>
+      </ul>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>板块</th>
+            <th>评分维度</th>
+            <th>分值</th>
+            <th>评委在看什么</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="4"><strong>作品（35 分）</strong></td>
+            <td>规划与过程记录</td>
+            <td>10</td>
+            <td>计划书、任务卡与 AI 使用日志是否呈现完整演进轨迹</td>
+          </tr>
+          <tr>
+            <td>科学准确性</td>
+            <td>10</td>
+            <td>公式、单位、数值、文献经得起核查</td>
+          </tr>
+          <tr>
+            <td>完成度与集成度</td>
+            <td>8</td>
+            <td>各部分构成一个整体，能打开、能运行、能交付</td>
+          </tr>
+          <tr>
+            <td>创意与表现力</td>
+            <td>7</td>
+            <td>选题角度与呈现方式是否有自己的想法</td>
+          </tr>
+          <tr>
+            <td rowspan="3"><strong>展示（15 分）</strong></td>
+            <td>内容表达</td>
+            <td>6</td>
+            <td>重点清楚、时间达标</td>
+          </tr>
+          <tr>
+            <td>人机协作过程呈现</td>
+            <td>5</td>
+            <td>关键提示词、迭代记录、人工把关点讲得具体</td>
+          </tr>
+          <tr>
+            <td>答辩质量</td>
+            <td>4</td>
+            <td>回答有据、态度诚实</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>教师评分与组间互评。</p>
+
+    <div class="box box-task">
+      <div class="box-title">📋 保底任务（人人完成）</div>
+      <p>路演台上的三件事，每完成一项打勾（勾选状态会自动保存）：</p>
+      <ul class="checklist">
+        <li><input type="checkbox" id="t1"><label for="t1"><strong>任务①　完成本组展示</strong>：在规定时间内完成展示，内容覆盖作品亮点与人机协作过程。<br>✅
+            完成标准：不超时；展示中至少出现 3 条关键提示词或 1 轮完整迭代记录；明确说出至少 1 处人工把关点。</label></li>
+        <li><input type="checkbox" id="t2"><label for="t2"><strong>任务②　完成答辩</strong>：回应评委与同学的提问。<br>✅ 完成标准：至少回答 2
+            个问题；遇到没把握的问题如实说"这点我们会后核实"，不现场编造。</label></li>
+        <li><input type="checkbox" id="t3"><label for="t3"><strong>任务③　完成对其他组的观摩记录</strong>：本讲未上台的组，记录 2 个作品的"最佳一处 +
+            最值得追问的一处"。<br>✅ 完成标准：记录指向可核验的细节（某图的单位、某数值的来源），不写"做得挺好"式空话。</label></li>
+      </ul>
+    </div>
+
+    <div class="box box-task">
+      <div class="box-title">📋 进阶挑战（学有余力）</div>
+      <ul class="checklist">
+        <li><input type="checkbox" id="t4"><label for="t4"><strong>挑战④　组间互评</strong>：给至少 2 个其他组的作品各写约 100 字评审意见，按"科学性 /
+            完成度 / 人机协作"三个维度。<br>✅ 完成标准：每条意见都指向作品里可核验的细节，不写空话；意见当场交给对方组。</label></li>
+        <li><input type="checkbox" id="t5"><label for="t5"><strong>挑战⑤　人机协作时间线</strong>：用演示区提示词②把本组全过程整理成一页时间线。<br>✅
+            完成标准：覆盖"选题 → 立项 → 素材 → 集成"至少 4 个阶段，每阶段写明 AI 做了什么、人工把关了什么；可在第 16 讲答辩时展示。</label></li>
+      </ul>
+    </div>
+
+    <h2>六、常见坑与翻车案例</h2>
+    <ul>
+      <li><strong>坑①　把"AI 做的"说成"我们做的"</strong>：答辩追问一句细节就露馅，还踩诚信红线。<em>解法：如实呈现分工——"AI 产出，人工把关"本身就是加分项，展示 15
+          分里专设"人机协作过程呈现" 5 分。</em></li>
+      <li><strong>坑②　只放成品、不讲过程</strong>：评委只能给"内容表达"的分，5 分过程分拿不到。<em>解法：把三件套（提示词 / 迭代 / 把关点）固定成一页展示，放在作品介绍之后。</em></li>
+      <li><strong>坑③　超时</strong>：20 页幻灯片 8 分钟讲不完，结尾仓促收场。<em>解法：先结论后细节；彩排掐表，超时的页当场删。</em></li>
+      <li><strong>坑④　现场翻车无 Plan B</strong>：教室电脑打不开网页、视频没声音。<em>解法：U 盘 + 云端双备份；网页准备截图版 PDF；视频提前在教室电脑上离线试播。</em></li>
+      <li><strong>坑⑤　答辩现编物理内容</strong>：被追问"这个不确定度怎么算的"，开始即兴发挥。<em>解法：答不准就诚实说"会后核实"。编造比答不出严重得多——它会直接拖垮"科学准确性"的分。</em>
+      </li>
+    </ul>
+
+    <h2>七、自测</h2>
+    <div class="box box-quiz">
+      <div class="box-title">✅ 五道题检验学习目标</div>
+
+      <div class="quiz-item">
+        <p class="q">1. 本课程能力主线的五个阶段，正确的顺序是？</p>
+        <ul>
+          <li data-opt="A.">会聊 → 会派 → 会调度 → 会创作 → 会集成</li>
+          <li data-opt="B.">会聊 → 会调度 → 会派 → 会集成 → 会创作</li>
+          <li data-opt="C.">会派 → 会聊 → 会创作 → 会调度 → 会集成</li>
+          <li data-opt="D.">会聊 → 会创作 → 会派 → 会调度 → 会集成</li>
+        </ul>
+        <details class="answer">
+          <summary>查看答案</summary>
+          <p><strong>A</strong>。对应讲次：会聊（4–6）、会派（7）、会调度（8–10）、会创作（11–14）、会集成（7–16）。这张表就是本讲能力地图的骨架。</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <p class="q">2. 展示评分中"人机协作过程呈现"（5 分）主要看什么？</p>
+        <ul>
+          <li data-opt="A.">PPT 是否美观、动画是否流畅</li>
+          <li data-opt="B.">是否展示了关键提示词、迭代记录与人工把关点</li>
+          <li data-opt="C.">是否全程由 AI 自动生成、无人参与</li>
+          <li data-opt="D.">是否使用了最新最贵的 AI 工具</li>
+        </ul>
+        <details class="answer">
+          <summary>查看答案</summary>
+          <p><strong>B</strong>。三件套——关键提示词、迭代记录（改了什么、为什么改）、人工把关点清单——讲得越具体，越能证明"人机协作"真实发生。"全 AI 无人参与"反而要扣诚信的分。</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <p class="q">3. 判断题："作品做得很完善，展示时只放成品就够了，讲不讲协作过程无所谓。"</p>
+        <details class="answer">
+          <summary>查看答案与解析</summary>
+          <p><strong>不对</strong>。作品分与展示分分开计算：只放成品不讲过程，"人机协作过程呈现"的 5 分拿不到；而且评委无法判断成果的可信度——"每一步谁做的、谁核的"恰恰是说服力的来源。</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <p class="q">4. 答辩中被问到没把握的问题，最稳妥的做法是？</p>
+        <ul>
+          <li data-opt="A.">凭感觉现场编一个合理的说法</li>
+          <li data-opt="B.">把问题岔开，讲自己熟悉的部分</li>
+          <li data-opt="C.">如实说"这点我们会后核实"，并记入答辩准备清单</li>
+          <li data-opt="D.">让 AI 现场生成一个答案念出来</li>
+        </ul>
+        <details class="answer">
+          <summary>查看答案</summary>
+          <p><strong>C</strong>。编造比答不出严重得多——它会直接拖垮"科学准确性"与"答辩质量"的分，还可能踩到诚信红线。诚实标注"会后核实"是评分规则明确认可的处理方式。</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <p class="q">5. 简答（开放）：写出本学期你最常用的三个提示词模式，各配一个物理学习场景的例子，并说明它为什么有效。</p>
+        <details class="answer">
+          <summary>参考答案（开放题，示例非唯一）</summary>
+          <p>示例：①<strong>角色 + 任务 + 场景</strong>——"你是数理方法老师，我是学完级数基础的高年级本科生，请讲解级数法求解 Legendre
+            方程"：给足背景让讲解落在你的水平上；②<strong>规定输出格式</strong>——"按'阶段 / 我们做了什么 / AI 做了什么 / 人工把关点 /
+            产出物'五列表格输出"：格式先行，结果可直接进报告、可验收；③<strong>迭代纠偏</strong>——"只给提示不给答案，等我先试"：把 AI
+            变成教练而不是代笔者，能力留在自己身上。你的答案只要模式真实、例子来自自己的使用记录即可。</p>
+        </details>
+      </div>
+    </div>
+
+    <h2>八、课后任务</h2>
+    <details class="advanced" open>
+      <summary>🎓 课后任务：</summary>
+      <p><strong>① 打包材料。</strong>把个人作品集与 AI 使用日志整理成压缩包。 </p>
+      <p><strong>② 总结经验。</strong>记录你踩过的坑和解决方法，选题太大、额度不够、提示词优化经验等。</p>
+      <p><strong>③ 互相学习。</strong>回想本讲最打动你的一个展示环节：它是怎么用一页幻灯片同时呈现"AI 干了什么"和"人守住了什么"的？把你的心得记进日志。</p>
+    </details>
+
+    <nav class="pagenav" aria-label="上一讲 / 下一讲">
+      <a href="../ch14/index.html"><span class="label">← 上一讲</span><span class="title">第 14 讲 · 代码、网页与小程序：零基础 AI
+          开发</span></a>
+      <a class="next" href="../ch16/index.html"><span class="label">下一讲 →</span><span class="title">第 16 讲 ·
+          项目展示与总结（二）</span></a>
+    </nav>
+  </main>
+
+  <style>
+    .kg-fab {
+      position: fixed;
+      right: 26px;
+      bottom: 26px;
+      z-index: 90;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      background: linear-gradient(135deg, #2f6fed, #8e44d3);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(47, 111, 237, 0.42);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .kg-fab:hover {
+      transform: scale(1.09);
+      box-shadow: 0 9px 26px rgba(47, 111, 237, 0.55);
+    }
+
+    .kg-fab-icon {
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .kg-fab-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 700px) {
+      .kg-fab {
+        right: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+      }
+    }
+
+    @media print {
+      .kg-fab {
+        display: none;
+      }
+    }
+  </style>
+  <a class="kg-fab" href="../glossary.html?focus=ch15" aria-label="本讲知识图谱" title="知识图谱：本讲概念网络与核心考点">
+    <span class="kg-fab-icon">🕸</span><span class="kg-fab-label">图谱</span>
+  </a>
+  <script src="../js/main.js"></script>
+</body>
+
+</html>

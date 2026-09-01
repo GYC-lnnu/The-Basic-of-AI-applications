@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 2 讲 · AIGC 发展史与前沿动态 · 《人工智能应用基础》</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">《人工智能应用基础》课程网站</a>
+    <span class="spacer"></span>
+    <a class="navlink" href="../index.html">课程首页</a>
+    <a class="navlink" href="../glossary.html">知识图谱</a>
+    <a class="navlink active" href="index.html">第 2 讲</a>
+  </div>
+</nav>
+
+<main>
+  <div class="breadcrumb"><a href="../index.html">课程首页</a> › 模块 A · 认知篇 › 第 2 讲</div>
+  <h1>第 2 讲　AIGC 发展史与前沿动态</h1>
+  <div class="pill-row">
+    <span class="pill">模块 A · 认知篇</span>
+    <span class="pill">能力主线：会聊</span>
+    <span class="pill gray">2 学时（90 分钟）</span>
+    <span class="pill gray">第 2 / 16 讲</span>
+  </div>
+  <p class="lead">AI 的历史不是"一年比一年聪明"的匀速直线运动，而是几次跳跃式的范式转变。这一讲我们把镜头拉远，看懂这条主线——你就有了判断"AI 下一步会怎样"的坐标系。</p>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 时效性提示</div>
+    <p>本讲的前沿动态与产品举例<strong>截至 2026 年 8 月整理，以最新公开信息为准</strong>。AI 领域变化极快，课堂举例每学期开课前更新一次；你在课外看到的最新格局，很可能已经和本页不同——这本身就是本讲要教你的第一课。</p>
+  </div>
+
+  <h2>一、本讲学习目标</h2>
+  <p>完成本讲后，你应该能够：</p>
+  <ol class="goals">
+    <li>按时间顺序梳理 <a class="term" href="../glossary.html#term-aigc">AIGC（AI Generated Content）</a>发展的关键节点，说清"<strong>会生成 → 会对话 → 会看会听（多模态）→ 会行动（Agent）</strong>"这条范式转变主线；</li>
+    <li>说出至少 3 个国内外代表模型（含国产模型）及其一句话特点；</li>
+    <li>解释"<strong>AI 是一种通用技术</strong>"的含义，并用"<strong>写 / 读 / 聊</strong>"三分类给 LLM 任务归类；</li>
+    <li>会用 <a class="term" href="../glossary.html#term-deepresearch">Deep Research（深度研究）</a>类工具与对话助手辅助追踪前沿动态；</li>
+    <li>说出 AI 在时效信息上的局限，并对 AI 给出的"新闻"和"史实"给出至少一种核实对策。</li>
+  </ol>
+
+  
+<h2>二、课前准备</h2>
+  <ul>
+    <li><strong>无需编程基础</strong>：本讲是"认知篇"，只用对话工具，不碰代码。</li>
+    <li>带上第 1 讲的<strong>《AI 使用日志》</strong>：本讲课堂实操要继续记录。</li>
+    <li>课堂将播放课程资料包视频片段（主题："AI 是一种通用技术"），课前不要求观看。</li>
+    <li>想一想：你<strong>第一次听说 ChatGPT</strong> 是什么时候、从谁那里听说的？当时它给你什么印象？——这是你与 AIGC 历史的"第一次相遇"，课堂上会用到。</li>
+    <li>不必提前背年份：本讲教的是"怎么记、怎么查、怎么核"，不是背年表。</li>
+  </ul>
+
+  <h2>三、核心概念精讲</h2>
+
+  <h3>1. 为什么要给 AI 学一点历史？</h3>
+  <p>物理学史课上记年份，不是为了应付填空题，而是为了看懂"范式转移"：牛顿力学在高速与微观世界失效，才有了相对论与量子力学。<a class="term" href="../glossary.html#term-agent">AI Agent（智能体）</a>出现之前的 AIGC 历史也一样，主线是四次范式转变：<strong>会生成 → 会对话 → 会看会听（多模态）→ 会行动</strong>。最后这个"会行动"，指的就是上面链接里的"数字同事"——故事的最新一章，第 8 讲起你将亲手指挥一位。记住这条主线，比背下任何一张年表都值钱。</p>
+
+  <h3>2. 史前与符号主义：问题被提出（1950–1990）</h3>
+  <p>一切从一个思想实验开始。1950 年，图灵发表论文提出"模仿游戏"——后世称为<strong>图灵测试</strong>：如果隔着幕布提问，你分不清对面是人还是机器，是否就该承认机器"会思考"？这个判据妙在"盲测"：不问机器内部如何运作，只看外部表现——与物理实验中用盲测排除主观偏差是同一个思想。1956 年，达特茅斯会议召开，"人工智能（Artificial Intelligence）"一词正式诞生，AI 成为一门独立学科。</p>
+  <p>此后几十年，主流路线是<strong>符号主义</strong>：把专家知识写成一条条"如果……那么……"的规则，做成<strong>专家系统</strong>。它在矿藏勘探、医疗辅助诊断等窄领域确实管用，但很快撞上天花板：规则靠人工逐条编写，而常识浩如烟海——就像想用有限几条公理推出全部物理，做到一半就会发现世界远比公理复杂。</p>
+  <p>结果便是<strong>两次 AI 寒冬</strong>（约 20 世纪 70 年代中期、80 年代末两轮低谷）：宣传承诺过高，能力跟不上，经费与社会信心一起转凉。这段历史留下一条至今有效的教训——<strong>"能聊"不等于"能干"</strong>；对任何学科来说，过度承诺都是最贵的负债。</p>
+
+  <h3>3. 深度学习浪潮：观测手段的升级（2012–2017）</h3>
+  <p>物理学的突破常常始于观测手段的升级——望远镜口径变大，新天区才被看见。AI 的"望远镜升级"发生在 2012 年：<strong>AlexNet</strong> 神经网络在 ImageNet 大规模图像识别比赛中以明显优势夺冠，深度学习从此成为主流。要强调的是，这不是理论一夜革命，而是算力、数据与网络结构三者同时到位——量变积累触发的质变。</p>
+  <p>2016 年，<strong>AlphaGo</strong> 战胜围棋世界冠军李世石。围棋长期被认为依赖人类"直觉与经验"，机器难以企及；AlphaGo 靠海量自我对弈加概率搜索，用统计直觉替代棋感——这可以看作统计方法的一次公开"答辩成功"。</p>
+  <p>2017 年，<a class="term" href="../glossary.html#term-transformer">Transformer</a> 架构论文发表，核心是<strong>注意力机制</strong>：读一段文字时，模型对句中每个词同时计算"该重点关注谁"的权重——类似对整段数据做一次权重自动学习的加权拟合。它还支持大规模并行训练，效率远超逐词处理的老办法。此后几乎所有大语言模型都构建在 Transformer 之上：它是今天这场大模型革命的共同底座。</p>
+
+  <h3>4. 生成式爆发：从"认得出"到"造得出"（2014–2023）</h3>
+  <p>识别类模型回答"这张图里是什么"，生成式模型回答"我能造一张新的"。2014 年提出的 <a class="term" href="../glossary.html#term-gan">GAN（生成对抗网络）</a>是标志性一步：生成器负责"造假"，判别器负责"找茬"，两者在对抗中共同变强——有点像实验中"发现系统误差 → 改进测量"的螺旋上升。GAN 之后，<a class="term" href="../glossary.html#term-diffusion">扩散模型（Diffusion Model）</a>接棒：直观理解，它学的是"把墨水滴入清水的扩散过程倒放"——从一团随机噪点出发，一步步"去噪显影"出图像（这是帮助记忆的类比，严格机制第 12 讲再谈）。</p>
+  <p>语言这边，基于 Transformer 的<a class="term" href="../glossary.html#term-llm">大模型（LLM）</a>沿 GPT 系列路线持续演进，2022 年底 <strong>ChatGPT</strong> 发布，对话式 AI 一夜出圈，2023 年被广泛称作"生成式 AI 元年"。这一刻被称作生成式 AI 的"出圈时刻"：自那以后，热度再未回落。这里要先建立一个直觉：模型的知识来自训练时"读"过的海量文本（以 <a class="term" href="../glossary.html#term-token">Token</a>——"文字积木"——为基本单位），而训练数据有截止日期，所以模型天然"不知道"截止之后的世界，第 3 讲会专门拆解这一点。2023 年起，头部模型纷纷走向<a class="term" href="../glossary.html#term-multimodal">多模态（Multimodal）</a>：不止读字，还能看图、听声、说话。</p>
+  <p>生成式 AI 生成的内容可归为<strong>文本、图像、音频</strong>三大类，目前影响最深的是文本；但图像（文生图，第 12 讲）与音频进展同样惊人——课堂上会播放一段"<strong>语音克隆</strong>"演示视频：AI 用克隆的人声说"我是 AI 生成的声音克隆，本人从来没说过这些话"。听到"以假乱真"的声音，你会对第 3 讲的"核查习惯"多一分敬意，也会对第 13 讲的配音生成多一分期待。</p>
+
+  <h3>5. 一张表看懂七十余年（时间轴总览）</h3>
+  <p>下表只收<strong>公认的年份与事件</strong>，说法不一或存疑的不列。建议把本表存进笔记——课后作业要直接用到。</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>年份</th><th>事件</th><th>一句话意义</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1950</td><td>图灵测试提出</td><td>隔着幕布分不清人与机器就算"会思考"——AI 的原点问题</td></tr>
+      <tr><td>1956</td><td>达特茅斯会议</td><td>"人工智能"一词正式诞生，AI 成为独立学科</td></tr>
+      <tr><td>20 世纪 60–80 年代</td><td>专家系统兴起</td><td>把专家知识写成规则让计算机推理，AI 第一次走向实用</td></tr>
+      <tr><td>约 1974–1980、1987–1993</td><td>两次 AI 寒冬</td><td>承诺过高、能力不济，经费遇冷——"能聊"≠"能干"的最早教训</td></tr>
+      <tr><td>1997</td><td>深蓝战胜国际象棋世界冠军</td><td>专用机器首次在规则明确的棋类上超越人类顶尖选手</td></tr>
+      <tr><td>2012</td><td>AlexNet 夺冠 ImageNet</td><td>深度神经网络大放异彩，深度学习浪潮正式开启</td></tr>
+      <tr><td>2014</td><td>GAN（生成对抗网络）提出</td><td>"造假 vs 找茬"的对抗训练，让机器学会"无中生有"造图像</td></tr>
+      <tr><td>2016</td><td>AlphaGo 战胜李世石</td><td>机器在直觉与经验主导的围棋上登顶，公众第一次为 AI"沸腾"</td></tr>
+      <tr><td>2017</td><td>Transformer 架构提出</td><td>注意力机制让模型高效读懂长文本，成为大模型的共同底座</td></tr>
+      <tr><td>2020–2022</td><td>扩散模型成熟，文生图集中爆发</td><td>从噪点"显影"的路线成为文生图主流，"一句话生成一张图"走入公众视野</td></tr>
+      <tr><td>2022</td><td>ChatGPT 发布</td><td>对话式 AI 走入千家万户，"生成式 AI 元年"被广泛提及</td></tr>
+      <tr><td>2023</td><td>头部模型走向多模态</td><td>单一文字模型开始能看图、听话、说话，输入输出形式全面扩展</td></tr>
+      <tr><td>2024–2025</td><td>多模态生成走向实用，AI Agent 兴起</td><td>AI 从"会聊"迈向"会做"：调用工具、执行任务、连接外部系统</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>6. 国产大模型格局：多家并存、快速迭代</h3>
+  <p>大模型不是海外独有，国内同样呈现"多家并存、快速迭代"的活跃格局。下面的介绍<strong>只给名称与一句话定位</strong>，不列参数规模与跑分——那既容易过时，也不是本课的重点；各产品的最新情况以厂商官方信息为准。排名不分先后。</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>模型</th><th>一句话定位</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>GLM</strong>（智谱）</td><td>本课程主力对话工具之一（智谱清言），通用对话与智能体能力均衡</td></tr>
+      <tr><td><strong>DeepSeek</strong>（深度求索）</td><td>以推理能力与开放策略著称，"高性价比"路线的代表</td></tr>
+      <tr><td><strong>Qwen / 通义千问</strong>（阿里巴巴）</td><td>开源版本覆盖广泛的系列模型，面向开发者的生态完整</td></tr>
+      <tr><td><strong>豆包</strong>（字节跳动）</td><td>面向大众日常使用的对话助手，移动端使用门槛低</td></tr>
+      <tr><td><strong>Kimi</strong>（月之暗面）</td><td>以长文本处理能力进入公众视野的对话助手</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>本课程的工具安排对齐教学大纲：<strong>AI 对话以智谱清言（GLM）与 DeepSeek 为主力</strong>，豆包、Kimi、通义千问等为备选——建议至少注册两个互为备份，这也是"感受不同模型脾气"的最直接办法。</p>
+
+  <h3>7. 从 Chatbot 到 Agent：正在进行的一次范式转变</h3>
+  <p>回望主线：专家系统"会推理"，深度学习"会识别"，生成式模型"会创作"，ChatGPT 之后"会对话"，多模态之后"会看会听"。最新的转变是——<strong>会行动</strong>。能陪你问答的助手叫 <a class="term" href="../glossary.html#term-chatbot">Chatbot（聊天机器人）</a>；能接任务、自己拆步骤、调用工具、交付成果的，叫 AI Agent。二者不是替代关系：<strong>Chatbot 负责"说"，Agent 负责"做"</strong>。</p>
+  <p>Agent 凭什么把"方法"落地？两个关键词。其一是<strong><a class="term" href="../glossary.html#term-skill">技能（Skill）</a></strong>：可以理解为"给 AI 的专业工作方法包"——把一类任务的指令、步骤与参考资料按文件夹的方式打包在一起，而且它已经是一道开放标准，一次编写、多种 Agent 工具通用。其二是<strong>基础工具</strong>：光有菜谱还不够，还得有厨房——Agent 靠"读写文件"与"执行命令"两件基本功，把方法包真正落在你的电脑上，就像实验讲义写得再好，没有实验桌和仪器，实验依然做不成。"方法包 + 工具"的组合，正是 2024 年以来 Agent 应用兴起的技术底气，也是本课后半程（第 8–10 讲）的主舞台。</p>
+
+  <h3>8. AI 是一种通用技术：用"写 / 读 / 聊"给 LLM 任务归类</h3>
+  <p>上一节讲的是 AI 的"最新一章"，这一节回答一个更根本的问题：<strong>AI 到底能干什么？</strong>这个问题出名的难答，一个经典解释是：因为 AI 是一种<strong><a class="term" href="../glossary.html#term-generaltech">通用技术（General Purpose Technology）</a></strong>——问"汽车能干什么"很好答（运输），问"微波炉能干什么"很好答（加热食物），但问"<strong>电能干什么</strong>""<strong>互联网能干什么</strong>"就没法一句话答完，因为它们几乎对每件事都有用。AI 正属于后者。这也是为什么本课要按"能力主线"而不是"功能清单"来组织——通用技术时代，值钱的是可迁移的能力。</p>
+  <p>通用技术难以归类，但大模型（LLM）的日常任务可以用一个三分法框起来：<strong>写、读、聊</strong>。分类的依据是"输入和输出的长短形状"：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>类别</th><th>形状</th><th>典型任务</th><th>物理学习场景示例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>写</strong></td><td>短输入 → 长输出</td><td>写作、头脑风暴、回答开放问题、按资料答疑</td><td>"把熵讲成高中生能懂的 300 字"；为科普文列 5 个备选标题；让它基于你上传的课件回答问题</td></tr>
+      <tr><td><strong>读</strong></td><td>长输入 → 短输出</td><td>分类、打标签、判断、摘要点</td><td>把整段实验记录贴进去，问"这组数据有没有明显异常值？（是 / 否 + 一句理由）"；判断一段文献摘要属于哪个研究方向</td></tr>
+      <tr><td><strong>聊</strong></td><td>多轮往复</td><td>通用对话、专用答疑机器人</td><td>多轮追问式复习概念；"只提示不给答案"的习题教练（第 6 讲正式练）</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>同一套技术还有另一种分法——按"你怎么用上它"分两类，这一分法直接通向本课后半程：</p>
+  <ul>
+    <li><strong>网页界面型应用</strong>：你打开对话网站，输入提示词，拿回结果。本课程第 1–7 讲的主战场。典型例子是"给产品起名"——随手输一句话就行；</li>
+    <li><strong>基于 LLM 的软件应用</strong>：LLM 被嵌进一套自动流程里，人不再逐条手工喂。典型例子是<strong>客服邮件自动分诊</strong>——"读"类任务判定"这封是不是投诉"，再自动转发给对应部门。没有人会把成千上万封邮件一封封复制粘贴进对话框：一旦量大到需要自动化，就该"软件应用"登场了。</li>
+  </ul>
+  <p>把这条线再往前推一步：当程序里的 LLM 进一步获得<strong>调用工具、操作文件、自主规划</strong>的能力，它就从"固定流程中的一环"升级为 Agent——第 8 讲的主角。现在先把"写 / 读 / 聊"这副眼镜戴上：课堂实操里，请把你第 1 讲"AI 三连"的三个任务各自归入写 / 读 / 聊，看看分类是否帮你看清了"当时为什么那样问"。</p>
+
+  <h2>四、物理场景案例演示</h2>
+  <p>本讲案例仍用对话工具完成，但目标从"解题"换成"办报"：让 AI 化身<strong>"新闻分析师"</strong>。课堂先看教师演示，随后你自己上手。这里先建立一个警惕：AI 会"一本正经地编"，术语叫<a class="term" href="../glossary.html#term-hallucination">幻觉（Hallucination）</a>（第 3 讲细讲）——所以下面这条提示词的灵魂，全在"待核实"三个字上。</p>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示：让 AI 当"新闻分析师"</div>
+    <pre><code>请你扮演一名 AI 领域的"新闻分析师"。我会在下方提供几条动态素材，
+请把它们整理成一张"本周 AI 大事表"，包含四列：事项、类别、一句话
+解读、建议核实渠道。
+要求：
+1. 只依据我提供的素材整理，素材之外的事件一律不添加，无法确认的
+   一律注明"待核实"；
+2. 表格之后，单独列出"可能过时或无法确认的信息"清单，并写明建议
+   到哪里核实；
+3. 全部使用中文。
+另外：如果我没有提供素材就要求你总结"本周动态"，请如实说明你读
+不到实时新闻、建议我改用联网检索工具，不要凭印象编造。
+【动态素材】（把我收集的 4–5 条动态粘贴在这里）</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 根据示例素材生成了本周 AI 大事表（执行环境：GLM+ZCode）。素材为示例，非实时检索。</p>
+        <p><strong>示例输入素材</strong>（整理截至 2026 年 8 月的公开动态要点，不写具体发布日期与跑分）：</p>
+        <pre class="result-text">① Agent 互连开放标准（如 MCP）生态持续扩张，主流开发工具与模型厂商广泛接入，"方法包 + 工具"的技术栈走向标准化。
+② DeepSeek、Qwen（通义千问）、GLM 等国产模型系列保持高频迭代，开源版本在开发者社区被广泛部署，"以开放换生态"路线延续。
+③ 文生视频产品密集升级，海外与国产多款产品竞逐，长时长、音画同步、可控性成为竞争焦点。
+④ AI for Science 标志性成果密集：蛋白质结构预测获诺贝尔化学奖认可，AI 气象预报、数学证明、材料发现等方向持续推进。
+⑤ 主流办公与开发平台把"智能体"产品化：操作浏览器、跨应用执行任务成为标配方向。</pre>
+        <p><strong>GLM 输出 · 本周 AI 大事表</strong>（依据上述素材生成）：</p>
+        <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>事项</th><th>类别</th><th>一句话解读</th><th>建议核实渠道</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Agent 互连开放标准（如 MCP）生态持续扩张，主流开发工具与模型厂商广泛接入</td><td>Agent 与标准</td><td>Agent 连接工具正从"各家私有做法"走向"公共标准"，相当于给 AI 统一了"USB 接口"（⚠️ 扩张程度为趋势概括，待核实）</td><td>MCP 官方文档与规范仓库；各大厂商官方博客</td></tr>
+            <tr><td>DeepSeek、Qwen、GLM 等国产模型系列高频迭代，开源版本被开发者广泛部署</td><td>国产开源模型</td><td>"以开放换生态"成为国产模型的共同路线，下游应用的试用门槛持续降低（⚠️ "广泛部署"程度待核实）</td><td>各厂商官网与官方公告；Hugging Face、魔搭等模型社区主页</td></tr>
+            <tr><td>文生视频产品密集升级，长时长、音画同步与可控性成为竞争焦点</td><td>多模态生成</td><td>视频生成从"能看几秒"走向"能进工作流"，内容生产行业最先被改写（⚠️ 竞争格局月月刷新，待核实）</td><td>各产品官网版本说明；权威科技媒体横向评测</td></tr>
+            <tr><td>AI for Science 标志性成果密集：蛋白质结构预测获诺贝尔化学奖认可，AI 气象预报、数学证明、材料发现持续推进</td><td>AI for Science</td><td>AI 正从"聊天工具"变成"科研仪器"，离物理人的距离比想象中近（✅ 诺奖事实据素材；其余进展待核实）</td><td>《自然》《科学》等期刊原文；诺贝尔奖官网；DeepMind 官方博客</td></tr>
+            <tr><td>主流办公与开发平台把"智能体"产品化，操作浏览器、跨应用执行任务成为标配方向</td><td>Agent 产品化</td><td>"会聊"的助手正在变成"会做"的数字同事——本课后半程的主舞台（⚠️ "标配"为趋势判断，待核实）</td><td>各平台官方发布页与功能文档；第三方实测文章</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p><strong>GLM 输出 · 可能过时或无法确认的信息清单</strong>：</p>
+        <pre class="result-text">1. 所有具体日期：示例素材刻意不提供发布日期，本表也未标日期——任何"具体哪天发布"都请以官方公告为准（待核实）。
+2. "生态扩张""广泛部署""标配"等规模与程度词：属于趋势概括，无法量化，默认待核实。
+3. "谁更领先"式对比：本表不做排名。各家版本月月刷新，任何排名拿到手时多半已过时，请查当期评测。
+4. 对"本周"的覆盖程度：示例素材只有 5 条，不代表本周动态全貌。实际使用时请先自行检索收集素材，再交给 AI 整理——素材的完整度决定了"大事表"的完整度。</pre>
+        <p class="result-caption">以上为 GLM 对示例素材的真实输出。换一周、换一批素材，表就要重做——时效性内容没有"一次生成、永久有效"这回事。</p>
+      </div>
+    </details>
+    <p style="margin-top:10px;"><strong>拆解这条提示词为什么"专业"</strong>——它的骨架其实就是第 4 讲要系统学习的四要素：</p>
+    <ul>
+      <li><strong>设定角色</strong>："新闻分析师"让 AI 知道用什么口吻、什么视角组织材料；</li>
+      <li><strong>规定输出</strong>：四列表格，列名清晰——输出格式定得越具体，结果越好验收；</li>
+      <li><strong>加约束</strong>："无法确认的一律注明待核实"，这是给 AI 划的诚信底线，也是给你留出的核查入口。</li>
+    </ul>
+  </div>
+  <p>再来一个物理味的对照实验——<strong>史实核查</strong>：</p>
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示：AI 的"历史叙述"可信吗？</div>
+    <pre><code>请按年份列出深度学习发展史上的 5 个关键节点，每个节点一行，
+包含：年份、事件、一句话意义。如果学术界对某一年份或归属有
+不同说法，请明确指出。</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 生成并核查了 5 条 AI 史断言（执行环境：GLM+ZCode）。其中 2 条不属实断言为教学故意所设。</p>
+        <p><strong>第一轮 · GLM 按提示词列出的 5 个关键节点</strong>：</p>
+        <pre class="result-text">1950｜图灵测试提出｜"隔着幕布分不清人与机器"成为 AI 的原点问题。
+1956｜达特茅斯会议召开｜"人工智能"一词正式诞生，AI 成为独立学科。
+2012｜AlexNet 夺冠 ImageNet｜深度神经网络大放异彩，深度学习浪潮开启。
+2016｜AlphaGo 战胜李世石｜机器在直觉与经验主导的围棋上登顶。
+2017｜Transformer 架构提出｜注意力机制成为此后大模型的共同底座。
+
+补充说明（按要求指出不同说法）：以上均为学界公认节点。需注意的
+细节有：①"深度学习"思想可追溯到更早（如 1986 年反向传播），2012
+年取的是公认"引爆点"；②两次 AI 寒冬的具体起止年份各家说法略有出
+入；③"图灵测试"是后世通称，1950 年论文原名为"模仿游戏"。</pre>
+        <p><strong>第二轮 · 逐条核查表</strong>（断言 → 核查 → 结论；核查动作 = GLM 复核 + 对照原始文献与官方公告）：</p>
+        <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>断言</th><th>核查过程与依据</th><th>结论</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>"Transformer 2017 年由 Google 团队提出"</td><td>对照原始论文《Attention Is All You Need》：2017 年公开，作者来自 Google Brain / Google Research 团队，后在 NeurIPS 2017 发表</td><td><strong>√ 属实</strong></td></tr>
+            <tr><td>"ChatGPT 于 2019 年发布"</td><td>对照 OpenAI 官方公告：ChatGPT 于 2022 年 11 月发布；2019 年 GPT 系列的新闻是 GPT-2 完整模型公开</td><td><strong>× 不属实</strong>（正确：2022 年 11 月）</td></tr>
+            <tr><td>"AlphaGo 2016 年战胜李世石"</td><td>对照 DeepMind 官方记录与《自然》2016 年论文：2016 年 3 月于首尔进行，总比分 4:1</td><td><strong>√ 属实</strong></td></tr>
+            <tr><td>"图灵 1950 年提出图灵测试"</td><td>对照原始论文《Computing Machinery and Intelligence》（Mind，1950）：提出的是"模仿游戏"，"图灵测试"为后世通称</td><td><strong>√ 属实</strong>（细节：原名"模仿游戏"）</td></tr>
+            <tr><td>"GAN 由 OpenAI 提出"</td><td>对照 NIPS 2014 论文《Generative Adversarial Nets》：由 Ian Goodfellow 等人在蒙特利尔大学提出；OpenAI 成立于 2015 年底，与 GAN 的提出无关</td><td><strong>× 不属实</strong>（正确：2014 年由 Goodfellow 等人提出）</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="result-caption">两条被改错的断言，GLM 复核时都当场指出并给出正确说法——但别急着放心：模型的自信语气与对错无关，"它说对了"不等于"可以免检"，抽查动作必须保留。<strong>这正是第 3 讲幻觉查证方法的预热</strong>：逐条标记"属实 / 有误 / 查无出处 / 无法核实"，并注明查证方式。</p>
+      </div>
+    </details>
+    <p style="margin-top:10px;"><strong>现场核查步骤</strong>：①从 AI 的答案中挑 2 条；②用浏览器搜索该事件的原始论文标题或官方公告；③对照年份与事件描述。你会发现一个有规律的结论：<strong>AI 的"宏观叙事"大体可信，"具体细节"必须抽查</strong>——这正是物理学生做数据审查的职业本能。</p>
+  </div>
+
+  <h2>五、课堂实操任务单</h2>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 前沿追踪工具版图：Deep Research 一族</div>
+    <p>想追"本周发生了什么"，除了普通对话助手，还有一类自带"自主检索"能力的 Deep Research 工具。各一句话定位：</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>工具</th><th>一句话定位</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>OpenAI Deep Research</td><td>业界最早提出"Deep Research"概念的深度研究功能</td></tr>
+        <tr><td>Gemini Deep Research</td><td>Gemini 内置的深度研究功能，多轮检索后汇总成报告</td></tr>
+        <tr><td>Grok Deep Research</td><td>Grok 平台的深度研究功能</td></tr>
+        <tr><td>Perplexity</td><td>定位为"AI 搜索引擎"的问答产品，回答通常附来源链接</td></tr>
+        <tr><td>秘塔（metaso）</td><td>国内的 AI 搜索与"深度研究"产品，中文资料覆盖较全</td></tr>
+        <tr><td>Kimi Researcher</td><td>Kimi 推出的深度研究能力，端到端自主检索整理</td></tr>
+        <tr><td>alphaXiv</td><td>面向 arXiv 论文的检索与讨论社区，离物理科研最近</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><strong>各工具功能与可用性随时间变化，以当期实际可用为准。</strong>本课程考核不指定工具，选你注册过的即可。</p>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 保底任务（人人完成）：本周 AI 大事表</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t1"><label for="t1"><strong>任务①　生成大事表</strong>：任选一款课程对话工具，用上面的"新闻分析师"提示词生成"本周 AI 大事表"（本周没大事可改"本月"）。<br>✅ 完成标准：表格四列齐全，且至少一条标了"待核实"。</label></li>
+      <li><input type="checkbox" id="t2"><label for="t2"><strong>任务②　逐条标注</strong>：给表中每条事件标注"✅ 有来源 / ⚠️ 需人工核实"。<br>✅ 完成标准：每条都有标注，没有"裸奔"条目。</label></li>
+      <li><input type="checkbox" id="t3"><label for="t3"><strong>任务③　核实一条</strong>：挑一条 ⚠️，用搜索或官方来源核实，记录出处与结论（属实 / 有出入 / 查无此事）。<br>✅ 完成标准：核实结果成文，注明来源（链接或截图）。</label></li>
+      <li><input type="checkbox" id="t3b"><label for="t3b"><strong>任务④　"写 / 读 / 聊"归类</strong>：翻出你第 1 讲"AI 三连"的 3 次对话，把每个任务归入"写 / 读 / 聊"之一，并写一句归类理由。<br>✅ 完成标准：3 个任务各归其类，且能指出每个任务的"输入 → 输出形状"（长进长出 / 长进短出 / 多轮往复）。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 进阶挑战（学有余力）</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t4"><label for="t4"><strong>挑战④　追问两个细节</strong>：就表中任一事件追问 AI"准确日期是哪天？""最初出处是哪里？"，再亲自验证它答得对不对。<br>✅ 完成标准：两问两答都有记录，并逐条标注"AI 对 / AI 错"。</label></li>
+      <li><input type="checkbox" id="t5"><label for="t5"><strong>挑战⑤　给 AI 打分</strong>：综合任务①–④，用三句话评价"AI 追踪时效信息"的可靠程度，并给出一条使用建议。<br>✅ 完成标准：三句话 + 一条建议，写入《AI 使用日志》。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 轮值快讯机制：全班的"前沿雷达"</div>
+    <p>从下一讲起，每讲开头 5 分钟由 1–2 名同学分享<strong>"本周 AI 快讯"</strong>，计入平时分。建议流程：<strong>用 AI 整理本周大事 → 人工挑 2–3 条 → 亲自核实 → 用一分钟讲清"为什么重要"</strong>。注意：直接照念 AI 生成、未经核实的快讯不算完成——核实环节正是本讲的得分点。课外想拓宽信息源，可浏览 AIGC 使用技巧类自学站（如 waytoagi 知识库），并用本讲方法对其中内容保持同样的核查习惯。</p>
+  </div>
+
+  <h2>六、常见坑与翻车案例</h2>
+  <ul>
+    <li><strong>坑①　直接问"今天有什么新闻"</strong>：普通对话助手的训练数据有截止时间，它根本没读过"今天"。<em>解法：时效性问题改用联网检索或 Deep Research 类工具。</em></li>
+    <li><strong>坑②　把 AI 讲的"历史"照单全收</strong>：AI 复述史实时可能张冠李戴——年份错位、把成就安到别的模型头上，而且语气笃定。<em>解法：凡引用年份与归属，对照本讲时间轴或原始文献抽查。</em></li>
+    <li><strong>坑③　陷入版本号与参数考据</strong>："谁的参数更大"式攀比既无标准答案，又月月刷新，纯属时间黑洞。<em>解法：重心放在范式转变上——生成、对话、多模态、行动；本站全站也不写参数与跑分。</em></li>
+    <li><strong>坑④　只追热点不留记录</strong>：刷了一周 AI 大新闻，合上屏幕全忘。<em>解法：用"大事记表 + 轮值快讯"把热点沉淀成自己的时间轴。</em></li>
+    <li><strong>坑⑤　把 Deep Research 报告当定论</strong>：自动报告结构漂亮、来源齐全，但可能漏读、误读甚至编出似是而非的引用。<em>解法：引用前抽查参考文献——核对原始出处是物理学生的基本功。</em></li>
+  </ul>
+
+  <h2>七、自测</h2>
+  <div class="box box-quiz">
+    <div class="box-title">✅ 五道题检验学习目标</div>
+
+    <div class="quiz-item">
+      <p class="q">1. 下列事件按发生时间先后排序，正确的是？</p>
+      <ul>
+        <li data-opt="A.">达特茅斯会议 → 图灵测试 → AlexNet → AlphaGo → ChatGPT</li>
+        <li data-opt="B.">图灵测试 → 达特茅斯会议 → AlexNet → AlphaGo → ChatGPT</li>
+        <li data-opt="C.">图灵测试 → 达特茅斯会议 → AlphaGo → AlexNet → ChatGPT</li>
+        <li data-opt="D.">达特茅斯会议 → 图灵测试 → AlphaGo → AlexNet → ChatGPT</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。1950 图灵测试 → 1956 达特茅斯会议 → 2012 AlexNet → 2016 AlphaGo → 2022 ChatGPT。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">2. 2017 年提出的 Transformer 被称为今天大模型的"共同底座"，主要因为？</p>
+      <ul>
+        <li data-opt="A.">它是第一个能与人对话的程序</li>
+        <li data-opt="B.">注意力机制能高效处理长文本，且支持大规模并行训练</li>
+        <li data-opt="C.">它专门用于生成图像</li>
+        <li data-opt="D.">它让模型不再需要训练数据</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。注意力机制 + 并行训练效率，使"读长文、学海量"成为可能；此后的大语言模型几乎都构建在它之上。第一个能对话的程序与图像生成都不是它的定位，模型也离不开训练数据。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">3. 简答：写出至少 3 个国产大模型名称，并各用一句话概括其定位。</p>
+      <details class="answer"><summary>参考答案</summary><p>示例（言之有理即可）：GLM——智谱推出的模型，本课程主力对话工具之一；DeepSeek——以推理能力与开放策略著称；Qwen（通义千问）——阿里系、开源生态覆盖广泛的系列模型；豆包——字节跳动面向大众的对话助手；Kimi——月之暗面推出、以长文本处理见长。注意：只要求"名称 + 定位"，不需要背参数与版本号。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">4. 简答：直接问普通对话助手"本周 AI 圈发生了什么"，为什么不可靠？给出至少一条对策。</p>
+      <details class="answer"><summary>参考答案</summary><p>因为它读不到训练截止之后的世界——本周的事根本不在它"读"过的文本里；更危险的是它可能顺着问题"补编"出貌似合理的答案（幻觉）。对策：时效性问题改用联网检索或 Deep Research 类工具，并对结果做人工核实；本讲保底任务的"标注 + 核实"就是标准动作。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">5. 判断题："Deep Research 工具自动生成的调研报告结构完整、来源齐全，可以直接引用到作业里，无需再核查。"这个说法对吗？</p>
+      <details class="answer"><summary>查看答案与解析</summary><p><strong>不对</strong>。结构完整 ≠ 内容为真：自动检索仍可能漏读、误读甚至编造引用。引用前必须抽查来源原文——课程规范说得很清楚："AI 产出，人工把关"，事实与引用的科学性由你本人负责。</p></details>
+    </div>
+  </div>
+
+  <div class="box box-quiz">
+    <div class="box-title">✅ 课堂小测（先作答，再对答案）</div>
+    <p>以下 3 题检验本讲核心概念（另有 2 题在第 3 讲）。先自己作答，再展开答案。</p>
+
+    <div class="quiz-item">
+      <p class="q">V1. 哪项是"生成式人工智能"的最佳定义？</p>
+      <ul>
+        <li data-opt="A.">能生成高质量内容（如文本、图像和音频）的人工智能</li>
+        <li data-opt="B.">一种网络搜索形式</li>
+        <li data-opt="C.">任何可生成文本的网络应用程序</li>
+        <li data-opt="D.">能将输入 A 映射到输出 B 的人工智能系统</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>A</strong>。生成式 AI 的标志性能力是"生成高质量内容"，覆盖文本、图像、音频三类。D 描述的是监督学习（贴标签，输入 A → 输出 B），是生成式 AI 的重要基石但不是定义本身——第 3 讲会讲清两者的关系。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">V2. 为什么我们称人工智能为通用技术？</p>
+      <ul>
+        <li data-opt="A.">因为它可用于许多不同的任务</li>
+        <li data-opt="B.">因为它可以聊天</li>
+        <li data-opt="C.">因为它既包括监督式学习，也包括生成式人工智能</li>
+        <li data-opt="D.">因为它可以通过普通网络访问</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>A</strong>。像电和互联网一样，AI 几乎对每件事都有用——这正是"AI 能干什么"难以一句话回答的原因。C 说的是 AI 工具箱里的两件主要工具，不是"通用技术"的定义。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">V3. 你听说有公司用 LLM 自动把客服邮件路由到正确的部门。这最有可能是哪种用例？</p>
+      <ul>
+        <li data-opt="A.">员工把邮件复制粘贴到网页界面，据结果决定如何转发</li>
+        <li data-opt="B.">公司有一个基于 LLM 的软件应用程序，自动完成邮件路由</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。邮件量大到需要"自动路由"时，逐封手工粘贴进网页界面既低效也不现实——这是"基于 LLM 的软件应用"：LLM 嵌入自动流程当"分类员"。当流程里的 LLM 再进一步获得调用工具与自主规划的能力，它就升级为 Agent（第 8 讲）。</p></details>
+    </div>
+  </div>
+
+  <h2>八、课后作业</h2>
+  <div class="box box-task">
+    <div class="box-title">📋 《AIGC 大事记短文》（500 字短文）</div>
+    <p>题目：<strong>《AIGC 大事记中我最关注的三个节点及理由》</strong>，约 500 字。写法建议：</p>
+    <ol>
+      <li>选 3 个节点，建议覆盖不同范式（例如一个"生成"、一个"对话"、一个"行动"），可与本讲时间轴互补；</li>
+      <li>每个节点两步走：<strong>发生了什么</strong>（1–2 句，年份务必可靠——可直接对照本讲时间轴）＋ <strong>我为什么关注它</strong>（2–3 句，最好联系你的物理学习或实验经历）；</li>
+      <li>结尾可选：大胆预测"下一个转折点会出现在哪"，一句话即可——预测没有对错，但要给理由。</li>
+    </ol>
+    <p>允许用 AI 辅助检索与润色，但<strong>节点的选择与理由必须是你自己的判断</strong>；本次使用请同步记入《AI 使用日志》。</p>
+  </div>
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 学术诚信提醒</div>
+    <p>按课程《学术诚信与 AI 使用规范》，本作业需附<strong>《AI 使用声明》</strong>：用了什么工具、让它做了什么、你如何核查。"AI 产出，人工把关。"</p>
+  </div>
+
+  <h2>九、进阶拓展（选学）</h2>
+  <details class="advanced">
+    <summary>🎓 两次寒冬的深层教训，与"考证一条 AI 史实"的完整流程</summary>
+    <p><strong>1. 寒冬教会我们的事。</strong>符号主义路线的困境不在"规则没用"，而在"常识写不完"；两次寒冬的本质都是<strong>承诺与能力的差距</strong>被市场兑现。反过来看 2012 年的胜利，靠的也不是豪言，而是算力、数据、结构三件事同时就位。给观察者的启示：判断一项 AI 进展，先问"什么条件到位了"，再问"还差什么"——而不是听结论有多惊人。</p>
+    <p><strong>2. 考证一条 AI 史实的五步流程</strong>（把本讲方法用到极限，类比实验中的不确定度评定）：</p>
+    <ol>
+      <li>让 AI 给出初稿（事件、年份、出处）；</li>
+      <li>多来源交叉验证（至少两个彼此独立的来源）；</li>
+      <li>尽量追溯到<strong>原始论文标题或官方公告</strong>；</li>
+      <li>记录出处，注明"哪些来源一致、哪些有出入"；</li>
+      <li>给你自己的结论标注"置信度"——拿不准就明说，这与测量报告里如实给出不确定度是同一种诚实。</li>
+    </ol>
+    <p><strong>3. 延伸阅读。</strong>想看"从 Chatbot 到 Agent"更细的脉络，可阅读 <a href="https://agentskillsdev.com/" target="_blank" rel="noopener">agentskillsdev.com</a> 的中文深度手册。</p>
+  </details>
+
+  <nav class="pagenav" aria-label="上一讲 / 下一讲">
+    <a href="../ch01/index.html"><span class="label">← 上一讲</span><span class="title">第 1 讲 · 课程导论与 AI 初体验</span></a>
+    <a class="next" href="../ch03/index.html"><span class="label">下一讲 →</span><span class="title">第 3 讲 · 大模型是如何工作的（科普级）</span></a>
+  </nav>
+</main>
+
+<style>
+.kg-fab { position: fixed; right: 26px; bottom: 26px; z-index: 90; width: 64px; height: 64px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none;
+  background: linear-gradient(135deg, #2f6fed, #8e44d3); color: #fff; box-shadow: 0 6px 18px rgba(47, 111, 237, 0.42);
+  transition: transform .15s ease, box-shadow .15s ease; }
+.kg-fab:hover { transform: scale(1.09); box-shadow: 0 9px 26px rgba(47, 111, 237, 0.55); }
+.kg-fab-icon { font-size: 23px; line-height: 1; }
+.kg-fab-label { font-size: 10px; letter-spacing: 1px; }
+@media (max-width: 700px) { .kg-fab { right: 16px; bottom: 16px; width: 56px; height: 56px; } }
+@media print { .kg-fab { display: none; } }
+</style>
+<a class="kg-fab" href="../glossary.html?focus=ch02" aria-label="本讲知识图谱" title="知识图谱：本讲概念网络与核心考点">
+  <span class="kg-fab-icon">🕸</span><span class="kg-fab-label">图谱</span>
+</a>
+<script src="../js/main.js"></script>
+</body>
+</html>

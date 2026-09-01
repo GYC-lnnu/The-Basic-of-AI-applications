@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  window.MathJax = { tex: { inlineMath: [["$", "$"], ["\(", "\)"]], displayMath: [["$$", "$$"], ["\[", "\]"]] }, svg: { fontCache: "global" } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<title>单摆运动 · 科普网页</title>
+<style>
+  :root { --ink:#1f2a3d; --muted:#5b6b85; --line:#dde5f0; --accent:#2f5fd0; --bg:#f4f7fc; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+         color:var(--ink); background:var(--bg); line-height:1.8; }
+  main { max-width:720px; margin:0 auto; padding:28px 18px 50px; }
+  .kicker { color:var(--accent); font-size:13px; font-weight:600; letter-spacing:.06em; margin:0; }
+  h1 { font-size:26px; margin:6px 0 4px; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 6px; }
+  section { background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:16px 0; }
+  h2 { font-size:19px; margin:0 0 10px; border-left:4px solid var(--accent); padding-left:10px; }
+  .formula { font-size:28px; text-align:center; font-family:"Times New Roman",Georgia,"Songti SC",serif;
+             background:#f0f4fb; border-radius:10px; padding:16px 8px; margin:12px 0; }
+  table { border-collapse:collapse; width:100%; font-size:15px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:center; }
+  th { background:#eef3fb; }
+  .demo-card { text-align:center; }
+  canvas { width:100%; max-width:360px; height:auto; background:#fbfcff;
+           border:1px solid var(--line); border-radius:10px; }
+  .ctrl { margin:12px 0 4px; font-size:15px; }
+  input[type=range] { width:min(320px,82%); accent-color:var(--accent); vertical-align:middle; }
+  .readout { font-weight:600; color:var(--accent); margin:6px 0 2px; }
+  .note { background:#fff8e6; border:1px solid #f0dfa8; border-radius:10px; padding:10px 14px;
+          font-size:14px; margin:12px 0; }
+  em.ph { font-style:normal; color:var(--accent); font-weight:600; }
+  footer { color:var(--muted); font-size:13px; text-align:center; margin-top:26px; padding:0 12px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">AI AGENT 一句话生成 · 物理科普演示</p>
+  <h1>单摆运动：一根细线吊起的简谐运动</h1>
+  <p class="sub">面向刚学完简谐运动的本科生 · 小角度近似 · 周期公式 · 可调摆长的摆动动画</p>
+
+  <section>
+    <h2>一、什么是单摆？</h2>
+    <p>把一个小球系在一条不可伸长、质量可以忽略的细线上，上端固定，就得到一个<strong>单摆（simple pendulum）</strong>。
+       把它拉开一个小角度后松手，<em class="ph">重力</em>与<em class="ph">细线拉力</em>的合力会把小球拉回最低点——
+       这个始终指向平衡位置的力叫<strong>回复力</strong>。摆球就在平衡位置两侧往复运动，与弹簧振子一样，是一种<strong>简谐运动</strong>。</p>
+    <p>不过,"简谐"是有条件的。回复力严格等于 $-mg\sin\theta$，并不与角度 $\theta$ 成正比；只有当
+       <strong>摆角 $\theta$ 很小（小于约 10°）</strong>时，才有 $\sin\theta \approx \theta$（弧度制），回复力近似等于 $-mg\theta$，
+       正比于角度，摆动才是标准的简谐运动。这就是<strong>小角度近似</strong>。</p>
+    <div class="note">近似有多好？若最大摆角为 10°，真实周期只比小角度公式的结果长大约 0.2%——
+       对课堂演示来说完全可以忽略；但摆角拉到 30°，偏差就升到约 2%，开始不能装作没看见了。</div>
+  </section>
+
+  <section>
+    <h2>二、看它摆起来（动画）</h2>
+    <div class="demo-card">
+      <canvas id="pendulum" width="360" height="360">你的浏览器不支持画布显示。</canvas>
+      <div class="ctrl">
+        <label for="len">摆长 L = <strong id="lenVal">1.0</strong> m　（0.5 – 2.0 m）</label><br>
+        <input type="range" id="len" min="0.5" max="2" step="0.1" value="1">
+      </div>
+      <p class="readout" id="readout">当前周期 T ≈ 2.01 s</p>
+    </div>
+    <p>动画按<strong>真实物理时间</strong>播放：摆角随时间按 $\theta(t) = \theta_0\cos\!\left(\sqrt{\dfrac{g}{L}}\,t\right)$ 变化（θ<sub>0</sub> 取 10°），
+       所以 1 m 摆长的摆来回一次真的约需 2 秒。拖动滑杆改变摆长，观察<strong>摆变长、摆动变慢</strong>——
+       摆长越长，周期越大。</p>
+  </section>
+
+  <section>
+    <h2>三、周期公式</h2>
+    <div class="formula">$$T = 2\pi\sqrt{\dfrac{L}{g}}$$</div>
+    <p>小角度近似下，单摆周期 <strong>$T$</strong> 只由两个量决定：摆长 <strong>$L$</strong> 与当地
+       <strong>重力加速度 $g$</strong>。读这条公式有三个要点：</p>
+    <ul>
+      <li><strong>摆长越长，周期越大</strong>——$T$ 与 $\sqrt{L}$ 成正比：摆长变为 4 倍，周期才变为 2 倍；</li>
+      <li><strong>与摆球质量无关</strong>——轻重小球同摆长时周期相同（伽利略的著名发现：相传他观察到教堂吊灯的摆动，发现了摆的等时性）；</li>
+      <li><strong>与振幅近似无关</strong>——小角度下摆得更远并不明显更慢（这正是"小角度近似"的另一面）。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>四、周期速查表（g = 9.8 m/s²）</h2>
+    <table>
+      <thead>
+        <tr><th>摆长 L（m）</th><th>周期 T（s）</th><th>一句话记忆</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0.5</td><td>≈ 1.42</td><td>半米长的摆，滴答约 1.4 秒</td></tr>
+        <tr><td>1.0</td><td>≈ 2.01</td><td>1 米摆 ≈ "秒摆"：来回约 2 秒</td></tr>
+        <tr><td>2.0</td><td>≈ 2.84</td><td>摆长加倍，周期只乘 √2 ≈ 1.41 倍</td></tr>
+      </tbody>
+    </table>
+    <p class="note">g 在地球表面各处略有差异（约 9.78 – 9.83 m/s²，标准参考值为 9.80665 m/s²），
+       严格计算时请代入当地值——这本身就是一条测量思路：用已知摆长测出 $T$，就能"称"出当地的 $g$。</p>
+  </section>
+
+  <footer>本页由 AI Agent（ZCode · GLM）依据一句话提示词生成，物理内容（小角度近似、公式与表中数值）经人工核对。公式用 MathJax 渲染（首次打开需联网加载，之后由浏览器缓存）。仅供课程教学演示。</footer>
+</main>
+<script>
+  const G = 9.8;                          // 重力加速度 m/s²
+  const THETA0 = 10 * Math.PI / 180;      // 最大摆角 10°（弧度），保证小角度近似成立
+  const cv = document.getElementById('pendulum');
+  const ctx = cv.getContext('2d');
+  const slider = document.getElementById('len');
+  const lenVal = document.getElementById('lenVal');
+  const readout = document.getElementById('readout');
+  let L = 1.0;                            // 摆长（米）
+
+  function fitCanvas() {                  // 按设备像素比放大画布，手机上才清晰
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = 360 * dpr; cv.height = 360 * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(th) {                     // 按当前摆角 th（弧度）重绘单摆
+    ctx.clearRect(0, 0, 360, 360);
+    const px = 180, py = 30;              // 悬点
+    const rodPx = 150 * L;                // 摆长 1 m ↔ 150 px
+    const bx = px + rodPx * Math.sin(th), by = py + rodPx * Math.cos(th);
+    ctx.strokeStyle = '#8a97ad'; ctx.lineWidth = 4;                 // 天花板
+    ctx.beginPath(); ctx.moveTo(px - 45, py); ctx.lineTo(px + 45, py); ctx.stroke();
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = '#b8c4d8'; ctx.lineWidth = 1; // 竖直参考线
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + rodPx + 26); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = '#5b6b85'; ctx.lineWidth = 2.5;               // 摆杆
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(bx, by); ctx.stroke();
+    ctx.strokeStyle = '#f0a63c'; ctx.lineWidth = 1.5;               // 摆角弧
+    ctx.beginPath(); ctx.arc(px, py, 34, Math.min(Math.PI / 2, Math.atan2(by - py, bx - px)),
+                             Math.max(Math.PI / 2, Math.atan2(by - py, bx - px))); ctx.stroke();
+    const grad = ctx.createRadialGradient(bx - 4, by - 5, 2, bx, by, 14); // 摆球
+    grad.addColorStop(0, '#7ea6ff'); grad.addColorStop(1, '#2f5fd0');
+    ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(bx, by, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#5b6b85';                                      // 悬点与角度读数
+    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+    const mid = (Math.PI / 2 + Math.atan2(by - py, bx - px)) / 2;
+    ctx.fillText((th * 180 / Math.PI).toFixed(1) + '°', px + 52 * Math.cos(mid), py + 52 * Math.sin(mid) + 4);
+  }
+
+  let phase = 0, last = null;             // 相位累加器：改摆长时角度不跳变
+  function frame(now) {
+    if (last !== null) phase += Math.sqrt(G / L) * Math.min((now - last) / 1000, 0.05);
+    last = now;
+    const th = THETA0 * Math.cos(phase);  // 小角度简谐：θ(<em>t</em>) = θ<sub>0</sub> cos<span class="rad" style="font-size:1.2em">√</span><span class="radicand" style="padding-top:2px"><span class="frac"><span class="num" style="padding:0 5px 1px"><em>g</em></span><span class="den" style="padding:1px 5px 0"><em>L</em></span></span></span>·<em>t</em>（θ<sub>0</sub> 取 10°）
+    draw(th);
+    requestAnimationFrame(frame);
+  }
+
+  slider.addEventListener('input', () => {
+    L = parseFloat(slider.value);
+    lenVal.textContent = L.toFixed(1);
+    readout.textContent = '当前周期 T ≈ ' + (2 * Math.PI * Math.sqrt(L / G)).toFixed(2) + ' s';
+  });
+
+  fitCanvas();
+  window.addEventListener('resize', fitCanvas);
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

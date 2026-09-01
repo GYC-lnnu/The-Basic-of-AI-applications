@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 6 讲 · 对话综合工作坊：物理场景实战 · 《人工智能应用基础》</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">《人工智能应用基础》课程网站</a>
+    <span class="spacer"></span>
+    <a class="navlink" href="../index.html">课程首页</a>
+    <a class="navlink" href="../glossary.html">知识图谱</a>
+    <a class="navlink active" href="index.html">第 6 讲</a>
+  </div>
+</nav>
+
+<main>
+  <div class="breadcrumb"><a href="../index.html">课程首页</a> › 模块 B · 对话篇 › 第 6 讲</div>
+  <h1>第 6 讲　对话综合工作坊：物理场景实战</h1>
+  <div class="pill-row">
+    <span class="pill">模块 B · 对话篇</span>
+    <span class="pill">能力主线：会聊</span>
+    <span class="pill gray">2 学时（90 分钟）</span>
+    <span class="pill gray">第 6 / 16 讲</span>
+  </div>
+  <p class="lead">本讲不教新概念——90 分钟全部用来把前四讲磨好的<a class="term" href="../glossary.html#term-prompt">提示词（Prompt）</a>工具箱整箱开进真实学习场景：读文献、刷习题、辩概念、译摘要。请直接翻到第五节，按任务卡开工。</p>
+
+  <h2>一、本讲学习目标</h2>
+  <p>完成本讲后，你应该能够：</p>
+  <ol class="goals">
+    <li>在文献精读、自测出题、概念辩论、学术翻译四个真实学习场景中，<strong>综合运用</strong>第 4–5 讲的提问与迭代技能；</li>
+    <li>会用"<strong>身份—规则—流程</strong>"三段式设定角色，并用<strong>显式约束</strong>管住 AI 的行为（如"全程不得直接给出答案"）；</li>
+    <li>会按"<strong>标题—说明—分部编号</strong>"约定输出格式，让 AI 产出结构稳定、便于自查的学习材料；</li>
+    <li>沉淀至少 4 条可复用的学习类提示词，参与全班汇编<strong>《物理学习 AI 助手提示词集 v1》</strong>。</li>
+  </ol>
+
+  
+<h2>二、课前准备</h2>
+  <ul>
+    <li><strong>四个任务包</strong>：教师已发放——A 文献摘要、B 讲义文本、C 概念卡、D 翻译摘要各一份素材（D 与 A 可为同一篇）。</li>
+    <li><strong>两人一组</strong>：工作坊全程结对进行，先完成的同学请当"小老师"。</li>
+    <li><strong>工具就绪</strong>：智谱清言（GLM）、DeepSeek 至少注册两个、互为备份，并确认能正常上传文本或文件。</li>
+    <li><strong>带上存量</strong>：第 4 讲的提示词库与第 5 讲的结构化模板、迭代三板斧——今天四条提示词都要从这里出发。</li>
+    <li><strong>组间互评表</strong>：第 2 节分享环节使用（教师发放）。</li>
+  </ul>
+
+  <h2>三、核心概念精讲</h2>
+
+  <h3>1. 从"单项基本功"到"综合实战"</h3>
+  <p>前两讲你分别练了单项：第 4 讲的四基本功（具体明确、给足上下文、设定角色、规定输出），第 5 讲的结构化模板与迭代三板斧。今天不新增概念，而是把整只工具箱搬进四个真实学习场景——就像物理实验里"单独调好每台仪器"之后第一次做<strong>整套系统联调</strong>：难点不在单台仪器，而在按正确的顺序把它们组合起来。</p>
+  <p>本讲的"作战地图"如下。每张任务卡都按<strong>输入素材 → 提示词起点 → 完成标准</strong>三栏组织——这是本课程<a class="term" href="../glossary.html#term-taskcard">任务卡</a>的最简形态，第 7 讲会升级为五栏版。</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>任务卡</th><th>场景</th><th>主要练什么</th><th>课堂时间</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>① 文献助手</td><td>精读一篇论文摘要</td><td>给足上下文 + 多轮追问</td><td>第 1 节 5–25 分</td></tr>
+      <tr><td>② 习题教练</td><td>自测一节讲义</td><td>角色设定 + 显式约束</td><td>第 1 节 25–45 分</td></tr>
+      <tr><td>③ 概念辩论</td><td>捍卫你的解释</td><td>角色设定 + 流程控制</td><td>第 2 节 0–15 分</td></tr>
+      <tr><td>④ 翻译改写</td><td>摘要中英互译</td><td>规定输出格式</td><td>第 2 节 15–30 分</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>2. 写法一：先递给 AI 一份"岗位说明书"</h3>
+  <p>四个任务的第一句话都是"你是一位……"。这不是花架子：给 AI 设定角色，等于先约定它站在哪个专业位置上说话——文献助手、习题教练、质疑者、翻译审校，各说各的行话、各守各的规矩。角色提示按三段式写：</p>
+  <ul>
+    <li><strong>身份（你是谁）</strong>：一句话定性，如"你是一位熟悉大学物理实验的习题教练"；</li>
+    <li><strong>规则（必须做什么、不许做什么）</strong>：最关键的一段——规则要写成<strong>可检验的条款</strong>，如"每轮只提 1 个问题""全程不附答案"；</li>
+    <li><strong>流程（按什么节奏进行）</strong>：先听后问、先出题后讲评、几轮一个回合。</li>
+  </ul>
+  <p>成熟的提示词样例，都体现了"身份 + 规则 + 流程"的写法。</p>
+
+  <h3>3. 写法二：把"不许做什么"写成显式约束</h3>
+  <p>第 3 讲说过，模型是概率预测机器，天然倾向于"给个答案"。所以"引导式教学"不能靠软绵绵地提醒一句"别告诉我答案哦"——要把约束写成第一条消息里最硬的条款："<strong>你不许直接告诉我对错与答案，只给一条提示和一个追问。</strong>"此外，输出格式也要先约定：一份合格的学习材料有固定结构——标题、做题说明、分部编号（一、判断题；二、简答题；三、应用题）。格式写在提示词里，AI 的输出才稳定、可比、便于自查。（这套"题型递进 + 不附答案键 + 格式规范"的设计思想，改写自课程底稿中一份专业的"练习题生成"<a class="term" href="../glossary.html#term-skill">技能（Skill）</a>说明——第 8 讲你会见到这类文件的原型。）</p>
+
+  <h3>4. 给 AI "喂"讲义：上传文本与知识库</h3>
+  <p>四个任务都遵循同一条铁律：<strong>AI 只依据你提供的材料干活</strong>，而不是凭"记忆"自由发挥（回忆第 3 讲的<a class="term" href="../glossary.html#term-hallucination">幻觉</a>问题）。普通对话助手里，直接把讲义文本粘贴进对话框即可。如果要把同领域多篇文献放在一起提问，可以使用<a class="term" href="../glossary.html#term-knowledgebase">知识库</a>类产品（如 NotebookLM 等）：它走的是另一条技术路线——<a class="term" href="../glossary.html#term-rag">RAG（检索增强生成）</a>，先从你上传的资料中检索相关段落，再依据资料作答。它的价值可以记成一句话：<strong>有据可依、溯源引用</strong>——回答限定在资料范围内，并标注来源页码或段落，方便人工查证。但注意：溯源也要真的点开核对，机器给出的"出处"同样需要抽查。</p>
+
+  <h2 id="demo">四、物理场景案例演示</h2>
+  <p>下面是教师用<strong>任务卡②的提示词起点</strong>（见第五节）对"单摆"讲义实测的一段对话节选。看懂它的三个设计要点，你就能把同款打法搬进任何一个学习场景。</p>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示：习题教练的一段实测对话</div>
+    <p><strong>第 1 步</strong>　把任务卡②的"教练契约"整段发出，AI 只回复四个字："教练已就位。"</p>
+    <p><strong>第 2 步</strong>　把"单摆"一节讲义文本粘贴给它，AI 出了第 1 组判断题——注意卷面的样子：</p>
+    <pre><code>【单摆自测 · 第 1 组】（判断题 · 共 2 道）
+
+做题说明：请凭讲义内容判断下列说法的对错，并说明理由。
+你每答一题，教练只给提示与追问，不会公布对错。
+
+1. 单摆的周期与摆球的质量无关。
+2. 摆角越大，公式 T = 2π√(L/g) 就越准确。</code></pre>
+    <p><strong>第 3 步</strong>　你凭直觉作答："第 1 题错——质量大的摆锤摆得快，所以周期短。"</p>
+    <p><strong>第 4 步</strong>　教练的回复如下（注意：它依然没有公布答案）：</p>
+    <pre><code>提示：回忆讲义中推导周期公式的过程——质量 m 是在哪一步被消去的？
+追问：如果换一个质量加倍的摆球而摆长不变，你预计测得的周期会怎么变？
+请先用这个预测检验你刚才的判断，再回答。</code></pre>
+    <p style="margin-top:10px;"><strong>三个设计要点</strong>，逐条兑现：</p>
+    <ul>
+      <li><strong>只依据讲义</strong>：题目中没有出现讲义之外的新公式与新结论；</li>
+      <li><strong>不附答案键</strong>：它把"对错判定"换成了"提示 + 追问"——思考的权利留给你；</li>
+      <li><strong>格式先约定</strong>：标题、做题说明、题号一应俱全——这不是 AI 自觉，是契约里写明的。</li>
+    </ul>
+  </div>
+  <p>你接下来的正确动作：回到讲义重看推导，确认"周期与质量无关"（小角度近似下 T = 2π√(L/g) 不含 m），再自己修正第 2 题的判断——这就是"引导式"与"答案机"的差别。</p>
+
+  <h2>五、课堂实操任务单</h2>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 工作坊规则（先读再开工）</div>
+    <ul>
+      <li>四人内两两结对；过关线：<strong>第 1 节下课完成任务卡①②，第 2 节下课完成任务卡①②③④</strong>。四张任务卡即今天的<a class="term" href="../glossary.html#term-baodi">保底任务 / 进阶挑战</a>中的保底项（人人完成），加深项见本节末"进阶挑战"；</li>
+      <li>每张卡按"<strong>输入素材 → 提示词起点 → 完成标准</strong>"组织：先把提示词起点整段复制到对话框，替换【占位符】内容，再逐条对照完成标准自查、打勾；</li>
+      <li>提示词起点是"起点"不是"终点"——跑不通时，用第 5 讲迭代三板斧（追问补充、明确纠偏、让 AI 自评）当场改；</li>
+      <li>第 2 节第 30–40 分钟，每组推荐 1 条"本组最强提示词"参加全班汇编（见第八节）。</li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 任务卡①　文献助手：三级递进读懂一篇摘要（第 1 节 5–25 分）</div>
+    <p><strong>输入素材</strong>：任务包 A——一篇物理论文摘要。示例（课堂可直接代用）：</p>
+    <p style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;">摘要：为验证单摆小角度周期公式 T = 2π√(L/g)，本实验用光电门计时器测量摆长 0.200–1.000 m 范围内 5 组单摆的周期，每组重复 20 次取平均。结果显示 T² 与 L 线性相关，由拟合斜率得重力加速度 g = 9.79 ± 0.02 m/s²，与本地参考值 9.794 m/s² 在不确定度范围内一致；摆角超过 10° 后测得周期系统性偏大，与小角度近似的适用范围相符。</p>
+    <p><strong>提示词起点</strong>（三级阅读模板 + 追问，逐级使用）：</p>
+    <pre><code>【使用说明】下面【第 1 级】—【第 4 步】请逐级单独发送：每级等输出、人工核对后再发下一级，不要整段一次性粘贴。
+
+【第 1 级 · 快速浏览】
+请用一句话概括这篇物理摘要的核心观点，并列出 3 个最重要的关键点。
+要求语言精炼，不要展开论证。
+
+【第 2 级 · 深度阅读（四问）】
+请作为一名物理文献阅读助手，逐项拆解这篇摘要：
+1. 核心主题：它要回答什么物理问题？
+2. 创新点与方法：作者用了什么装置和方法，新在哪里？
+3. 事实与证据：测了哪些物理量？数据如何支撑结论？
+4. 结论与建议：最后的定论是什么？对后续工作有什么建议？
+
+【第 3 级 · 深度思考（四问）】
+请批判性地分析这篇摘要：
+1. 作者的研究动机是什么？
+2. 前提假设有哪些？是否合理？
+3. 实验设计或论证有无明显的漏洞？
+4. 有哪些没有写出来、但可能很重要的信息？
+
+【第 4 步 · 细节追问（至少 3 轮）】
+针对你总结的创新点，请继续回答：
+（示例）光电门计时器的计时精度是多少？它对 g 的不确定度贡献有多大？
+（示例）拟合斜率是如何换算成 g 的？请写出换算关系。</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>第 1 级 · 快速浏览（一句话 + 3 关键点）</strong></p>
+        <pre class="result-text">一句话概括：本实验通过测量 5 组不同摆长下单摆的周期，验证了小角度周期公式
+T = 2π√(L/g)，并据此测得本地重力加速度 g = 9.79 ± 0.02 m/s²。
+
+3 个关键点：
+1. 方法：光电门计时，摆长 0.200–1.000 m 共 5 组，每组重复 20 次取平均；
+2. 证据：T² 与 L 线性相关，由拟合斜率换算出 g，并与本地参考值比较；
+3. 边界：摆角超过 10° 后测得周期系统性偏大，提示小角度近似有适用范围。</pre>
+        <p><strong>第 2 级 · 深度阅读（四问）</strong></p>
+        <pre class="result-text">1. 核心主题：单摆的小角度周期公式是否成立？能否用它把本地重力加速度 g 测准？
+2. 创新点与方法：没有新装置，"新"在数据处理——用光电门提高计时精度，用 5 组
+   摆长、每组 20 次取平均、T²–L 线性拟合压低随机误差；价值在于把一个基础实验
+   做规范，而非报告新发现。
+3. 事实与证据：测量量为摆长 L 与周期 T。公式可变形为 T² = (4π²/g)·L，故 T²–L
+   应为线性；由拟合斜率得 g = 9.79 ± 0.02 m/s²，与本地参考值 9.794 m/s² 之差为
+   0.004 m/s²，小于不确定度 0.02 m/s²，"在不确定度范围内一致"这一说法成立。
+4. 结论与建议：小角度公式在摆角 10° 以内成立，g 的测量值与参考值一致；若研究
+   更大摆角，需引入摆角修正，或定量测出周期随摆角的偏差规律。</pre>
+        <p><strong>第 3 级 · 深度思考（四问）</strong></p>
+        <pre class="result-text">1. 研究动机：摘要未明说；从"与本地参考值比较"的写法推断，属大学物理实验教学
+   场景下的公式验证与测量质量评定。
+2. 前提假设：摆球可视为质点、悬线轻且不可伸长、空气阻力与浮力可忽略、摆角足够
+   小；还有一条容易漏掉——光电门每次触发对应的相位要一致，否则测到的不是完整
+   周期。
+3. 论证漏洞：① 0.02 m/s² 的不确定度如何评定（A/B 类合成？拟合参数的不确定度？）
+   摘要未交代，无从核查；② 各组摆角具体多大、是否都控制在 10° 以内未说明——若
+   大摆角组未做修正，周期系统性偏大，由 g = 4π²L/T² 反解出的 g 会系统性偏小。
+4. 未提及：摆球直径与摆线质量如何处理、"重复 20 次"是每次测 1 个周期还是连续测
+   多个周期、有无剔除异常数据、拟合是否加权、实验环境的温度与气压。</pre>
+        <p><strong>第 4 步 · 细节追问（节选 3 轮）</strong></p>
+        <pre class="result-text">轮 1　我问：光电门计时器的计时精度是多少？它对 g 的不确定度贡献有多大？
+AI 答：摘要未给型号，具体分辨率以仪器说明书为准。实验室光电门通常为 0.1–1 ms
+量级，对 T ≈ 2 s 的周期，单次计时相对影响约 5×10⁻⁵–5×10⁻⁴，一般小于摆长测量的
+相对不确定度（毫米刻度尺下约 10⁻³ 量级），不是主要误差源；"每组重复 20 次取平均"
+还能把随机分量再压低约 √20 倍。
+
+轮 2　我问：拟合斜率是如何换算成 g 的？请写出换算关系。
+AI 答：由 T = 2π√(L/g) 两边平方得 T² = (4π²/g)·L，斜率 k = 4π²/g，故 g = 4π²/k。
+按摘要结果反推，k = 4π²/9.79 ≈ 4.03 s²/m，与"T² 与 L 线性相关"自洽。
+
+轮 3　我问：摆角超过 10° 后周期为什么系统性偏大？大约偏多少？
+AI 答：小角度近似把方程中的 sinθ 换成 θ（弧度制），而任何正摆角下 sinθ 总小于
+θ，实际回复力矩总比近似值小，摆动因此变"慢"——周期变长。定量上 T ≈ T₀(1 +
+θ₀²/16)，θ₀ 为角振幅：θ₀ = 10° ≈ 0.175 rad 时，θ₀²/16 ≈ 0.0019，即偏大约 0.2%。
+量级虽小但方向单一，多次取平均也消不掉，所以叫"系统性"偏大。</pre>
+      </div>
+    </details>
+    <p><strong>完成标准</strong>：</p>
+    <ul class="checklist">
+      <li><input type="checkbox" id="c1"><label for="c1">三级提示词逐级用过，且第 2 级的<strong>创新点 / 方法 / 结论</strong>三个要点都能指回摘要原句；</label></li>
+      <li><input type="checkbox" id="c2"><label for="c2">完成<strong>至少 3 轮细节追问</strong>，每轮追问都得到具体回应；</label></li>
+      <li><input type="checkbox" id="c3"><label for="c3">能指出 AI 总结中至少 1 处"说得不准 / 漏掉"的地方（这是你人工把关的证据）。</label></li>
+    </ul>
+    <p style="margin-top:8px;">💡 需要全网检索新文献时，用第 2 讲介绍过的<a class="term" href="../glossary.html#term-deepresearch">Deep Research（深度研究）</a>；本讲聚焦<strong>手头已有文献</strong>的精读。</p>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 任务卡②　习题教练：出题、引导式讲解、检查我的解答（第 1 节 25–45 分）</div>
+    <p><strong>输入素材</strong>：任务包 B——本节讲义文本（如"单摆"一节）。</p>
+    <p><strong>提示词起点</strong>（教练契约——最关键的是第 3 条约束）：</p>
+    <pre><code>你是我的物理习题教练，我要自测"单摆"这一节，请严格遵守以下规则：
+1. 只依据我下一条消息发来的讲义文本出题，不引入讲义之外的知识；
+2. 每轮先出 2 道判断题，出完就停下等我作答；
+3. 我每答一题，你不许直接告诉我对错和答案，只给一条提示加一个追问，
+   引导我自己发现并纠正错误；
+4. 同一轮的 2 道判断题全部答对后，才升级出简答题；
+5. 全程不附答案与解析，也不提示答案在讲义的哪一页。
+现在请只回复"教练已就位"，等我发讲义文本。</code></pre>
+    <p><strong>设计要点</strong>：输入就是<strong>本节讲义文本</strong>；题型按<strong>判断题 → 简答题 → 应用题</strong>递进，各类型内部数量与难度也递进；<strong>全卷不附答案键</strong>——与"引导式讲解"互相配合；卷面按<strong>标题、做题说明、分部编号</strong>的格式规范输出。</p>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>第 1 步 · 升级出卷（4 判断 + 3 简答 + 1 应用，无答案键）</strong></p>
+        <pre class="result-text">教练（收到讲义文本与升级出卷指令后，整卷输出如下）：
+
+《单摆》自测练习卷（判断题 4 · 简答题 3 · 应用题 1）
+
+做题说明：本卷只依据"单摆"一节讲义出题，全卷不附答案与解析。判断题请写出判断
+理由；简答题请用 3–5 句话作答；应用题请写出完整过程。你每答一题，教练只给提示
+与追问，不公布对错。
+
+一、判断题（1–2 定义判断，3–4 推理辨析）
+1. 单摆的周期与摆球的质量无关。
+2. 测量摆长时，只需测量悬线的长度。
+3. 测得 T²–L 图线是一条过原点的直线，说明周期 T 与摆长 L 成正比。
+4. 其他条件不变，摆角从 5° 增大到 15°，测得的周期会略大于小角度公式的预测值。
+
+二、简答题
+1. 从回复力出发说明：为什么小角度下单摆的运动可看作简谐运动？周期公式中为什么
+   不含摆球质量 m？
+2. 实验中通常测量 30–50 个周期的总时间再除以周期数，而不是只测 1 个周期。这样做
+   减小的是什么误差？为什么有效？
+3. 小角度近似"近似"在哪里？摆角偏大时，实际周期比公式预测值偏大还是偏小？这个
+   偏差的方向为什么是单一的？
+
+三、应用题
+情境：用单摆测本地重力加速度。器材：长约 1 m 的细线、直径 2.00 cm 的小钢球、
+米尺（分度值 1 mm）、游标卡尺、光电门计时器（计时分辨率 0.001 s）；摆角控制在
+5° 以内。
+数据：悬线长 99.50 cm；钢球直径 2.00 cm；光电门测得 50 个全振动的总时间 100.66 s。
+任务：(1) 计算摆长 L 与周期 T；(2) 写出由 L、T 求 g 的关系式并算出 g；(3) 指出本
+情境中最需要修正的一处系统误差来源，并说明修正方法。
+约束：结果保留 3–4 位有效数字；不得引入讲义之外的公式。
+提示（不含解法）：① 摆长的两个端点在哪里？② 先把总时间换算成单个周期再代入；
+③ 由周期公式变形即可得到 g 的表达式。</pre>
+        <p><strong>第 2 步 · 引导式讲解第 1 轮（学生答错 → 教练只给提示与追问）</strong></p>
+        <pre class="result-text">我（选判断题第 3 题作答）：第 3 题，对。T²–L 图线过原点，过原点就说明两个量
+成正比，所以周期 T 与摆长 L 成正比。
+
+教练：提示：把 T = 2π√(L/g) 两边平方，看看 T² 与 L 的关系式里，直线的斜率应该
+等于什么？
+追问：如果周期真的与摆长成正比，那 T²–L 图会是什么形状？还是一条过原点的直线
+吗？</pre>
+        <p><strong>第 3 步 · 第 2 轮（学生自我纠正 → 教练仍不公布判定，追问巩固）</strong></p>
+        <pre class="result-text">我：我想错了——若 T 与 L 成正比，则 T² 与 L² 成正比，T²–L 图应是开口向上的
+曲线，不可能是直线。平方之后 T² = (4π²/g)·L 才是线性关系。所以"过原点的直线"
+说明的是 T² 与 L 成正比，也就是 T 与 L 的平方根成正比。我把判断改为：错。
+
+教练：你把图线形状和公式对上了——这个修正过程比结论本身更重要。提示：由斜率
+k = 4π²/g 可以反解出 g，这正是"图线法"测 g 的原理。
+追问：若你测得斜率 k ≈ 4.03 s²/m，请自己算出 g；再想一想，要下"与本地参考值
+一致"的结论，除了算出这个数，你还需要知道什么？
+
+（对话继续中，此处节选两轮。）</pre>
+      </div>
+    </details>
+    <p><strong>完成标准</strong>：</p>
+    <ul class="checklist">
+      <li><input type="checkbox" id="c4"><label for="c4">完成<strong>至少 3 道题</strong>的自测循环，其中至少 1 次是在教练提示下<strong>自己纠正</strong>了错误；</label></li>
+      <li><input type="checkbox" id="c5"><label for="c5">AI 全程<strong>未直接给出答案</strong>——如有违规，你能指出并让它重申规则后继续；</label></li>
+      <li><input type="checkbox" id="c6"><label for="c6">让它<strong>检查你的解答过程</strong>一次：发出你的完整解题步骤，要求"按最挑剔的标准指出最不严谨的一步"。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 任务卡③　概念辩论：请一位"较真教授"挑战你（第 2 节 0–15 分）</div>
+    <p><strong>输入素材</strong>：任务包 C——"波粒二象性"概念卡；以及<strong>你自己的口头解释</strong>（先对同伴讲一遍，原样发给 AI）。</p>
+    <p><strong>提示词起点</strong>：</p>
+    <pre><code>请扮演一位较真的物理教授，来质疑我对"波粒二象性"的解释。规则：
+1. 先完整听我讲 2–3 句解释，中途不打断、不评论；
+2. 每轮只提出 1 个最尖锐的问题，并指出我表述中最不严谨的一处；
+3. 只追问，不给出标准答案，除非我连续 2 次答不上来；
+4. 每轮提完问题就停下，等我回答后再进入下一轮，共进行 5 轮；
+5. 问题范围控制在大二"大学物理"课程内容内，不引入量子场论等超纲概念；
+6. 第 5 轮结束后，用不超过 3 句话指出我整段解释中最需要修正的一处表述，作为收束。
+我的解释是：（在这里粘贴或复述你的口头解释）</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>输入 · 学生的解释（原样发给教授）</strong></p>
+        <pre class="result-text">我的解释：光的干涉、衍射实验说明光是波；光电效应又说明光的能量是一份一份的，
+一份就是一个光子，所以光也是粒子。这就是波粒二象性——光有时表现为波，有时表现
+为粒子，取决于我们用什么仪器去观察它。我认为单个光子经过双缝时会分裂成两个
+"半个光子"，分别穿过两条缝，这两半再互相干涉，在屏上形成明暗条纹。</pre>
+        <p><strong>第 1 轮 · 教授发问</strong></p>
+        <pre class="result-text">教授：你这段话最不严谨的是"分裂成两个半个光子"。我把问题问到底：如果光子真的
+劈成了两半，那么在双缝后面各放一个探测器，就应该能记录到"半个光子"的事件——
+每次探测到的能量应当是 hν/2。请回答：单光子双缝实验里，探测器每次实际记录到的
+能量是多少？你预言的"半能量事件"一次也没有被记录到，你脑子里的这幅图像要不要
+修改？</pre>
+        <p><strong>第 1 轮 · 学生应答 → 教授第 2 轮发问</strong></p>
+        <pre class="result-text">我：实验上从来没有记录过"半个光子"，每次探测到的都是完整的一份 hν。所以
+"分裂成两半"这幅图像不对。我改成：光子作为整体到达，每次只在一个位置被探测；
+但在到达之前，与它相联系的波（量子力学里叫波函数）同时经过两条缝，两路叠加
+决定屏上各点出现光子的概率，大量光子一个个积累出来，才是那条干涉条纹。
+
+教授：这次你把"整体探测"和"概率波分两路"分开了，方向对。下一个尖锐问题留给你
+开头那句话："光有时是波，有时是粒子，取决于用什么仪器"——听起来像是仪器把光
+"变成"了这一种或那一种。请用"这台仪器测量的是什么量"把这句话重说一遍：双缝的
+屏在测量什么？光电管的阳极又在测量什么？</pre>
+        <p><strong>第 2 轮 · 学生应答 → 教授回应（节选至此）</strong></p>
+        <pre class="result-text">我：不是光"变成"了什么，而是仪器决定了你测量哪个量。双缝的屏记录的是光子到达
+位置的分布——大量到达位置呈现出干涉图样，这一面用"波"的语言描述最自然；光电
+效应里，电子每次与光交换的是一整份 hν，这一面用"光子"的语言描述最自然。仪器
+选择的是"测什么量"，不是改写光的身份。
+
+教授：这个重述比你的第一版严谨得多。但我还要推你一步：你说的这个"概率波"，是
+不是水波、声波那种需要介质、携带着能量在空间里流动的波？如果不是，"波"这个词
+还在哪层意义上成立？——带着这个问题进入第 3 轮。
+
+（第 3–5 轮从略。按新增规则第 6 条，教授在第 5 轮后用 3 句话收束，指出最需要
+修正的表述：把"光有时是波、有时是粒子"改为"同一微观客体在不同类型的测量中
+呈现出波动性或粒子性的不同侧面，完整的描述需要量子力学的波函数"。）</pre>
+      </div>
+    </details>
+    <p><strong>完成标准</strong>：</p>
+    <ul class="checklist">
+      <li><input type="checkbox" id="c7"><label for="c7">完成<strong>至少 3 轮攻防</strong>，且 AI 的质疑至少 1 次让你当场改口或补充；</label></li>
+      <li><input type="checkbox" id="c8"><label for="c8">辩论结束后，你能<strong>说出一点新认识</strong>（哪句话原来不严谨、严谨的说法是什么），并写进任务记录。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 任务卡④　翻译改写：物理摘要中英互译 + 术语对照表（第 2 节 15–30 分）</div>
+    <p><strong>输入素材</strong>：任务包 D——一段物理摘要（可用任务卡①同一篇）。</p>
+    <p><strong>提示词起点</strong>（中译英；把方向对调、要求不变即为英译中，两向都完成一次）：</p>
+    <pre><code>请把下面这段物理摘要翻译成英文，并按以下要求输出：
+1. 先给出完整译文；
+2. 再给出中英术语对照表，表头为：中文术语 / 英文术语 / 一句话说明，
+   覆盖摘要中的全部物理术语（如"单摆""周期""重力加速度""不确定度"）；
+3. 物理量与单位保持规范写法（如 g ≈ 9.8 m/s²）；
+4. 最后列出 2 处你没有把握的表述，说明两种可选译法的差别，等我决定；
+5. 译文采用学术论文摘要的客观语体（可用被动语态），术语对照表按术语在摘要中出现的先后顺序排列。
+摘要如下：（粘贴任务包 D 的摘要）</code></pre>
+    <p style="margin-top:8px;">💡 更多中英互译与润色的成熟写法，可参考 DeepSeek 官方提示词库（以官方页面为准）。</p>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实生成了 5 条文献推荐并逐条查证（执行环境：GLM+ZCode）。本次未出现编造——但幻觉是概率事件，没编造≠次次不编造。</p>
+        <p><strong>中译英 · 译文 + 术语对照表（10 个术语）</strong></p>
+        <pre class="result-text">【译文】
+Abstract: To verify the small-angle period formula for a simple pendulum,
+T = 2π√(L/g), the periods of five pendulums with lengths from 0.200 m to
+1.000 m were measured with a photogate timer, and 20 repeated measurements
+were averaged for each length. The results show that T² is linearly related
+to L; the acceleration due to gravity obtained from the slope of the linear
+fit is g = 9.79 ± 0.02 m/s², consistent with the local reference value of
+9.794 m/s² within the uncertainty. When the swing angle exceeds 10°, the
+measured period becomes systematically larger, in agreement with the limited
+range of validity of the small-angle approximation.
+
+【中英术语对照表】（按摘要中出现顺序）
+| 中文术语 | 英文术语 | 一句话说明 |
+| 单摆 | simple pendulum | 摆球可视为质点、悬线轻且不可伸长的理想摆动模型 |
+| 小角度近似 | small-angle approximation | 以 sinθ ≈ θ（θ 取弧度）简化摆动方程，适用范围有限 |
+| 周期 | period | 完成一次全振动所需的时间，记作 T |
+| 光电门计时器 | photogate timer | 遮光触发、自动计时的实验装置 |
+| 摆长 | pendulum length | 悬点到摆球重心的距离，记作 L |
+| 拟合斜率 | slope of the linear fit | T²–L 直线的斜率，物理上等于 4π²/g |
+| 重力加速度 | acceleration due to gravity | 记作 g，由拟合斜率反解得到 |
+| 不确定度 | uncertainty | 测量结果可疑程度的定量表征（规范术语，勿译作 inaccuracy） |
+| 摆角 | swing angle（待决，见下） | 摆线偏离竖直方向的角度 |
+| 系统性偏大 | systematically larger | 偏差方向单一，多次取平均不能消除，属系统效应 |
+
+【2 处没有把握的表述】
+(1) "摆角"：译 swing angle（字面直译）还是 angular amplitude（物理文献惯用，
+    强调"最大摆角/角振幅"）？摘要"摆角超过 10°"指的是最大摆角，两种译法都能
+    看懂，但 angular amplitude 更符合文献惯例。
+(2) "在不确定度范围内一致"：within the uncertainty（把不确定度当作一个已合成
+    的区间）还是 within uncertainties（泛指两值各自的不确定度）？若 0.02 m/s²
+    是合成（扩展）不确定度，更严谨的写法是 within the combined uncertainty，
+    以原文的评定方式为准。
+
+【演示的处理】（完成标准第 2 条：查证后自选，不默认采纳）
+(1) 选 angular amplitude；(2) 保留 within the uncertainty，并在文中注明
+0.02 m/s² 的评定方式。</pre>
+        <p><strong>英译中 · 对拍（把英文译文交回 AI 译回中文，节选）</strong></p>
+        <pre class="result-text">【回译节选】"……当角振幅超过 10° 时，测得的周期系统性地变长，与小角度近似
+有限的适用范围相一致……"
+
+【对拍发现】术语走了一条弯路：摆角 → swing angle →（查证后改用）angular
+amplitude → 回译成"角振幅"。"摆角"与"角振幅"含义并不相同（前者泛指摆线与竖直
+方向的夹角，后者特指最大摆角）——若不对照原文，就会把回译稿当成原稿的同义改写。
+数值 g = 9.79 ± 0.02 m/s²、9.794 m/s²、10° 经人工核对三处均未失真。这正是"对拍"
+的价值：术语漂移要靠往返对照才抓得住。</pre>
+      </div>
+    </details>
+    <p><strong>完成标准</strong>：</p>
+    <ul class="checklist">
+      <li><input type="checkbox" id="c9"><label for="c9">拿到<strong>译文 + 术语对照表</strong>，并抽查 3 个术语，确认与教科书或讲义的用法一致；</label></li>
+      <li><input type="checkbox" id="c10"><label for="c10">对 AI 标注的 2 处"没把握"的表述，<strong>自己查证后做出选择</strong>，而不是默认采用。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 进阶挑战（学有余力，任选）</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="c11"><label for="c11"><strong>挑战①　迷你知识库</strong>：把任务包中 2–3 篇摘要放入知识库类产品再提问，同一问题分别用"单篇对话"与"知识库"各问一次，对比是否给出出处。<br>✅ 完成标准：留有两次回答的对照记录，能各指出 1 条"有出处 / 无出处"的证据。</label></li>
+      <li><input type="checkbox" id="c12"><label for="c12"><strong>挑战②　4+3+1 练习卷</strong>：让任务卡②的教练按题型递进出一套整卷——判断题 4 道 → 简答题 3 道 → 应用题 1 道：<br></label></li>
+    </ul>
+    <pre><code>请把本次自测升级为一份完整练习卷，出卷规则如下：
+1. 题型递进：判断题 4 道 → 简答题 3 道 → 应用题 1 道；
+2. 数量与难度都递进：判断题先 1–2 道定义判断、再 2–3 道推理辨析；
+   简答题每题需 3–5 句话才能答好；应用题给完整物理情境；
+3. 应用题须包含：情境描述、可用数据、要完成的任务、约束条件，
+   并附 2–3 条提示，但不得给出解法；
+4. 只依据讲义文本出题；全卷不附任何答案与解析；
+5. 卷面结构：标题 → 做题说明 → 分部编号（一、判断题；二、简答题；三、应用题）；
+6. 难度基准：面向大学物理初学者（大二年级），不得超出讲义深度与低年级数学工具。</code></pre>
+    <ul class="checklist">
+      <li><input type="checkbox" id="c13"><label for="c13">✅ 完成标准：拿到结构完整的 4+3+1 练习卷；抽查 2 题，答案依据能在讲义原文中找到；全卷无答案键。</label></li>
+      <li><input type="checkbox" id="c14"><label for="c14"><strong>挑战③　攻防互换</strong>：让 AI 先给一段"恰好含 3 处不严谨表述"的波粒二象性科普解释，你当质疑者逐条指出，最后让它公布清单自评。<br>✅ 完成标准：找全 3 处（或说明漏掉之处与原因）。</label></li>
+      <li><input type="checkbox" id="c15"><label for="c15"><strong>挑战④　提示词卡互测</strong>：把本组最强提示词按第 5 讲模板整理成"提示词卡"，请另一组试用一次并按反馈修订。<br>✅ 完成标准：卡片完成 + 留有 1 条修订记录。</label></li>
+    </ul>
+  </div>
+
+  <h2>六、常见坑与翻车案例</h2>
+  <ul>
+    <li><strong>坑①　丢一句话就想要深度总结</strong>："帮我总结一下这篇文章"——没有角色、没有结构，得到一段泛泛而谈。<em>解法：按三级阅读模板逐级递进，先用快速浏览判断值不值得精读。</em></li>
+    <li><strong>坑②　忘了写"不给答案"约束</strong>：教练秒变答案机，一问就给完整解答——模型默认倾向"给个答案"。<em>解法：把约束写进第一条消息的规则区；一旦违规，立即重申规则，必要时重开会话。</em></li>
+    <li><strong>坑③　出题超纲</strong>：AI 引入讲义没讲过的公式与结论，题目超出自学范围。<em>解法：明确"只依据讲义出题"；抽查 2 题，确认答案依据能在原文找到。</em></li>
+    <li><strong>坑④　检查解答时"你好我好"</strong>：无论你写什么，AI 都说"完全正确，思路清晰"。<em>解法：要求"按最挑剔的标准指出最不严谨的一步"，或直接问"这个解答有没有漏洞"。</em></li>
+    <li><strong>坑⑤　译文照单全收</strong>：物理术语被译偏而不自知，如"不确定度"译成 inaccuracy（规范术语是 uncertainty）。<em>解法：强制输出术语对照表并抽查；把译文用另一个工具译回中文对照——这正是"对拍"习惯的雏形。</em></li>
+  </ul>
+
+  <h2>七、自测</h2>
+  <div class="box box-quiz">
+    <div class="box-title">✅ 五道题检验学习目标</div>
+
+    <div class="quiz-item">
+      <p class="q">1. 任务卡①的"三级阅读"，最合理的使用顺序是？</p>
+      <ul>
+        <li data-opt="A.">深度思考 → 深度阅读 → 快速浏览</li>
+        <li data-opt="B.">快速浏览 → 深度阅读 → 深度思考</li>
+        <li data-opt="C.">三级同时发出，让 AI 一次性回答</li>
+        <li data-opt="D.">只用第 1 级就够了</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。先用快速浏览判断值不值得精读，再逐项拆解内容，最后做批判性审视——由浅入深，每一级的输出都是下一级的输入。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">2. 为什么给习题教练的第一条指令必须写明"不许直接告诉我答案"？</p>
+      <ul>
+        <li data-opt="A.">为了节省对话轮数</li>
+        <li data-opt="B.">模型天然倾向于"给个答案"，不写成显式约束它就会直接给，剥夺你独立思考的机会</li>
+        <li data-opt="C.">因为 AI 不会出题</li>
+        <li data-opt="D.">为了让回答更短</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。"引导式教学"必须靠<strong>显式约束</strong>实现——把它写成第一条消息里可检验的硬条款，而不是事后软绵绵的提醒。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">3. 4+3+1 练习卷的题型递进顺序是？</p>
+      <ul>
+        <li data-opt="A.">简答题 → 判断题 → 应用题</li>
+        <li data-opt="B.">判断题 → 应用题 → 简答题</li>
+        <li data-opt="C.">判断题 → 简答题 → 应用题</li>
+        <li data-opt="D.">应用题 → 简答题 → 判断题</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>C</strong>。判断题（辨析概念）→ 简答题（讲清理由）→ 应用题（用于情境），由浅入深；且各类型内部难度也递进——判断题先定义判断后推理辨析。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">4. 判断题："只要让 AI 基于我上传的文献回答，就一定不会出错，无需再核对原文。"</p>
+      <details class="answer"><summary>查看答案与解析</summary><p><strong>不科学</strong>。知识库与 RAG 方式能做到"有据可依、溯源引用"，大幅减少凭空编造，但标注的"出处"同样需要点开抽查——引用也可能断章取义。核查责任始终在你："AI 产出，人工把关。"</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">5. 简答：任务卡③为什么规定"每轮只提 1 个问题，并等你回答后再继续"？</p>
+      <details class="answer"><summary>参考答案</summary><p>①<strong>控制节奏</strong>——一次抛出一串问题会淹没你的思考；②<strong>集中火力</strong>——逐轮追问把矛盾聚焦到一个最尖锐的点上，便于发现自己解释体系里最薄弱的一环；③这与第 5 讲"一次只改一件事"的迭代思想一致，每轮改动可检验、可回退。</p></details>
+    </div>
+  </div>
+
+  <h2>八、课后作业</h2>
+  <div class="box box-task">
+    <div class="box-title">📋 《AI 学习助手提示词集》（≥5 场景提示词集）</div>
+    <p>把今天实战检验过的提示词沉淀为<strong>个人学习助手提示词集</strong>：不少于 <strong>5 个学习场景</strong>，每个场景包含三件套——</p>
+    <ol>
+      <li><strong>场景名与适用时机</strong>（什么时候用它）；</li>
+      <li><strong>模板化提示词</strong>（带【占位符】，可整体复制替换使用）；</li>
+      <li><strong>一次实测记录</strong>（你发的提示词、AI 的表现、你做的修订）——可直接并入你的<a class="term" href="../glossary.html#term-log">AI 使用日志</a>。</li>
+    </ol>
+    <p>场景建议：文献助手、习题教练、概念辩论、翻译改写（今天的四张任务卡）+ 至少 1 个<strong>自创场景</strong>（如"公式推导检查员""实验步骤找茬员""名词解释出题人"）。</p>
+  </div>
+  <div class="box box-tip">
+    <div class="box-title">💡 全班汇编：《物理学习 AI 助手提示词集 v1》</div>
+    <p>第 2 节第 30–40 分钟，每组推荐 1 条"本组最强提示词"上台展示 30 秒实战战绩；课后由学习委员会同教师汇编为班本<strong>《物理学习 AI 助手提示词集 v1》</strong>，全班人手一份。下一届开学将其迭代为 v2——你今天的作业，就是明年的课程教材。</p>
+  </div>
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 学术诚信提醒</div>
+    <p>按课程《学术诚信与 AI 使用规范》，本作业需附<strong><a class="term" href="../glossary.html#term-declaration">AI 使用声明</a></strong>：用了什么工具、让它做了什么、你如何核查。"AI 产出，人工把关。"</p>
+  </div>
+
+  <h2>九、进阶拓展（选学）</h2>
+  <details class="advanced">
+    <summary>🎓 把"习题教练"升级为技能（Skill）：从一条提示词到一套方法</summary>
+    <p>今天你写的教练契约，如果<strong>每个章节都要复用</strong>，就值得固化——这正是第 7 讲"反复出现的工作流值得被固化"的先声。课程底稿中的出题案例给出了它的工程化形态：</p>
+    <ul>
+      <li><strong>第一步</strong>：把契约整理成第 5 讲的"提示词卡"（模板化、带占位符）；</li>
+      <li><strong>第二步</strong>：加上名称与描述等元数据，写成 <a class="term" href="../glossary.html#term-skillmd">SKILL.md</a> 文件——描述要说明"做什么、何时用"，让 AI 判断何时调用它；</li>
+      <li><strong>第三步</strong>：把按章节分类的例题库、卷面模板等参考资料放进同一个文件夹——底稿案例就带有一个"按主题分类的出题示例库"，供出题时取用。</li>
+    </ul>
+    <p>到第 8 讲你会看到 Agent 如何加载这类"技能"文件夹。技能（Skills）按开放标准讲授，不绑定具体厂商；文件格式与字符数等约束细节以标准文档为准。想先睹为快的同学，可阅读 <a href="https://agentskillsdev.com/" target="_blank" rel="noopener">agentskillsdev.com</a> 的中文深度手册。</p>
+  </details>
+
+  <nav class="pagenav" aria-label="上一讲 / 下一讲">
+    <a href="../ch05/index.html"><span class="label">← 上一讲</span><span class="title">第 5 讲 · 结构化提示词与迭代优化</span></a>
+    <a class="next" href="../ch07/index.html"><span class="label">下一讲 →</span><span class="title">第 7 讲 · 复杂任务的规划与分解</span></a>
+  </nav>
+</main>
+
+<style>
+.kg-fab { position: fixed; right: 26px; bottom: 26px; z-index: 90; width: 64px; height: 64px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none;
+  background: linear-gradient(135deg, #2f6fed, #8e44d3); color: #fff; box-shadow: 0 6px 18px rgba(47, 111, 237, 0.42);
+  transition: transform .15s ease, box-shadow .15s ease; }
+.kg-fab:hover { transform: scale(1.09); box-shadow: 0 9px 26px rgba(47, 111, 237, 0.55); }
+.kg-fab-icon { font-size: 23px; line-height: 1; }
+.kg-fab-label { font-size: 10px; letter-spacing: 1px; }
+@media (max-width: 700px) { .kg-fab { right: 16px; bottom: 16px; width: 56px; height: 56px; } }
+@media print { .kg-fab { display: none; } }
+</style>
+<a class="kg-fab" href="../glossary.html?focus=ch06" aria-label="本讲知识图谱" title="知识图谱：本讲概念网络与核心考点">
+  <span class="kg-fab-icon">🕸</span><span class="kg-fab-label">图谱</span>
+</a>
+<script src="../js/main.js"></script>
+</body>
+</html>

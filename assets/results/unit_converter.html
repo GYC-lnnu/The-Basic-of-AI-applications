@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理单位换算器 · 第 15 讲挑战③示例</title>
+<style>
+  :root { --accent: #2f6fed; --line: #d8e0f0; --ok: #15803d; --bad: #b91c1c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px 16px 48px; background: #f5f7fb; color: #1f2733;
+         font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif; }
+  main { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .sub { color: #5b6678; margin: 0 0 18px; font-size: 14px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .tabs button { padding: 7px 16px; border: 1px solid var(--line); border-radius: 999px;
+         background: #fff; cursor: pointer; font-size: 14px; color: #3a4657; }
+  .tabs button.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px;
+          padding: 18px 20px; margin-bottom: 16px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+  .row label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #5b6678; flex: 1; min-width: 120px; }
+  .row input, .row select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+          font-size: 16px; font-family: inherit; background: #fff; color: inherit; }
+  .row input:focus, .row select:focus { outline: 2px solid #bcd0fb; border-color: var(--accent); }
+  #swap { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+          cursor: pointer; font-size: 16px; }
+  #swap:hover { border-color: var(--accent); color: var(--accent); }
+  .out { margin-top: 16px; padding: 14px 16px; background: #f0f5ff; border-radius: 10px;
+         font-size: 22px; font-weight: 700; color: var(--accent); word-break: break-all; }
+  .out small { font-size: 15px; font-weight: 400; color: #3a4657; }
+  .ratio { margin: 10px 0 0; font-size: 13px; color: #5b6678; }
+  h2 { font-size: 17px; margin: 0 0 6px; }
+  .hint { font-size: 13px; color: #5b6678; margin: 0 0 12px; }
+  #btn-test { padding: 7px 16px; border: 1px solid var(--accent); border-radius: 8px;
+          background: var(--accent); color: #fff; cursor: pointer; font-size: 14px; }
+  #testlog { list-style: none; padding: 0; margin: 12px 0 0; font-size: 14px; }
+  #testlog li { padding: 5px 0; border-bottom: 1px dashed #eef1f7; }
+  #testlog li.ok { color: var(--ok); }
+  #testlog li.bad { color: var(--bad); }
+  #testlog li.sum { font-weight: 700; border-bottom: none; }
+  footer { font-size: 12px; color: #7a8496; line-height: 1.7; }
+</style>
+</head>
+<body>
+<main>
+  <h1>物理单位换算器</h1>
+  <p class="sub">《人工智能应用基础》第 15 讲 · 挑战③示例成品 · 纯原生 JavaScript，双击打开即用，无需联网</p>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="card">
+    <div class="row">
+      <label>数值（支持科学计数法，如 1.6e-19）
+        <input id="val" type="text" inputmode="decimal" value="1">
+      </label>
+      <label>从单位 <select id="from"></select></label>
+      <button id="swap" title="交换单位">⇄</button>
+      <label>到单位 <select id="to"></select></label>
+    </div>
+    <div class="out"><span id="out-num">—</span> <small id="out-unit"></small></div>
+    <p class="ratio" id="ratio"></p>
+  </div>
+
+  <div class="card">
+    <h2>对拍自检：换算程序对不对，用已知值说话</h2>
+    <p class="hint">下列 8 组换算的期望值均来自国际定义（如 1 eV = 1.602176634×10⁻¹⁹ J、90° = π/2 rad），
+       相对误差容限 10⁻¹²。点击按钮重新核对——页面打开时会自动对拍一次。</p>
+    <button id="btn-test">▶ 一键对拍</button>
+    <ul id="testlog"></ul>
+  </div>
+
+  <footer>换算因子依据国际单位制（SI）及相关定义：1 eV = 1.602176634×10⁻¹⁹ J（2019 年 SI 修订的精确定义值）、
+  1 cal（热化学卡）= 4.184 J、1 英寸 = 0.0254 m、1 磅 = 0.45359237 kg、1 atm = 101325 Pa 等均为定义值；
+  原子质量单位 u 取 CODATA 推荐值（近似）。本页为课程教学示例。</footer>
+</main>
+
+<script>
+"use strict";
+/* ========== 1. 换算因子表：每类单位给出"相对基准单位的倍率" ========== */
+const UNITS = {
+  length: { name: "长度", base: "m", u: {
+    "纳米 (nm)": 1e-9, "微米 (μm)": 1e-6, "毫米 (mm)": 1e-3, "厘米 (cm)": 1e-2,
+    "米 (m)": 1, "千米 (km)": 1e3, "英寸 (in)": 0.0254, "英尺 (ft)": 0.3048,
+    "英里 (mi)": 1609.344, "埃 (Å)": 1e-10, "光年 (ly)": 9.4607304725808e15 } },
+  mass: { name: "质量", base: "kg", u: {
+    "毫克 (mg)": 1e-6, "克 (g)": 1e-3, "千克 (kg)": 1, "吨 (t)": 1e3,
+    "磅 (lb)": 0.45359237, "盎司 (oz)": 0.028349523125, "原子质量单位 (u)": 1.66053906892e-27 } },
+  time: { name: "时间", base: "s", u: {
+    "纳秒 (ns)": 1e-9, "微秒 (μs)": 1e-6, "毫秒 (ms)": 1e-3, "秒 (s)": 1,
+    "分 (min)": 60, "小时 (h)": 3600, "天 (d)": 86400, "年 (a)": 3.15576e7 } },
+  energy: { name: "能量", base: "J", u: {
+    "焦耳 (J)": 1, "千焦 (kJ)": 1e3, "电子伏 (eV)": 1.602176634e-19,
+    "千电子伏 (keV)": 1.602176634e-16, "兆电子伏 (MeV)": 1.602176634e-13,
+    "卡路里 (cal)": 4.184, "千卡 (kcal)": 4184, "千瓦时 (kW·h)": 3.6e6, "尔格 (erg)": 1e-7 } },
+  pressure: { name: "压强", base: "Pa", u: {
+    "帕斯卡 (Pa)": 1, "百帕 (hPa)": 100, "千帕 (kPa)": 1e3, "兆帕 (MPa)": 1e6,
+    "巴 (bar)": 1e5, "标准大气压 (atm)": 101325, "毫米汞柱 (mmHg)": 133.322387415,
+    "磅每平方英寸 (psi)": 6894.757293168361 } },
+  angle: { name: "角度", base: "rad", u: {
+    "弧度 (rad)": 1, "度 (°)": Math.PI / 180, "角分 (′)": Math.PI / 10800,
+    "角秒 (″)": Math.PI / 648000, "圈 (rev)": 2 * Math.PI } }
+};
+
+/* ========== 2. 换算与显示（纯函数，浏览器内外都能跑） ========== */
+function convert(val, cat, from, to) {
+  const f = UNITS[cat].u;
+  return val * f[from] / f[to];   // 先化成基准单位，再换到目标单位
+}
+
+const SUP = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
+              "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "-": "⁻" };
+function fmt(x) {   // 10 位有效数字，指数形式显示为"×10ⁿ"
+  if (!isFinite(x)) return "—";
+  if (x === 0) return "0";
+  const s = String(parseFloat(x.toPrecision(10)));
+  const m = s.match(/^(-?[\d.]+)e([+-]?\d+)$/);
+  if (!m) return s;
+  return m[1] + "×10" + [...m[2].replace("+", "")].map(c => SUP[c]).join("");
+}
+
+/* ========== 3. 对拍样例：期望值全部来自国际定义 ========== */
+const TESTS = [
+  { cat: "energy",   v: 1, from: "电子伏 (eV)",    to: "焦耳 (J)",       expect: 1.602176634e-19, label: "1 eV → J" },
+  { cat: "energy",   v: 1, from: "千瓦时 (kW·h)",  to: "焦耳 (J)",       expect: 3.6e6,           label: "1 kW·h → J" },
+  { cat: "energy",   v: 1, from: "卡路里 (cal)",   to: "焦耳 (J)",       expect: 4.184,           label: "1 cal → J" },
+  { cat: "angle",    v: 90, from: "度 (°)",        to: "弧度 (rad)",     expect: Math.PI / 2,     label: "90° → rad" },
+  { cat: "angle",    v: 180, from: "度 (°)",       to: "弧度 (rad)",     expect: Math.PI,         label: "180° → rad" },
+  { cat: "pressure", v: 1, from: "标准大气压 (atm)", to: "帕斯卡 (Pa)",   expect: 101325,          label: "1 atm → Pa" },
+  { cat: "length",   v: 1, from: "英里 (mi)",      to: "米 (m)",         expect: 1609.344,        label: "1 mi → m" },
+  { cat: "mass",     v: 1, from: "磅 (lb)",        to: "千克 (kg)",      expect: 0.45359237,      label: "1 lb → kg" }
+];
+
+/* ========== 4. 页面交互（只在浏览器里执行） ========== */
+if (typeof document !== "undefined") {
+  const DEFAULT_FROM_TO = { length: ["米 (m)", "厘米 (cm)"], mass: ["千克 (kg)", "克 (g)"],
+    time: ["小时 (h)", "秒 (s)"], energy: ["电子伏 (eV)", "焦耳 (J)"],
+    pressure: ["标准大气压 (atm)", "帕斯卡 (Pa)"], angle: ["度 (°)", "弧度 (rad)"] };
+  let cat = "energy";
+  const $ = id => document.getElementById(id);
+  const tabsEl = $("tabs"), valEl = $("val"), fromEl = $("from"), toEl = $("to"),
+        outNum = $("out-num"), outUnit = $("out-unit"), ratioEl = $("ratio"), logEl = $("testlog");
+
+  for (const key of Object.keys(UNITS)) {
+    const b = document.createElement("button");
+    b.textContent = UNITS[key].name;
+    b.addEventListener("click", () => { cat = key;
+      for (const t of tabsEl.children) t.classList.remove("active");
+      b.classList.add("active"); render(); });
+    tabsEl.appendChild(b);
+  }
+  function fillSelect(sel) {
+    sel.innerHTML = "";
+    for (const name of Object.keys(UNITS[cat].u)) {
+      const opt = document.createElement("option");
+      opt.value = name; opt.textContent = name;
+      sel.appendChild(opt);
+    }
+  }
+  function render() {
+    fillSelect(fromEl); fillSelect(toEl);
+    fromEl.value = DEFAULT_FROM_TO[cat][0];
+    toEl.value = DEFAULT_FROM_TO[cat][1];
+    update();
+  }
+  function update() {
+    const v = Number(valEl.value);
+    if (valEl.value.trim() === "" || !isFinite(v)) {
+      outNum.textContent = "—"; outUnit.textContent = "";
+      ratioEl.textContent = "请输入合法数值（支持科学计数法，如 1.6e-19）";
+      return;
+    }
+    const f = UNITS[cat].u, from = fromEl.value, to = toEl.value;
+    outNum.textContent = fmt(convert(v, cat, from, to));
+    outUnit.textContent = to;
+    ratioEl.textContent = "换算关系：1 " + from + " = " + fmt(f[from] / f[to]) + " " + to;
+  }
+  function runTests() {
+    logEl.innerHTML = "";
+    let pass = 0;
+    for (const t of TESTS) {
+      const got = convert(t.v, t.cat, t.from, t.to);
+      const ok = Math.abs(got - t.expect) <= Math.abs(t.expect) * 1e-12;
+      if (ok) pass++;
+      const li = document.createElement("li");
+      li.className = ok ? "ok" : "bad";
+      li.textContent = (ok ? "✓ " : "✗ ") + t.label + "：算得 " + fmt(got) + "（期望 " + fmt(t.expect) + "）";
+      logEl.appendChild(li);
+    }
+    const sum = document.createElement("li");
+    sum.className = "sum " + (pass === TESTS.length ? "ok" : "bad");
+    sum.textContent = "对拍 " + TESTS.length + " 项：通过 " + pass + " 项，失败 " + (TESTS.length - pass) + " 项";
+    logEl.appendChild(sum);
+  }
+  valEl.addEventListener("input", update);
+  fromEl.addEventListener("change", update);
+  toEl.addEventListener("change", update);
+  $("swap").addEventListener("click", () => {
+    const t = fromEl.value; fromEl.value = toEl.value; toEl.value = t; update();
+  });
+  $("btn-test").addEventListener("click", runTests);
+  tabsEl.children[3].classList.add("active");   // 默认打开"能量"
+  render();
+  runTests();
+}
+</script>
+</body>
+</html>

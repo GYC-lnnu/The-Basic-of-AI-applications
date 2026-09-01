@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 9 讲 · Agent 操作本地软件与文件自动化 · 《人工智能应用基础》</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">《人工智能应用基础》课程网站</a>
+    <span class="spacer"></span>
+    <a class="navlink" href="../index.html">课程首页</a>
+    <a class="navlink" href="../glossary.html">知识图谱</a>
+    <a class="navlink active" href="index.html">第 9 讲</a>
+  </div>
+</nav>
+
+<main>
+  <div class="breadcrumb"><a href="../index.html">课程首页</a> › 模块 D · Agent 篇 › 第 9 讲</div>
+  <h1>第 9 讲　Agent 操作本地软件与文件自动化</h1>
+  <div class="pill-row">
+    <span class="pill">模块 D · Agent 篇</span>
+    <span class="pill">能力主线：会调度</span>
+    <span class="pill gray">2 学时（90 分钟）</span>
+    <span class="pill gray">第 9 / 16 讲</span>
+  </div>
+  <p class="lead">第 8 讲你认识了 <a class="term" href="../glossary.html#term-agent">AI Agent（智能体）</a>这位"数字同事"，本讲开始真正把活交给它：读写数据文件与 Office 文档，跑通"清洗 → 计算 → 绘图 → 报告"的完整流水线——并在它出错时当好"主治医生"。</p>
+
+  <h2>一、本讲学习目标</h2>
+  <p>完成本讲后，你应该能够：</p>
+  <ol class="goals">
+    <li>说明 <a class="term" href="../glossary.html#term-agent">Agent</a> 如何"看见"你的文件：<a class="term" href="../glossary.html#term-workdir">工作目录（Working Directory）</a>与文件路径的含义；</li>
+    <li>用自然语言指令指挥 Agent 读写 CSV 数据文件与 Word/WPS 文档——指令写全<strong>"对谁做、做什么、做成什么样"</strong>三要素；</li>
+    <li>完成"数据 → 计算 → 图表 → 报告"的自动化流水线：处理单摆实验数据，得到重力加速度 g 及其不确定度；</li>
+    <li>读懂 Agent 的报错原文并贴回，让它<strong>自我修复</strong>；</li>
+    <li>用"<a class="term" href="../glossary.html#term-duipai">对拍</a>"习惯人工复核 AI 的计算结果——物理学生的专业优势。</li>
+  </ol>
+
+  
+<h2>二、课前准备</h2>
+  <ul>
+    <li><strong>环境就绪</strong>：第 8 讲安装登录的 ZCode 可正常使用；回顾<strong>安全使用三原则</strong>（最小授权、危险操作需确认、重要文件先备份）——本讲要动真格的文件，三原则全程生效。</li>
+    <li><strong>复习一点物理</strong>：单摆测重力加速度的原理（本讲案例的数据内核），以及大学物理实验里的"不确定度（Uncertainty）"概念——结果不能只给一个数，还要给出可信范围。</li>
+    <li><strong>材料发放</strong>：课堂数据文件 <code>danbai_data.csv</code>（单摆周期测量数据，故意混入少量脏数据）与 Word/WPS 报告模板，由教师统一放入练习目录。</li>
+    <li><strong>无需编程基础</strong>：本讲所有指令都是自然语言。你只需要说清需求与验收标准，技术活由 Agent 自己完成。</li>
+  </ul>
+
+  <h2>三、核心概念精讲</h2>
+
+  <h3>1. Agent 如何"看见"你的文件：工作目录</h3>
+  <p>做力学实验要先选定参考系，让 Agent 动手也要先明确它的"活动范围"。Agent 并不是天生知道你电脑里有什么——它干活的位置叫<a class="term" href="../glossary.html#term-workdir"><strong>工作目录（Working Directory）</strong></a>：当前这次会话中被限定操作的文件夹。你在哪个文件夹里启动它（或指定哪个文件夹），它就在那个范围内读写文件、建子目录。</p>
+  <p>指令里写的"相对路径"就是<strong>从工作目录出发</strong>的文件地址，好比"从实验楼出发向东 50 米"——不必写出完整门牌。例如 <code>data/danbai_data.csv</code> 指"工作目录下 data 文件夹里的 danbai_data.csv"。</p>
+  <div class="box box-tip">
+    <div class="box-title">💡 开工三问（写第一条指令前先自答）</div>
+    <ol>
+      <li>我的<strong>工作目录</strong>在哪里？（拿不准就先问 Agent 一句"你当前的工作目录是哪里？"）</li>
+      <li>要处理的<strong>文件</strong>叫什么、在哪个子文件夹？</li>
+      <li><strong>产出物</strong>放在哪、叫什么名字？</li>
+    </ol>
+    <p>三个问题在第一条指令里交代清楚，能避免一大半"文件不见了"的翻车。</p>
+  </div>
+
+  <h3>2. 办公技能仓库：让 Agent 会用表格、文档与幻灯片</h3>
+  <p>第 8 讲说过，<a class="term" href="../glossary.html#term-skill">技能（Skill）</a>是打包好的"工作方法包"，而 Agent 靠<a class="term" href="../glossary.html#term-tool">工具调用</a>（"模型决策 → 程序执行 → 结果回传"的循环）真正动手。本讲你会直观看到两者合作的效果：围绕日常办公文件，各家 Agent 工具与开源社区维护着一批<strong>预设技能</strong>——就像新同事入职时自带的一套岗位手册。按文件类型大致分四类：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>技能类别</th><th>它让 Agent 能做什么</th><th>物理学习中的例子</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>表格</strong>（Excel / CSV）</td><td>读取数据、汇总统计、排序筛选、多表合并、条件格式、批量生成、过滤导出</td><td>单摆数据清洗与汇总、多次测量数据合并</td></tr>
+      <tr><td><strong>文档</strong>（Word / WPS）</td><td>按模板生成报告、插入图表与数值、批注修订</td><td>生成实验报告骨架、把计算结果写进模板</td></tr>
+      <tr><td><strong>演示文稿</strong>（PPT）</td><td>生成幻灯片骨架、整理要点排版</td><td>组会汇报初稿、路演 PPT 骨架（第 10 讲）</td></tr>
+      <tr><td><strong>PDF</strong></td><td>提取文字与表格、生成 PDF 文件</td><td>从文献 PDF 中摘出数据表</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>预设技能的具体清单与获取方式因工具而异，<strong>以所用工具的官方文档为准</strong>。课堂上以 Claude 为例讲解这些原理，用 ZCode 演示——原理是通用的，不绑定任何厂商。</p>
+
+  <h3>3. 指令写法三要素：对谁做、做什么、做成什么样</h3>
+  <p>给 Agent 下指令，不像聊天提问，更像签一张"委托单"。一张合格的委托单有三要素：</p>
+  <ul>
+    <li><strong>对谁做（范围）</strong>：哪个目录、哪些文件——"练习目录里的 <code>danbai_data.csv</code>"；</li>
+    <li><strong>做什么（动作）</strong>：用准确的动词——清洗、计算、绘图、插入、另存为；</li>
+    <li><strong>做成什么样（验收标准）</strong>：产出物的名字、格式与可检查的要求——"另存为 <code>danbai_clean.csv</code>，并逐条列出你改动与剔除的内容"。</li>
+  </ul>
+  <p>"列出改动清单"这类要求看似啰嗦，其实是<strong>验收抓手</strong>：Agent 自己汇报干了什么，你逐条核对即可。这与第 7 讲任务卡的"验收标准"一脉相承——验收标准前置，结果才可检查。</p>
+
+  <h3>4. 权限四档：把"钥匙"给到哪一级</h3>
+  <p>Agent 的每个动作都在<a class="term" href="../glossary.html#term-permission">权限（只读 / 默认 / 自动审批 / 完全访问）</a>约束下进行——权限就是你交给它的"钥匙"档位。入门材料把权限分为四档（不同工具的档位名称与具体行为略有差异，以官方文档为准）：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>档位</th><th>通俗含义</th><th>适合场景</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>只读</strong></td><td>只能看，不能改</td><td>让 Agent 检查数据、出方案</td></tr>
+      <tr><td><strong>默认</strong></td><td>常规操作逐次请你确认</td><td>课堂练习的主力档位</td></tr>
+      <tr><td><strong>自动审批</strong></td><td>常规操作自动放行，拦截危险动作</td><td>熟练之后的日常任务</td></tr>
+      <tr><td><strong>完全访问</strong></td><td>全部放行</td><td>本课程不使用</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>本讲要写文件、存图片，用<strong>"默认"档</strong>最合适：每一步都过目，既放得开手，又看得住门。这正是安全三原则的落地——练习目录内操作（最小授权）、删除覆盖需确认、重要文件先备份。</p>
+
+  <h3>5. 报错自修复与"对拍"：让流水线跑得稳</h3>
+  <p>第 8 讲拓展区介绍过智能体循环：<strong>收集上下文 → 采取行动 → 验证结果</strong>。前两步 Agent 自己能做，最后一步"验证"要人机各半——</p>
+  <ul>
+    <li><strong>Agent 的自检</strong>：好的指令会让它自己复查，例如"核对改动清单与文件实际内容一致后再汇报完成"；</li>
+    <li><strong>你的对拍</strong>：用<strong>独立方法</strong>抽查核验。对拍是实验物理的老传统——两套独立方法给出一致结果，才敢说数据可信。对物理学生这是专业优势：手算一组数据、做量纲检查、看截距是否合理、与公认值比较，都是低成本高收益的抽查手段。</li>
+  </ul>
+  <p>还有一个"真跑起来之后"的现实问题——<strong>状态</strong>。一个 Agent 干了半小时：看了 25 个文件、跑了 8 次测试、改了 4 个文件，其中两条路已经试过并且失败。此刻它（和你）都必须能回答："刚才干过什么？哪条路已证明不行？文件现在是什么状态？"这已经不只是"提示词 + 工具"，而像一个真正的软件系统：<strong>要有状态、要能追踪、最好还能恢复</strong>。落到你的操作习惯上就是三条：①让 Agent 用<strong>清单和日志</strong>留痕（改了哪些文件、每步结论），别让它"全在脑子里"；②重要节点<strong>保存中间产物</strong>（清洗后的数据、生成一半的图表），断点可续、出错了不必从头再来；③像实验记录本一样，<strong>失败的路也记下来</strong>——"方案 A 已试、失败原因是什么"，这句话能帮 Agent（和下一轮的你）少走回头路。</p>
+  <p>流水线越长，中途报错越常见。报错不是坏事——它是<strong>病历</strong>，读懂病历才能对症下药：</p>
+  <div class="box box-tip">
+    <div class="box-title">💡 报错应对四步（本讲进阶挑战将实战一次）</div>
+    <ol>
+      <li><strong>读懂</strong>：报错里通常写明"哪个文件、哪一步、什么类型的问题"，先自己读一遍；</li>
+      <li><strong>完整复制</strong>：把报错<strong>原文</strong>全部复制——不要只截半句或凭记忆转述；</li>
+      <li><strong>贴回同一会话</strong>：补一句你刚才做了什么，让 Agent 拿着完整上下文去修；</li>
+      <li><strong>重新验证</strong>：让 Agent 修完后自己再跑一遍，你按验收标准核对。</li>
+    </ol>
+  </div>
+
+  <h2 id="demo">四、物理场景案例演示</h2>
+  <p>课堂开场，教师会先演示一个热身任务：让 Agent <strong>批量重命名</strong> 100 个数据文件并生成清单——感受"一句话顶一千次鼠标点击"。接下来的正餐，是一条完整的<strong>实验数据处理流水线</strong>。</p>
+
+  <h3>场景：单摆测重力加速度</h3>
+  <p>改变摆长 L，测出对应的周期 T。由单摆周期公式 <strong>T = 2π√(L/g)</strong>，两边平方得 <strong>T² = (4π²/g)·L</strong>——T² 与 L 成正比，图像是一条直线，斜率 k = 4π²/g，于是 <strong>g = 4π²/k</strong>。这就是流水线的物理内核：清洗数据 → 算 T²、拟合斜率 → 绘 T²–L 图 → 写进报告。</p>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 数据文件说明：danbai_data.csv（教师统一发放）</div>
+    <p>CSV 是一种用记事本或表格软件都能打开的纯文本数据表。字段为：<strong>序号、摆长（cm）、周期（s）、备注</strong>。数据集里故意混入了<strong>两处脏数据</strong>——下表是教学缩影（摘 6 行），已把问题位置标出；真实数据文件里没有这些标注，需要你或 Agent 自己发现。课堂发放的数据集行数更多，处理方法完全相同。</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>序号</th><th>摆长 (cm)</th><th>周期 T (s)</th><th>备注</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>40.0</td><td>1.27</td><td>—</td></tr>
+        <tr><td>2</td><td>50.0</td><td>1.42</td><td>—</td></tr>
+        <tr><td>3</td><td>60.0</td><td>1.55</td><td>—</td></tr>
+        <tr><td>4</td><td><strong>0.700</strong></td><td>1.68</td><td>⚠️ 单位不一致：此行写成了 m，应为 70.0</td></tr>
+        <tr><td>5</td><td>80.0</td><td>1.79</td><td>—</td></tr>
+        <tr><td>6</td><td>90.0</td><td><strong>2.55</strong></td><td>⚠️ 异常值：同样装置下应约 1.90，疑为计时失误</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <h3>流水线总览与四条指令</h3>
+  <p>整条流水线四步，每步一条自然语言指令（以下指令均可直接复制使用，替换成你的文件名即可——且都已在 ZCode 里<strong>真实跑通</strong>，每条指令后面的折叠区就是实测记录，含踩坑与修复过程，建议先看再仿做）：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>步骤</th><th>输入</th><th>你要下达的指令要点</th><th>产出物</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>① 清洗</td><td>danbai_data.csv</td><td>统一单位、剔除异常值、列出改动清单</td><td>danbai_clean.csv + 改动清单</td></tr>
+      <tr><td>② 计算</td><td>danbai_clean.csv</td><td>算 T²、拟合斜率、由 g=4π²/k 求 g 与不确定度</td><td>result.md</td></tr>
+      <tr><td>③ 绘图</td><td>danbai_clean.csv</td><td>绘 T²–L 散点图与拟合线，标注物理量与单位</td><td>T2-L.png</td></tr>
+      <tr><td>④ 报告</td><td>result.md + T2-L.png + 模板</td><td>写入模板、插图、写结论、批注改动位置</td><td>单摆实验报告_AI.docx</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>指令①　清洗数据</strong>——三要素齐全：对谁做（danbai_data.csv）、做什么（统一单位、剔除异常）、做成什么样（另存新文件、列出清单）。"不要覆盖原文件"就是安全三原则的落地。实测后发现两处要补：文件编码与表头要说清（否则 Agent 读错列名），行号口径要约定（"文件第几行"含表头，与表格里的"序号"差 1）：</p>
+  <pre><code>打开练习目录下的 danbai_data.csv 逐行检查（文件为 UTF-8
+编码，表头依次是：序号、摆长(cm)、周期(s)、备注）：
+1. 摆长是否统一用 cm（注意有没有写成 m 的行）；
+   拿不准的行用周期反推摆长 L = gT²/4π² 佐证；
+2. 周期是否在合理范围（本实验约 1.2–2.0 s）。
+把摆长 0.700 的行改为 70.0，把周期 2.55 s 的行判为
+异常值并剔除；处理结果另存为 danbai_clean.csv
+（不要覆盖原文件），并逐条列出你改动和剔除的内容，
+行号注明"文件第几行"（表头算第 1 行）。</code></pre>
+
+  <details class="result">
+    <summary>🧪 查看运行结果（ZCode 实测）——指令①清洗</summary>
+    <div class="result-body">
+      <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+      <pre class="result-text">读取成功：表头 ['序号', '摆长(cm)', '周期(s)', '备注']，共 6 行数据
+
+逐行检查（摆长应统一为 cm；周期合理范围 1.2–2.0 s）：
+  行  序号   摆长(cm)  周期(s)  检查结论
+   2    1      40.0     1.27  正常
+   3    2      50.0     1.42  正常
+   4    3      60.0     1.55  正常
+   5    4     0.700     1.68  摆长 0.700 数值异常（其余行均 40–90），疑为 m 误作 cm；
+                             由 T=1.68 s 反推 L≈70.1 cm，确认应为 0.700 m = 70.0 cm
+   6    5      80.0     1.79  正常
+   7    6      90.0     2.55  周期 2.55 s 超出合理范围 1.2–2.0 s；同装置 L≈0.9 m 的
+                             理论周期 2π√(L/g)≈1.90 s，判为异常值（疑计时失误）
+
+脏数据清单（行号 = CSV 文件行号，含表头）：
+  行号 | 问题类型   | 说明                                   | 处理建议
+   5 | 单位不一致 | 摆长 0.700 写成 m（应 70.0 cm），T 反推佐证 | 改为 70.0
+   7 | 异常值    | 周期 2.55 s 超范围（理论约 1.90 s）         | 剔除该行
+
+改动清单（原文件未覆盖，结果另存 danbai_clean.csv）：
+  · 第 5 行（序号 4）：摆长 0.7 改为 70.0（统一单位 m→cm）
+  · 第 7 行（序号 6）：周期 2.55 s 判为异常值，已剔除
+
+danbai_clean.csv：5 行数据，摆长(cm) 列 = ['40.0', '50.0', '60.0', '70.0', '80.0']</pre>
+    </div>
+  </details>
+
+  <p><strong>指令②　计算 g 与不确定度</strong>——把物理公式 <strong>g = 4π²/k</strong> 明确写进指令，Agent 才会按你的口径计算；公式本身就是验收标准的一部分。实测补三处：摆长先换算成 m（不换算斜率会差 100 倍）、指定不确定度的算法口径、加一步"逐组 g 对拍"：</p>
+  <pre><code>用 danbai_clean.csv 计算重力加速度（摆长先换算成 m）：
+1. 为每组数据计算 T²（单位 s²）；
+2. 对 T²–L 作最小二乘线性拟合，报告斜率 k（s²/m）
+   与截距 b（b 应接近 0，可作合理性检查）；
+3. 由 g = 4π²/k 算出 g；不确定度用斜率标准误
+   传递：u(g) = g·se(k)/k；
+4. 再逐组用 g = 4π²L/T² 各算一遍，作对拍对照；
+5. 结果写入 result.md：包含所用公式、代入的数值、
+   斜率 k 与 g ± u(g)；关键数值行格式固定，
+   供第④步写报告时引用。</code></pre>
+
+  <details class="result">
+    <summary>🧪 查看运行结果（ZCode 实测）——指令②计算</summary>
+    <div class="result-body">
+      <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+      <pre class="result-text">第 1 步：逐组计算 T²（L 换算为 m）
+  组   L (m)   T (s)   T² (s²)
+   1   0.400    1.27    1.6129
+   2   0.500    1.42    2.0164
+   3   0.600    1.55    2.4025
+   4   0.700    1.68    2.8224
+   5   0.800    1.79    3.2041
+
+第 2 步：最小二乘拟合 T² = k·L + b（手工公式计算，再用 numpy 复核）
+  k = 3.9884 s²/m（numpy 复核 3.9884，一致）；b = +0.0186 s²（numpy +0.0186）
+
+第 3 步：g = 4π²/k 及不确定度（斜率标准误传递）
+  各点残差 (s²)：[-0.0011, 0.0036, -0.0092, 0.0119, -0.0052]
+  残差标准差 s = 0.0094 s²；斜率标准误 se(k) = 0.0298 s²/m
+  u(g) = g · se(k)/k = 0.0740 ≈ 0.07 m/s²
+
+第 4 步：对拍——逐组 g_i = 4π²L/T² 的独立复核
+  组 1: g = 4π²×0.400/1.6129 = 9.791 m/s²
+  组 2: g = 4π²×0.500/2.0164 = 9.789 m/s²
+  组 3: g = 4π²×0.600/2.4025 = 9.859 m/s²
+  组 4: g = 4π²×0.700/2.8224 = 9.791 m/s²
+  组 5: g = 4π²×0.800/3.2041 = 9.857 m/s²
+  平均 9.818 ± 0.037 m/s²（与拟合结果在不确定度内一致）
+
+最终：g = 9.90 ± 0.07 m/s²，与公认值 9.8 m/s² 相对偏差 1.0%
+result.md 已写入</pre>
+      <p>两种算法对拍：拟合得 9.90 ± 0.07，逐组平均 9.82 ± 0.04，在不确定度范围内一致；最终结果取拟合值 <strong>g = 9.90 ± 0.07 m/s²</strong>（约 0.1 m/s² 量级），与上方"预期产出示例"及挑战⑦的手算（9.79 m/s²）全部对得上。</p>
+    </div>
+  </details>
+
+  <p><strong>指令③　绘制 T²–L 图</strong>——规定坐标轴的物理量与单位。图注齐全是物理图表的底线，也是第 10 讲互评的检查项。实测补两处：绘图库默认字体不含中文（画出来是方框，须指定中文字体）、说明文字别挡住数据点：</p>
+  <pre><code>用 danbai_clean.csv 绘制 T²–L 图并保存为 T2-L.png：
+散点表示测量数据，另画一条拟合直线；
+横轴为摆长 L（单位 m），纵轴为 T²（单位 s²）；
+图上标注斜率 k 的数值和由它得到的 g 值（取自 result.md）。
+若图中中文显示为方框，先给绘图库指定中文字体
+（如微软雅黑）再重画；说明文字不要挡住数据点。</code></pre>
+
+  <details class="result">
+    <summary>🧪 查看运行结果（ZCode 实测）——指令③绘图</summary>
+    <div class="result-body">
+      <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+      <pre class="result-text">绘图完成：散点 5 组 + 拟合线（k = 3.9884 s²/m，g = 9.90 m/s²）
+已保存：T2-L.png（练习目录）——网页展示用副本另存一份</pre>
+      <img src="../assets/images/results/ch10-t2l.png" alt="T²–L 拟合图：5 组清洗后数据的散点与拟合直线，斜率 k≈3.99 s²/m，g≈9.90 m/s²">
+      <p class="result-caption">图：T²–L 拟合，斜率 k≈3.99 s²/m → g≈9.9 m/s²（与手算对拍一致）。横轴摆长、纵轴 T² 单位齐全，散点近似落在过原点的直线上——单位陷阱行与异常行剔除后，物理规律立出来。</p>
+    </div>
+  </details>
+
+  <p><strong>指令④　生成 Word 报告</strong>——先备份模板再动手；"批注列出改动"让每处修改可追溯。实测补三处：填前先列占位符（防写错栏目）、生成后读回自查（不信"已完成"）、关键数值行从 result.md 原样引用：</p>
+  <pre><code>先复制一份"单摆实验报告模板.docx"作为备份；
+然后生成"单摆实验报告_AI.docx"：
+0. 先列出模板里所有【待填…】占位符，我确认
+   后再动手（防止写错栏目）；
+1. 把 result.md 中的数据表、g 的计算结果与
+   不确定度写入对应栏目；
+2. 把 T2-L.png 插入"数据图"一节，写编号图注；
+3. 结尾用两三句话给出实验结论。
+在文档末尾附一段批注，列出你改动的所有位置；
+写完后重新打开文档自查：表格、图片、数值都在吗？</code></pre>
+
+  <details class="result">
+    <summary>🧪 查看运行结果（ZCode 实测）——指令④报告</summary>
+    <div class="result-body">
+      <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+      <pre class="result-text">第一次运行即报错（报错应对四步实战）：
+Traceback (most recent call last):
+  File "step4_report.py", line 18, in &lt;module&gt;
+    g_val = float(m.group(1))
+AttributeError: 'NoneType' object has no attribute 'group'
+原因：result.md 里公式行是"g = 4π²/k = 39.4784/3.9884 = 9.90"，
+读取规则漏了中间的除式。贴回报错原文 → 修正读取规则 → 重跑成功。
+
+重跑输出：
+已备份：单摆实验报告模板_备份.docx（模板本体此后不再触碰）
+从 result.md 读到：k = 3.9884 s²/m，g = 9.9 m/s²，u(g) = 0.07 m/s²
+已生成：单摆实验报告_AI.docx
+
+读回自检：段落数 19，表格数 1（数据表 6 行），图片数 1
+图注存在：True；g=9.90±0.07 已写入：True
+
+文档实际内容（读回摘录）：
+  [Title]        单摆测重力加速度实验报告
+  [三、实验数据]  数据表如下（5 组，L 已换算为 m）；数据处理说明：原 6 组
+                 数据，第 5 行摆长 0.700（m 误作 cm）已修正为 70.0 cm，
+                 第 7 行周期 2.55 s（超合理范围）判为异常值剔除。
+  [数据表]       组 | L (m) | T (s) | T² (s²) 共 6 行（表头 + 5 组）
+  [四、数据图]    T2-L.png 已插入（宽 14 cm）
+  [图注]         图 1　单摆实验 T²–L 拟合图：散点为清洗后 5 组测量数据，
+                 虚线为最小二乘拟合直线，斜率 k ≈ 3.99 s²/m。
+  [五、结果与结论] 结果：g = 4π²/k = 39.48/3.99 ≈ 9.90 m/s²，不确定度
+                 u(g) ≈ 0.07 m/s²，即 g = (9.90 ± 0.07) m/s²。与公认值
+                 9.8 m/s² 相对偏差约 1.0%，在不确定度范围内一致……
+  [附]           AI 改动说明：逐条列出以上全部改动位置，供人工核对</pre>
+    </div>
+  </details>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 预期产出示例（教学缩影的参考结果）</div>
+    <p>清洗后剩 5 组数据（第 4 行改为 70.0，第 6 行剔除）。拟合直线斜率 k ≈ 3.99 s²/m，由 g = 4π²/k 得 <strong>g ≈ 9.9 m/s²</strong>，不确定度约 0.1 m/s²——与公认值 9.8 m/s² 的相对偏差约 1%。（数值随数据与拟合方法而变，以课堂实际运行结果为准。）Agent 的清洗汇报应类似："第 4 行摆长 0.700 改为 70.0（统一单位）；第 6 行周期 2.55 s 判为异常值，已剔除。"这套缩影数据已在 ZCode 里真实跑通：实测 k = 3.9884 s²/m，g = 9.90 ± 0.07 m/s²，与此吻合（完整过程见上方各折叠区）。</p>
+  </div>
+
+  <h2>五、课堂实操任务单</h2>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 开工之前：权限与安全须知（本讲铁律）</div>
+    <ol>
+      <li><strong>全程在教师指定的练习目录内操作</strong>——这是最小授权：即使指令有歧义，也不会波及练习目录之外的文件；</li>
+      <li><strong>删除、覆盖、批量修改类动作逐次确认</strong>——Agent 每次要"动手改"时都看一眼再放行（默认档）；</li>
+      <li><strong>重要文件先备份</strong>——原始数据 <code>danbai_data.csv</code> 与报告模板，开工前各复制一份副本。</li>
+    </ol>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 保底任务（人人完成）：跑通"清洗 → 计算 → 绘图 → 报告"流水线</div>
+    <p>只负责写指令，让 Agent 干活。每完成一步，打开产物核对后在方框中打勾（勾选状态会自动保存）：</p>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t1"><label for="t1"><strong>步骤〇　开工确认与备份</strong>：问 Agent 当前工作目录，确认在练习目录内；备份数据文件与报告模板。<br>✅ 完成标准：能说出工作目录路径；目录里能看到数据与模板的副本文件。</label></li>
+      <li><input type="checkbox" id="t2"><label for="t2"><strong>步骤一　清洗</strong>：下达指令①，得到 danbai_clean.csv 与改动清单。<br>✅ 完成标准：打开 CSV 核对——0.700 已改为 70.0、周期 2.55 s 一行已剔除；改动清单与文件实际内容一致。</label></li>
+      <li><input type="checkbox" id="t3"><label for="t3"><strong>步骤二　计算</strong>：下达指令②，得到 result.md。<br>✅ 完成标准：文件中公式、斜率 k、g 的结果齐全；g 与公认值 9.8 m/s² 的偏差不超过 5%，且你能看懂它代入的过程。</label></li>
+      <li><input type="checkbox" id="t4"><label for="t4"><strong>步骤三　绘图</strong>：下达指令③，得到 T2-L.png。<br>✅ 完成标准：打开图片——横纵轴物理量与单位齐全，散点近似落在一条直线上。</label></li>
+      <li><input type="checkbox" id="t5"><label for="t5"><strong>步骤四　报告</strong>：下达指令④，得到单摆实验报告_AI.docx。<br>✅ 完成标准：打开 Word/WPS 文档——图已插入且有图注，数值与 result.md 一致；模板副本未被改动。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 进阶挑战（学有余力）</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t6"><label for="t6"><strong>挑战⑥　故意制造一次报错，练习"自修复"</strong>：在指令里把文件名故意写错（如 danbai_data1.csv），观察 Agent 的反应；然后按"报错应对四步"处理——读懂原文 → 完整复制 → 贴回同一会话 → 让它自修。把报错原文与修复过程记入《AI 使用日志》。<br>✅ 完成标准：留有一次"报错 → 自修 → 重新出结果"的完整记录。</label></li>
+      <li><input type="checkbox" id="t7"><label for="t7"><strong>挑战⑦　对拍一组数据</strong>：手算第 2 组（L = 0.500 m，T = 1.42 s）：g = 4π²L/T² = 39.48 × 0.500 / 1.42² ≈ 9.79 m/s²，与流水线结果对照；再读图核对 L = 0.500 m 处拟合线是否在 T² ≈ 2.02 s² 附近。<br>✅ 完成标准：写出公式与代入过程；若偏差 ≥ 2%，能查出原因，或能说明两者在不确定度范围内一致。</label></li>
+    </ul>
+  </div>
+  <p>讨论（第 2 节结尾）：流水线四步里，哪些环节 Agent 干得比你好？哪些环节<strong>绝对不能</strong>交给它？——把答案带到第 10 讲的复盘。</p>
+
+  <h2>六、常见坑与翻车案例</h2>
+  <ul>
+    <li><strong>坑①　单位"看着差不多"</strong>：0.700（m）混在 70.0（cm）里，人眼极容易放过；一旦进入拟合，斜率可能差出成百上千倍，g 就全错了。<em>解法：第一步先让 Agent 输出数据概况（每列的取值范围、有没有离群写法），确认无异常再动手处理。</em></li>
+    <li><strong>坑②　异常值"顺手删了不说"</strong>：Agent 自作主张删数据还不报告，报告里少一组测量你却毫不知情——这不是清洗，是篡改。<em>解法：指令里明确要求"逐条列出剔除内容"；最终报告必须写明数据处理方式。</em></li>
+    <li><strong>坑③　"帮我处理一下数据"</strong>：没有范围、没有动作、没有验收标准，Agent 只能自由发挥，结果无法检查。<em>解法：三要素写全——对谁做、做什么、做成什么样。</em></li>
+    <li><strong>坑④　看到"已完成"就交差</strong>：Agent 说"完成"不等于"完成得对"——图可能是空坐标轴，数值可能没真正写进 Word。<em>解法：亲自打开每一份产物逐项核对，汇报只是线索，不是证据。</em></li>
+    <li><strong>坑⑤　一报错就重开会话</strong>：新会话里上下文全丢，Agent 要从头再理解一遍任务，越修越乱。<em>解法：报错原文完整贴回同一会话，让它接着修（报错应对四步）。</em></li>
+  </ul>
+
+  <h2>七、自测</h2>
+  <div class="box box-quiz">
+    <div class="box-title">✅ 五道题检验学习目标</div>
+
+    <div class="quiz-item">
+      <p class="q">1. 下面哪条指令最符合"对谁做、做什么、做成什么样"三要素？</p>
+      <ul>
+        <li data-opt="A.">"帮我处理一下数据。"</li>
+        <li data-opt="B.">"把练习目录里 danbai_data.csv 的摆长单位统一成 cm，剔除周期 2.55 s 的异常行，另存为 danbai_clean.csv，并列出改动清单。"</li>
+        <li data-opt="C.">"数据在文件夹里，你看着办。"</li>
+        <li data-opt="D.">"把文件弄好一点，谢谢。"</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。范围（哪个文件）、动作（统一单位、剔除异常）、验收标准（另存为新文件、列出清单）三要素齐全。A、C、D 都把"决定怎么做"的责任推给了 Agent，结果无法验收。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">2. 你只想让 Agent"检查数据、指出问题"，暂时<strong>不允许它改动任何文件</strong>，应选哪一档权限？</p>
+      <ul>
+        <li data-opt="A.">只读</li>
+        <li data-opt="B.">默认</li>
+        <li data-opt="C.">自动审批</li>
+        <li data-opt="D.">完全访问</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>A</strong>。"只读"档只能看不能改，天然杜绝误写误删——最小授权原则的直接应用。本讲要写文件、存图片，才升到"默认"档。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">3. 单摆实验中，T²–L 图拟合直线的斜率 k 与重力加速度 g 的关系是？</p>
+      <ul>
+        <li data-opt="A.">k = g / 4π²</li>
+        <li data-opt="B.">k = 4π² / g</li>
+        <li data-opt="C.">k = 2π√g</li>
+        <li data-opt="D.">k 与 g 无关</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。由 T = 2π√(L/g) 两边平方得 T² = (4π²/g)·L，对照直线方程 y = kx + b，斜率 k = 4π²/g，所以 g = 4π²/k。k 的单位是 s²/m，算出的 g 才是 m/s²。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">4. 判断题："Agent 汇报'清洗完成、共剔除 1 行'，就可以直接把报告交上去了。"</p>
+      <details class="answer"><summary>查看答案与解析</summary><p><strong>不可以</strong>。执行汇报只是线索，不是证据：要亲自打开产物核对（改动清单是否与文件一致），并用"对拍"抽查计算结果（手算一组对照）。记住课程原则——"AI 产出，人工把关"。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">5. 简答：流水线中途 Agent 报错了，正确的应对流程是什么？</p>
+      <details class="answer"><summary>参考答案</summary><p>四步：①<strong>读懂报错</strong>——哪个文件、哪一步、什么类型的问题；②<strong>完整复制报错原文</strong>——不要只截半句；③<strong>贴回同一会话</strong>——补一句你刚才做了什么，保住上下文；④<strong>重新验证</strong>——让 Agent 修完自己再跑一遍，你按验收标准核对。不要一报错就重开会话，那会丢掉全部任务上下文。</p></details>
+    </div>
+  </div>
+
+  <h2>八、课后作业</h2>
+  <div class="box box-task">
+    <div class="box-title">📋 《实验数据 AI 报告》（含图表报告）</div>
+    <p>用<strong>自己课程的真实数据</strong>（如力学、电磁学实验记录），或使用课堂发放的数据集，让 Agent 走完流水线，产出一份<strong>含图表的数据分析报告</strong>：</p>
+    <ol>
+      <li><strong>数据</strong>：说明数据来源；原始文件先备份，处理过程不覆盖原件；</li>
+      <li><strong>流水线</strong>：完成"清洗 → 计算 → 绘图 → 报告"四步，保留每步的指令原文与 Agent 汇报；</li>
+      <li><strong>报告内容</strong>：数据处理说明（改了什么、剔了什么、为什么）、至少 1 张图注完整的图、结果与不确定度、简短结论；</li>
+      <li><strong>对拍记录</strong>：至少手算 1 组数据与 AI 结果对照，写明公式与代入过程；</li>
+      <li><strong>过程归档</strong>：指令与迭代过程记入《AI 使用日志》。</li>
+    </ol>
+  </div>
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 学术诚信提醒</div>
+    <p>本作业需附<strong>《AI 使用声明》</strong>：用了什么工具、让它做了什么、你如何核查。特别提醒：<strong>数据不得伪造</strong>——让 AI 剔除异常值必须如实写明，绝不能为了让结果"好看"而悄悄删数据。"AI 产出，人工把关。"</p>
+  </div>
+
+  <h2>九、进阶拓展（选学）</h2>
+  <details class="advanced">
+    <summary>🎓 把这条流水线沉淀成可复用的"技能"</summary>
+    <p>本讲你用四条指令跑通了流水线。如果这套流程每学期要重复十几次（每次实验都出报告），每次都重新描述就太浪费了——第 7 讲说过：<strong>反复出现的工作流值得被固化</strong>。按照 Skills 开放标准的做法，可以把它打包成一个文件夹：</p>
+    <pre><code>physics-data-skill/
+├── SKILL.md          ← 说明文件：技能做什么、输入输出、四步流程
+├── scripts/          ← 脚本（Script）：清洗、拟合、绘图等可自动执行的程序
+│   ├── clean_data.py
+│   └── fit_plot.py
+└── references/       ← 参考区：报告模板、数据处理规范、样例数据
+    ├── report_template.docx
+    └── rules.md</code></pre>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>文件夹成员</th><th>作用</th><th>类比</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><a class="term" href="../glossary.html#term-skillmd">SKILL.md</a></td><td>说明文件：元数据（名称、何时使用）+ 方法正文（流程与要求）</td><td>岗位说明书</td></tr>
+        <tr><td>scripts/</td><td>脚本（Script）：一段段能自动执行的程序，Agent 自己编写并运行</td><td>预编好的标准操作步骤</td></tr>
+        <tr><td>references/</td><td>参考规则、输出模板、样例数据</td><td>随手册附的表格与范例</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>课程底稿里"常见表格自动化任务"换成物理场景后是这样（改写对照）：</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>通用办公场景</th><th>物理实验场景</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>销售数据汇总统计</td><td>求各组周期的平均值与不确定度</td></tr>
+        <tr><td>条件格式标色</td><td>异常值自动标色提醒</td></tr>
+        <tr><td>多表按编号合并</td><td>多次测量数据合并成总表</td></tr>
+        <tr><td>按模板批量生成文档</td><td>按模板批量出报告骨架</td></tr>
+        <tr><td>数据过滤导出</td><td>筛出合格数据组</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>至于 Agent 内部用什么技术实现（例如用什么程序库读数据、写表格，公式如何重算、错误如何校验）——这些技术选型由 Agent 自动完成，<strong>你只需要说清需求与验收标准</strong>。不同工具运行脚本的方式也不同：有的直接在本地执行，有的在隔离的<a class="term" href="../glossary.html#term-sandbox">沙箱（Sandbox）</a>里运行，具体以所用工具的官方文档为准。</p>
+    <p>想拥有自己的技能？最省力的学习法是<strong>"复制样板 → 只改一处 → 试跑验证"</strong>：从预设技能仓库挑一个最简单的样板技能，复制到本地保持原结构，只改动一处（比如把示例数据换成你的实验数据），运行验证效果，再逐步扩展。许多 Agent 工具都提供创建与管理技能的入口，具体位置与用法以官方文档为准。第 10 讲的多工具协同项目，会让"技能化"的思想派上大用场。</p>
+  </details>
+
+  <nav class="pagenav" aria-label="上一讲 / 下一讲">
+    <a href="../ch08/index.html"><span class="label">← 上一讲</span><span class="title">第 8 讲 · 认识 AI Agent：从聊天到干活</span></a>
+    <a class="next" href="../ch10/index.html"><span class="label">下一讲 →</span><span class="title">第 10 讲 · 多工具协同项目：从数据到汇报</span></a>
+  </nav>
+</main>
+
+<style>
+.kg-fab { position: fixed; right: 26px; bottom: 26px; z-index: 90; width: 64px; height: 64px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none;
+  background: linear-gradient(135deg, #2f6fed, #8e44d3); color: #fff; box-shadow: 0 6px 18px rgba(47, 111, 237, 0.42);
+  transition: transform .15s ease, box-shadow .15s ease; }
+.kg-fab:hover { transform: scale(1.09); box-shadow: 0 9px 26px rgba(47, 111, 237, 0.55); }
+.kg-fab-icon { font-size: 23px; line-height: 1; }
+.kg-fab-label { font-size: 10px; letter-spacing: 1px; }
+@media (max-width: 700px) { .kg-fab { right: 16px; bottom: 16px; width: 56px; height: 56px; } }
+@media print { .kg-fab { display: none; } }
+</style>
+<a class="kg-fab" href="../glossary.html?focus=ch09" aria-label="本讲知识图谱" title="知识图谱：本讲概念网络与核心考点">
+  <span class="kg-fab-icon">🕸</span><span class="kg-fab-label">图谱</span>
+</a>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 12 讲 · 图像与设计生成 · 《人工智能应用基础》</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">《人工智能应用基础》课程网站</a>
+    <span class="spacer"></span>
+    <a class="navlink" href="../index.html">课程首页</a>
+    <a class="navlink" href="../glossary.html">知识图谱</a>
+    <a class="navlink active" href="index.html">第 12 讲</a>
+  </div>
+</nav>
+
+<main>
+  <div class="breadcrumb"><a href="../index.html">课程首页</a> › 模块 E · 生成篇 › 第 12 讲</div>
+  <h1>第 12 讲　图像与设计生成</h1>
+  <div class="pill-row">
+    <span class="pill">模块 E · 生成篇</span>
+    <span class="pill">能力主线：会创作</span>
+    <span class="pill gray">2 学时（90 分钟）</span>
+    <span class="pill gray">第 12 / 16 讲</span>
+  </div>
+  <p class="lead">生成篇第二站。上一讲你让 AI 写出了项目的"字"，这一讲让它画出"图"：封面、插图、海报，都能从一段<a class="term" href="../glossary.html#term-t2i">文生图（Text-to-Image）</a>提示词里"显影"出来。学完本讲，你的期末项目将有一套风格统一的图像——第 13 讲做视频时，它们还会变成分镜画面的底稿。</p>
+
+  <h2>一、本讲学习目标</h2>
+  <p>完成本讲后，你应该能够：</p>
+  <ol class="goals">
+    <li>用"从噪点中显影"的直觉比喻，说明绘图工具如何把一段文字变成一张图；</li>
+    <li>套用"主体 + 场景 + 风格"基础公式与进阶公式，写出<strong>要素完整的文生图提示词</strong>；</li>
+    <li>为期末项目产出一套<strong>风格统一</strong>的图像（封面、插图，进阶加海报），并记录提示词与迭代过程；</li>
+    <li>说出 AI 绘图在科学示意图上的典型局限，会用<strong>科学性把关清单</strong>逐项核对，并知道 SVG 示意图这一替代方案。</li>
+  </ol>
+
+  
+<h2>二、课前准备</h2>
+  <ul>
+    <li><strong>绘图工具就位</strong>：按课程工具表注册文生图工具（主力即梦 AI，备选通义万相、可灵、文心一格），并做一次额度测试——随手生成一张最简单的图，确认账号与免费额度可用。</li>
+    <li><strong>带项目材料</strong>：期末项目选题说明书（第 8 讲）与核心文本初稿（第 11 讲）——本讲产出的每一张图都要服务这个项目。</li>
+    <li><strong>海报版式参考</strong>：收集 1–2 张你喜欢的科普海报，试着用"主体 + 场景 + 风格"三要素说出它好在哪里。</li>
+    <li><strong>选做</strong>：想提前摸索的同学，可浏览 AIGC 使用技巧类自学站（如 waytoagi 知识库，内容以当期为准）的绘图技巧版块——记得带上第 2 讲的核查习惯。</li>
+  </ul>
+
+  <h2>三、核心概念精讲</h2>
+
+  <h3>1. 扩散模型直觉：图像是从噪点里"显影"出来的</h3>
+  <p>第 3 讲说过，<a class="term" href="../glossary.html#term-llm">大模型（LLM）</a>本质上是"文字接龙"的概率机器。那画图的模型呢？当前主流文生图工具背后，多数是一种叫<a class="term" href="../glossary.html#term-diffusion"><strong>扩散模型（Diffusion Model）</strong></a>的模型。先用一个直观比喻来理解它——注意，这是<strong>直觉层面的比喻，不是严格机制</strong>。</p>
+  <p>想象一张布满雪花噪点的旧照片被放进"显影液"：噪点被一点点洗去，图像一层层浮现，从模糊轮廓到清晰细节。扩散模型的生成过程与此类似——模型从一张纯噪声图出发，按你的提示词一步一步"去噪"，每一步都让画面更接近你所描述的样子，几十步之后图像就"显影"完成。也可以把它想成雕塑：大理石块（噪声）里本来"藏着"一尊雕像，雕刻家一刀刀凿掉多余的部分，雕像便浮现出来。这类"从无到有画图"的模型，与只处理文字的模型不同，属于<a class="term" href="../glossary.html#term-multimodal"><strong>多模态（Multimodal）</strong></a>能力的一种——模型不再只"读字"，还能"作画"。</p>
+  <div class="box box-tip">
+    <div class="box-title">💡 这个比喻为什么有用</div>
+    <p>它一口气解释了文生图的两个常见现象：①<strong>同一个提示词，每次生成的图都不完全一样</strong>——因为起点是随机噪声，就像显影过程带着随机涨落；②<strong>提示词是"显影的方向盘"</strong>——你写得越明确，每一步去噪就朝越确定的方向走。这正是本讲强调"提示词要素完整"的原因。</p>
+  </div>
+  <p>顺带补一句历史：在扩散模型普及之前，早期图像生成的主力是<a class="term" href="../glossary.html#term-gan">GAN（生成对抗网络）</a>——第 2 讲的 AIGC 时间线上见过它。今天你不必细究门派，只需记住一条主线：<strong>无论哪家的绘图工具，大多遵循"文字 → 逐步去噪 → 图像"的过程</strong>，差异在细节与参数。</p>
+
+  <h3>2. 提示词公式：三要素打底，进阶版再加三层</h3>
+  <p>文生图提示词与第 4 讲的提示词四基本功一脉相承，只是更"镜头化"。下面的公式与词汇摘自阿里云《文生图 Prompt 指南》（<strong>公式以阿里云百炼官方指南为准，不同绘图工具的写法与参数有差异</strong>）。</p>
+  <p><strong>基础公式：提示词 = 主体 + 场景 + 风格</strong></p>
+  <ul>
+    <li><strong>主体</strong>：画面主要表现的对象——人、物、装置或想象之物，写清它的特征与动作；</li>
+    <li><strong>场景</strong>：主体所处的环境——室内外、天气、时间、光线，真实或虚构空间均可；</li>
+    <li><strong>风格</strong>：画种或视觉样式——写实照片、水彩、扁平插画、水墨等。</li>
+  </ul>
+  <p>三要素都交代清楚，一张图就有了"及格线"。想要更稳、更贴近脑中画面，再加三层：</p>
+  <p><strong>进阶公式：提示词 = 主体描述 + 场景描述 + 风格 + 镜头语言 + 氛围词 + 细节修饰</strong></p>
+  <ul>
+    <li><strong>镜头语言</strong>：景别与视角——远景还是特写？平视还是俯视？（词汇见下方速查表）；</li>
+    <li><strong>氛围词</strong>：画面的情绪——梦幻、孤独、宏伟、宁静；</li>
+    <li><strong>细节修饰</strong>：光源位置、道具搭配、色调、分辨率等精细要求。</li>
+  </ul>
+  <p>两个实用补充。其一是<strong><a class="term" href="../glossary.html#term-negprompt">负向提示词（Negative Prompt）</a></strong>：反其道而行，声明你不希望出现的元素（如"文字、乱码、多余肢体"），用来排除常见错误。其二是有些工具提供<strong>提示词自动扩写（prompt_extend）</strong>：默认由模型把你的简短提示词自动补写得更丰富——想完全掌控画面可以关掉，交给工具润色可以打开；具体名称与默认状态以各工具官方文档为准。另外，中英文提示词在不同工具上的效果未必相同，同一含义各写一版、保留更好的一版，是常用的迭代技巧。</p>
+  <p>成套图像还要解决<strong>画风统一</strong>的问题：常用做法是全组共用同一组风格词与色调，固定成功的那版提示词、只微调主体与场景；不少工具还提供图生图（以参考图为底生成）、局部重绘（只改画面某一块）等功能，用法以官方文档为准。</p>
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 别把一家的参数当成通用标准</div>
+    <p>本讲的公式与词典只是帮你建立<strong>通用语感</strong>；落到具体工具，参数名称、支持程度、默认开关都可能不同——<strong>以官方文档为准</strong>，迁移使用前先花一分钟确认。</p>
+  </div>
+
+  <h3>3. 五维词典速查表：把"感觉"换成"词"</h3>
+  <p>提示词写不具体，多半不是想象力不够，而是<strong>词穷</strong>——"好看一点""有科技感"这类表述对绘图工具几乎没有信息量。下表把镜头语言与风格光线维度的常用词汇整理成速查词典（摘选改写自阿里云文生图指南，仅列常用词，完整词典以官方指南为准）：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>维度</th><th>它回答的问题</th><th>常用词汇（摘选）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>景别</strong></td><td>画面"截"到多远</td><td>远景、全景、中景、近景、特写</td></tr>
+      <tr><td><strong>视角</strong></td><td>从哪个方向看</td><td>平视、俯视、仰视、航拍</td></tr>
+      <tr><td><strong>镜头（拍摄类型）</strong></td><td>用什么"镜头感"</td><td>微距、超广角、长焦、鱼眼</td></tr>
+      <tr><td><strong>风格</strong></td><td>像哪种画种 / 介质</td><td>写实、水彩、水墨、3D 卡通、粘土、折纸、国风水墨、超现实</td></tr>
+      <tr><td><strong>光线</strong></td><td>光从哪来、什么质感</td><td>自然光（太阳光、月光、星光）、逆光、霓虹灯、氛围光</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>用法很简单：动笔前从每一维各挑 1–2 个词填进提示词，比如"中景、平视、扁平插画、自然光"——一句话就把画面的"取景参数"定下来了。</p>
+
+  <h3>4. 为什么物理示意图容易"看着对、其实错"？</h3>
+  <p>插画与海报是绘图工具的舒适区；一到<strong>科学示意图</strong>（光路图、装置图、受力图），它就频繁翻车。原因值得每位同学想明白：</p>
+  <p>绘图模型从海量图片中学到的是"什么样的图<strong>像</strong>光路图"，也就是<strong>统计意义上的"像"</strong>，而不是物理意义上的"对"。它没有内置"反射角等于入射角"这样的定律，手里也没有尺子和圆规——去噪的每一步都朝"更像"走，而不是朝"更对"走。于是常见几类错误（这是对普遍现象的归纳，不针对某个具体工具）：</p>
+  <ul>
+    <li><strong>光路角度失真</strong>：反射线、折射线画歪，入射角与反射角明显不相等；</li>
+    <li><strong>装置比例失真</strong>：透镜比人还大、器件悬空接不上、结构彼此错位；</li>
+    <li><strong>伪科学细节</strong>：画面里出现看似专业、实际并不存在的结构与符号——这是<a class="term" href="../glossary.html#term-hallucination">幻觉（Hallucination）</a>在图像上的变体。</li>
+  </ul>
+  <p>这不是让你弃用 AI 绘图，而是分场合使用：<strong>概念插画、海报放心交给绘图工具；需要物理正确的示意图，让 Agent 直接生成 SVG 矢量图或流程图</strong>——坐标、角度、比例都由精确的指令决定，还能逐项修改（本讲进阶挑战就会做一次）。"看着对"与"真的是对"之间的距离，正是本讲要训练你的批判性眼光。</p>
+
+  <h2 id="demo">四、物理场景案例演示</h2>
+  <p>课堂演示与你的实操①用的是同一套方法：<strong>套公式写初稿 → 生成 → 挑毛病 → 只改一处再生成</strong>。下面三条示例提示词可直接复制使用。生成后把最终提示词与改动原因记入记录表——这是本讲的硬要求。</p>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示 A：量子隧穿概念图（概念插画）</div>
+    <pre><code>科普概念插画：一颗发光的蓝色小球从左侧滚向一堵高大的灰色"势垒"墙，
+小球周围泛起水波般的波纹，波纹连续渗过墙体（墙内不出现完整小球），
+在墙的右侧重新汇聚成一颗半透明的小球；
+扁平风科普插画，深蓝色渐变背景，中景，平视，
+主体居中偏左，右侧留出标注空间，画面简洁留白，高分辨率；
+比例示意非严格尺度；标注使用中文、后期添加（不在画面内生成文字）。
+负向提示词：文字、乱码、多余小球、模糊边缘。</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（SVG 替代演示 · 课堂用实际生图工具）</summary>
+      <div class="result-body">
+        <p class="result-note">本环境无文生图工具：此处为 AI Agent 生成的 SVG 矢量示意图替代演示（执行环境：GLM+ZCode）。课堂请在实际生图工具中执行同款提示词并对比。</p>
+        <img src="../assets/images/results/ch13-tunneling.svg" alt="量子隧穿 SVG 示意图：能量 E 低于势垒高度 U₀ 的粒子，入射波列从左侧射向势垒，势垒内波函数指数衰减，右侧透射波振幅变小、波长不变，另有部分反射波（虚线）">
+        <p class="result-caption">图：量子隧穿示意（长度为示意像素：λ=110、势垒宽 a=72、E=0.9U₀；衰减系数按 κ=√(2m(U₀−E))/ħ 取值，与入射波数之比严格为 1/3，透射振幅按 e^(−κa)≈1/4 绘制）。科学性自查：①E 虚线低于 U₀ ✓ ②势垒两侧波长相同 ✓ ③势垒内纯指数衰减、不振荡 ✓ ④透射振幅约为入射的 1/4 且波长不变 ✓ ⑤反射波振幅为示意。</p>
+      </div>
+    </details>
+    <p style="margin-top:10px;">物理底子：量子隧穿指粒子能量低于势垒高度时，仍有一定概率穿过势垒的现象，概率随势垒加高、加宽而急剧减小——扫描隧道显微镜（STM）与 α 衰变都用到了它。图中"波纹渗过墙体"是对波函数穿透性的<strong>直观比喻</strong>：概念插画允许艺术夸张，但不能把夸张当物理（比如不能画成小球"整颗"出现在墙内或"瞬移"到墙外）。"势垒"等标注建议后期添加，见坑②。</p>
+  </div>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示 B：波动干涉科普海报</div>
+    <pre><code>科普海报插画：画面中央为双缝干涉示意——左侧一束平行光照向
+开有两条狭缝的挡板，两条狭缝各自发出间距一致（同一波长）的同心圆波纹，
+向右扩散并交叠，交叠区按波程差呈现明暗相间的干涉条纹；
+深蓝色星空背景，霓虹光效，对称构图，近景，
+画面顶部与底部预留海报标题与文字排版空间，高分辨率；
+比例示意非严格尺度；标注使用中文、后期添加（不在画面内生成文字）。
+负向提示词：文字、乱码、扭曲断裂的条纹。</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（SVG 替代演示 · 课堂用实际生图工具）</summary>
+      <div class="result-body">
+        <p class="result-note">本环境无文生图工具：此处为 AI Agent 生成的 SVG 矢量示意图替代演示（执行环境：GLM+ZCode）。课堂请在实际生图工具中执行同款提示词并对比。</p>
+        <img src="../assets/images/results/ch13-interference.svg" alt="双缝干涉 SVG 示意图：平行光垂直入射双缝挡板，两条狭缝发出同频同相的圆形波前（实线为波峰、虚线为波谷）向右交叠，相长与相消方向线按 d=3λ 精确计算，波峰相遇点以实心圆点标出、波峰遇波谷点以空心圆点标出">
+        <p class="result-caption">图：杨氏双缝干涉波前图（波面间距 = λ，d = 3λ）。科学性自查：①两波源同频同相 ✓ ②相长点波程差 = mλ、相消点 = (m+½)λ ✓ ③图中实心 / 空心圆点为波面圆弧交点的精确解，与相长 / 相消方向线严格重合，条纹位置由 sinθ = mλ/d 算出，不是目测 ✓。</p>
+      </div>
+    </details>
+    <p style="margin-top:10px;">物理底子：两列频率相同、相位差恒定的<strong>相干波</strong>叠加，波峰遇波峰处<strong>相长干涉</strong>（对应亮纹），波峰遇波谷处<strong>相消干涉</strong>（对应暗纹）——杨氏双缝实验中即明暗相间条纹。AI 画的条纹好不好看由它说了算，<strong>对不对</strong>要你按这个标准核对。</p>
+  </div>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示 C：实验装置示意图——先试一次，记录翻车点</div>
+    <p>这次故意选一个"高难度"目标，看看绘图工具在科学示意图上的真实表现：</p>
+    <pre><code>教学用示意图：牛顿环实验装置——一块曲率半径很大的平凸透镜
+凸面朝下放在平板玻璃上、凸面中心与平板仅一点接触，
+单色平行光从正上方垂直照射；
+从上往下看到一圈圈同心圆干涉环，环半径按平方根规律逐级增大（内疏外密）；
+简洁教学风，白色背景，装置截面与俯视环纹分图呈现，构图工整，高分辨率；
+比例示意非严格尺度；标注使用中文、后期添加（不在画面内生成文字）。
+负向提示词：文字、乱码、多余仪器。</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（SVG 替代演示 · 课堂用实际生图工具）</summary>
+      <div class="result-body">
+        <p class="result-note">本环境无文生图工具：此处为 AI Agent 生成的 SVG 矢量示意图替代演示（执行环境：GLM+ZCode）。课堂请在实际生图工具中执行同款提示词并对比。</p>
+        <img src="../assets/images/results/ch13-newtonrings.svg" alt="牛顿环 SVG 示意图，分左右两栏：左栏为装置截面，平凸透镜凸面朝下、仅中心一点接触平板玻璃，单色平行光垂直照射、反射光向上观察，空气薄层中心薄边缘厚；右栏为俯视反射干涉环，中心为暗斑，各级暗环半径按平方根规律增大、内疏外密">
+        <p class="result-caption">图：牛顿环装置截面与反射光干涉环俯视。科学性自查：①凸面朝下、中心一点接触 ✓ ②空气层厚度按 d(r) = r²/2R 随半径增大 ✓ ③暗环半径按 r = √(mλR) 绘制（r₄ = 2r₁，间距自动内疏外密）✓ ④中心为暗斑（反射光存在半波损失）✓ ⑤截面曲率已夸大、图内已声明。</p>
+      </div>
+    </details>
+    <p style="margin-top:10px;">生成后，用下一节的<strong>科学性把关清单</strong>逐项核对，把翻车点记入<a class="term" href="../glossary.html#term-log">AI 使用日志</a>——这些一手记录，就是你课堂讨论"为什么示意图容易错"的证据。</p>
+  </div>
+
+
+  <div class="box box-demo">
+    <div class="box-title">📋 提示词迭代记录表（示例：上面三条演示的真实回填，格式同课后作业要求）</div>
+    <p>课后作业要求随图提交<strong>提示词记录表：图名 / 最终提示词（含负向提示词）/ 迭代次数 / 每轮改动要点 / 科学性核对结果</strong>。下表就是按这个格式对上面三条演示的真实回填：每张图 2 轮迭代，第 1 版的坑是本次实际制图时暴露的，第 2 版已回写进上方演示框——你现在看到的演示提示词就是"第 2 版"。课堂用实际生图工具执行时，请按同样格式记录你自己的两轮迭代，写进<a class="term" href="../glossary.html#term-log">AI 使用日志</a>。</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th style="width:8%">图名</th><th style="width:19%">最终提示词（含负向提示词）</th><th style="width:6%">迭代次数</th><th style="width:42%;white-space:normal">每轮改动要点（第 1 版 → 发现的问题 → 第 2 版）</th><th style="width:25%;white-space:normal">科学性核对结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>演示 A</strong><br>量子隧穿概念图</td><td>见演示 A 提示词（第 2 版；负向提示词：文字、乱码、多余小球、模糊边缘）</td><td>2</td><td>第 1 版只写"小球滚向势垒墙、波纹渗过墙体、右侧汇聚成半透明小球"。试画发现两个问题：①"渗过"极易被画成小球本体分身穿墙——墙内出现整颗小球是硬伤；②不声明比例，势垒会被画得与球差不多高，看不出 E 明显低于 U₀。第 2 版：改为"波纹连续渗过墙体（墙内不出现完整小球）"，并补"比例示意非严格尺度；标注使用中文、后期添加"。</td><td>通过把关清单：E 虚线低于 U₀；势垒内只画指数衰减曲线、不振荡；两侧波长相同；透射振幅约为入射的 1/4。"波纹渗墙"是允许的艺术比喻，但墙内不出现完整小球。</td></tr>
+        <tr><td><strong>演示 B</strong><br>双缝干涉海报</td><td>见演示 B 提示词（第 2 版；负向提示词：文字、乱码、扭曲断裂的条纹）</td><td>2</td><td>第 1 版只写"两条狭缝各自发出一圈圈同心圆波纹、交叠区明暗相间"。试画发现两个问题：①两套圆圈疏密各画各的（波长不同）——不满足同频相干，本不该出稳定条纹；②"明暗条纹"没有几何依据，常被画成等间距直条纹，与圆形波前自相矛盾。第 2 版：加"两组波纹间距一致（同一波长）""交叠区按波程差呈现明暗"。</td><td>两波源同频同相；波峰实线、波谷虚线；相长点波程差 = mλ、相消点 = (m+½)λ；相长 / 相消方向线按 sinθ = mλ/d（d = 3λ）算出，与图中波面交点严格重合——条纹位置是算出来的，不是看着像。</td></tr>
+        <tr><td><strong>演示 C</strong><br>牛顿环装置图</td><td>见演示 C 提示词（第 2 版；负向提示词：文字、乱码、多余仪器）</td><td>2</td><td>第 1 版只写"平凸透镜放在平板玻璃上、从上往下看到同心环、内疏外密"。试画发现三个问题：①"放在"不等于"中心一点接触"——透镜悬空或整面贴合都出不了环（整面贴合就没有厚度渐变的空气层）；②装置截面与俯视环纹挤在一张图里，视角混乱；③"内疏外密"只是形容词，无法核对。第 2 版：改"凸面中心与平板仅一点接触"，注明截面与俯视分图呈现，环半径按平方根规律逐级计算。</td><td>凸面朝下、中心一点接触；空气层厚度按 d(r) = r²/2R 增大；暗环半径按 r = √(mλR) 绘制（r₄ = 2r₁，间距自动内疏外密）；中心为暗斑（反射光存在半波损失）；截面曲率已夸大并在图内声明。</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>一点提醒：提示词迭代的核心是"发现问题 → 只改一处"，与用什么工具画图无关。本页三张 SVG 就是按第 2 版提示词逐条执行的"运行结果"——课堂用生图工具执行同款提示词时，大概率会在第 1 版踩到表中同类问题。这正是记录表的价值：让每次"翻车"都变成可复用的经验。</p>
+  </div>
+
+  <h2>五、课堂实操任务单</h2>
+  <p>本讲任务全部围绕<strong>期末项目</strong>展开：每一张图都必须服务于你的选题（第 8 讲立项、第 11 讲核心文本）。任务分<a class="term" href="../glossary.html#term-baodi">保底任务 / 进阶挑战</a>两层——保底人人完成，进阶学有余力选做。</p>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 开工之前：科学性把关清单（本讲铁律）</div>
+    <p>AI 生成的图，交给项目之前一律过下面四项人工核对——就像第 10、11 讲的<a class="term" href="../glossary.html#term-duipai">对拍</a>习惯：用你自己的物理判断当"标准答案"。</p>
+    <ol>
+      <li><strong>光路方向</strong>：反射角是否等于入射角？折射方向是否合理？光的传播方向画反了吗？</li>
+      <li><strong>能量 / 过程箭头</strong>：能量流动、过程方向的箭头画对了吗？有没有多画、漏画或反向？</li>
+      <li><strong>单位标注</strong>：图上的数值与单位写对了吗？（更常见的情况：图中文字出错或乱码，须后期重标）</li>
+      <li><strong>装置相对比例</strong>：器件的大小、间距比例符合真实装置吗？</li>
+    </ol>
+    <p>任何一项不过关：改提示词重新生成、用图像软件手工修正，或改用 SVG 示意图。<strong>核对结果写进记录表。</strong></p>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 保底任务（人人完成）：项目成套图像之三件套</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t1"><label for="t1"><strong>任务①　项目封面图</strong>：围绕项目主题生成 1 张封面图。提示词按进阶公式写全（主体描述、场景描述、风格、镜头语言、氛围词、细节修饰）；至少迭代 2 次，每次只改一处并观察变化。<br>✅ 完成标准：封面与项目主题一致；提示词记录表已有 2 行以上（初稿 + 每次修改的提示词与改动原因）。</label></li>
+      <li><input type="checkbox" id="t2"><label for="t2"><strong>任务②　概念插图</strong>：从第 11 讲核心文本中挑 1 个关键概念，生成 1 张概念插画（可参考演示 A 的写法）。<br>✅ 完成标准：提示词四要素齐全；图与概念的物理表述经组内互查无科学性硬伤；迭代 ≥2 次并记录。</label></li>
+      <li><input type="checkbox" id="t3"><label for="t3"><strong>任务③　场景插图</strong>：生成 1 张场景类插图（实验场景、设备与环境氛围均可，不要求装置精确）。<br>✅ 完成标准：通过科学性把关清单逐项核对，或在记录表中明确标注"氛围图，非严格示意图"；迭代 ≥2 次并记录。</label></li>
+    </ul>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 进阶挑战（学有余力）</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t4"><label for="t4"><strong>挑战④　项目海报</strong>：在与封面一致的风格下生成 1 张海报（可参考演示 B 的写法）。<br>✅ 完成标准：风格词与封面一致、有"成套感"；标题与文字区域已留白（文字后期添加）；迭代 ≥2 次并记录。</label></li>
+      <li><input type="checkbox" id="t5"><label for="t5"><strong>挑战⑤　SVG 示意图替代方案</strong>：把项目中的一个流程（如实验流程图）交给 ZCode，让它生成 SVG 矢量图，在浏览器中打开检查。<br>✅ 完成标准：SVG 在浏览器中正常显示；每个框、每条线的含义你都能讲清；与 AI 直绘版对比后，能说出"示意图交给 Agent 画"的好处。</label></li>
+    </ul>
+  </div>
+  <p>讨论（第 2 节结尾）：把你记录的翻车案例带到小组——<strong>为什么物理示意图容易"看着对、其实错"？</strong>每组提炼 2 条经验，汇总成全班的"科学性把关清单"扩展版。</p>
+
+  <h2>六、常见坑与翻车案例</h2>
+  <ul>
+    <li><strong>坑①　"画一个单摆"式裸提示词</strong>：只有主体，没有场景与风格，画面风格全凭工具随机发挥，抽卡像开盲盒。<em>解法：三要素打底，进阶公式加分，五维词典填词。</em></li>
+    <li><strong>坑②　让 AI 在图里写字、写公式</strong>：图中文字出错（笔画错、乱码、字母变形）是常见现象，公式尤其是重灾区。<em>解法：画面留白，标题与标注一律后期用演示文稿或图像软件添加。</em></li>
+    <li><strong>坑③　示意图看着对就直接进报告</strong>：光路角度失真、装置比例失真、伪科学细节——"像"不等于"对"。<em>解法：把关清单逐项核对；不过关就重生成，或改用 Agent 生成的 SVG 示意图。</em></li>
+    <li><strong>坑④　好图一出就关页面</strong>：提示词没记录，风格无法复现，成套图各画各的。<em>解法：每次生成都先写进提示词记录表——最终提示词、迭代次数、改动原因缺一不可。</em></li>
+    <li><strong>坑⑤　不满意就无限抽卡</strong>：免费额度很快见底，还未必抽到更好的。<em>解法：先想清楚"这次只改哪一处"再生成，小步迭代；小组共用账号时约定使用规则。</em></li>
+    <li><strong>坑⑥　成套图画风打架</strong>：封面是水墨、插图是 3D 卡通、海报是赛博朋克。<em>解法：全组锁定同一组风格词与色调；有条件时用图生图以定稿图为参考（用法以官方文档为准）。</em></li>
+  </ul>
+
+  <h2>七、自测</h2>
+  <div class="box box-quiz">
+    <div class="box-title">✅ 五道题检验学习目标</div>
+
+    <div class="quiz-item">
+      <p class="q">1. 用扩散模型的直觉理解，绘图工具"从一段文字到一张图"的过程是？</p>
+      <ul>
+        <li data-opt="A.">从图库里检索出最接近的一张现成图片</li>
+        <li data-opt="B.">从一张随机噪点图出发，按提示词一步步"去噪"，图像逐渐显影</li>
+        <li data-opt="C.">把文字先翻译成英文，再匹配对应的表情包</li>
+        <li data-opt="D.">由画师接到订单后快速手绘</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。起点是随机噪声，所以同一提示词每次生成的图都不完全一样；提示词是"显影的方向盘"。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">2. 基础公式"提示词 = 主体 + 场景 + 风格"中，"风格"要素回答的问题是？</p>
+      <ul>
+        <li data-opt="A.">画面主要表现对象是什么</li>
+        <li data-opt="B.">主体处在什么样的环境中</li>
+        <li data-opt="C.">画面像哪种画种或视觉样式（如水彩、写实、扁平插画）</li>
+        <li data-opt="D.">画面里不希望出现什么</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>C</strong>。A 是主体、B 是场景；"不希望出现什么"是负向提示词的事。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">3. 负向提示词（negative_prompt）的作用是？</p>
+      <ul>
+        <li data-opt="A.">把简短提示词自动扩写得更详细</li>
+        <li data-opt="B.">声明不希望出现的元素，用于排除常见错误</li>
+        <li data-opt="C.">把中文提示词翻译成英文</li>
+        <li data-opt="D.">提高生成图片的分辨率</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。A 说的是部分工具提供的"提示词自动扩写"（prompt_extend），与负向提示词是两回事；具体功能名称以各工具官方文档为准。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">4. 判断题："AI 画的光路图看上去很专业，可以直接放进实验报告。"这个说法对吗？</p>
+      <details class="answer"><summary>查看答案与解析</summary><p><strong>不对</strong>。绘图模型按"像"生成而非按"对"生成：它学的是统计意义上的相似，没有内置物理定律。光路角度、能量箭头、单位标注、装置比例必须用科学性把关清单逐项人工核对；不过关就重生成，或改用 Agent 生成的 SVG 示意图。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">5. 简答：小组的四张项目图被同学评价"画风打架"，你会从哪几步入手解决？</p>
+      <details class="answer"><summary>参考答案</summary><p>①全组锁定<strong>同一组风格词与色调</strong>，四张图共用；②固定成功那版的提示词，只微调主体与场景；③有条件时用图生图，以已定稿的封面为参考（用法以官方文档为准）；④每次生成记入提示词记录表，保证可复现——这也是《AI 使用日志》的要求。</p></details>
+    </div>
+  </div>
+
+  <h2>八、课后作业</h2>
+  <div class="box box-task">
+    <div class="box-title">📋 《项目图像素材》（图像包 + 提示词记录表）</div>
+    <p>在课堂任务的基础上，完成期末项目的<strong>全套图像素材</strong>：</p>
+    <ol>
+      <li><strong>封面图 1 张</strong>：项目主题的"门面"，负责风格定型；</li>
+      <li><strong>插图 2 张</strong>：分别对应核心文本的两个关键概念或场景；</li>
+      <li><strong>海报 1 张</strong>：进阶挑战的延续，供第 15–16 讲项目展示使用（课堂只完成保底的同学，课后补齐）。</li>
+    </ol>
+    <p>随图提交<strong>提示词记录表</strong>，每张图一行：图名 / 最终提示词（含负向提示词）/ 迭代次数 / 每轮改动要点 / 科学性核对结果。全部图像风格统一，并与第 11 讲核心文本口径一致。</p>
+  </div>
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 学术诚信提醒</div>
+    <p>按课程《学术诚信与 AI 使用规范》，本作业需附<strong><a class="term" href="../glossary.html#term-declaration">AI 使用声明</a></strong>：用了什么工具、让它做了什么、你如何核查——尤其是：哪几张图经过你的物理核对、哪几张标注了"氛围图，非严格示意图"。"AI 产出，人工把关。"</p>
+  </div>
+
+  <h2>九、进阶拓展（选学）</h2>
+  <details class="advanced">
+    <summary>🎓 建立个人"图像与提示词素材库"（assets 目录思想）</summary>
+    <p>第 8 讲说过，Agent 干活稳，靠的是<a class="term" href="../glossary.html#term-skill">技能（Skill）</a>——打包好的工作方法。技能文件夹里有一个可选目录，其中 <strong>assets（资产）目录</strong>专门存放"输出的原料"：模板文件、图像（图表、标志）、数据文件（查找表、模式）等——需要哪种输出，就调用对应的模板，而不是把所有内容硬塞进一个主文件。</p>
+    <p>把这套思想搬到学习资料管理上，就是<strong>建立个人图像与提示词素材库</strong>：</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>子目录</th><th>放什么</th><th>例子</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>模板/</strong></td><td>可复用的版式与框架</td><td>海报版式参考图、本讲的提示词模板、封面构图草案</td></tr>
+        <tr><td><strong>图像/</strong></td><td>产出的成图与风格参考</td><td>期末项目定稿封面、风格统一的成套插图、喜欢的风格样例</td></tr>
+        <tr><td><strong>数据文件/</strong></td><td>查得快的"词典与清单"</td><td>五维词典摘录、你自己的风格词表、翻车案例记录</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>好处与技能的 assets 目录如出一辙：<strong>下次接活不必从零开始</strong>——封面沿用上次的风格词，海报套上次的版式，词典一查就有词。素材库用本地文件夹即可建成；第 14 讲之后，你还可以让 Agent 帮你自动归档与命名。</p>
+  </details>
+
+  <nav class="pagenav" aria-label="上一讲 / 下一讲">
+    <a href="../ch11/index.html"><span class="label">← 上一讲</span><span class="title">第 11 讲 · 文本生成深度应用</span></a>
+    <a class="next" href="../ch13/index.html"><span class="label">下一讲 →</span><span class="title">第 13 讲 · 视频与音频生成</span></a>
+  </nav>
+</main>
+
+<style>
+.kg-fab { position: fixed; right: 26px; bottom: 26px; z-index: 90; width: 64px; height: 64px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none;
+  background: linear-gradient(135deg, #2f6fed, #8e44d3); color: #fff; box-shadow: 0 6px 18px rgba(47, 111, 237, 0.42);
+  transition: transform .15s ease, box-shadow .15s ease; }
+.kg-fab:hover { transform: scale(1.09); box-shadow: 0 9px 26px rgba(47, 111, 237, 0.55); }
+.kg-fab-icon { font-size: 23px; line-height: 1; }
+.kg-fab-label { font-size: 10px; letter-spacing: 1px; }
+@media (max-width: 700px) { .kg-fab { right: 16px; bottom: 16px; width: 56px; height: 56px; } }
+@media print { .kg-fab { display: none; } }
+</style>
+<a class="kg-fab" href="../glossary.html?focus=ch12" aria-label="本讲知识图谱" title="知识图谱：本讲概念网络与核心考点">
+  <span class="kg-fab-icon">🕸</span><span class="kg-fab-label">图谱</span>
+</a>
+<script src="../js/main.js"></script>
+</body>
+</html>

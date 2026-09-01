@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 5 讲 · 结构化提示词与迭代优化 · 《人工智能应用基础》</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">《人工智能应用基础》课程网站</a>
+    <span class="spacer"></span>
+    <a class="navlink" href="../index.html">课程首页</a>
+    <a class="navlink" href="../glossary.html">知识图谱</a>
+    <a class="navlink active" href="index.html">第 5 讲</a>
+  </div>
+</nav>
+
+<main>
+  <div class="breadcrumb"><a href="../index.html">课程首页</a> › 模块 B · 对话篇 › 第 5 讲</div>
+  <h1>第 5 讲　结构化提示词与迭代优化</h1>
+  <div class="pill-row">
+    <span class="pill">模块 B · 对话篇</span>
+    <span class="pill">能力主线：会聊</span>
+    <span class="pill gray">2 学时（90 分钟）</span>
+    <span class="pill gray">第 5 / 16 讲</span>
+  </div>
+  <p class="lead">第 4 讲的四要素让你的<a class="term" href="../glossary.html#term-prompt">提示词（Prompt）</a>"信息齐全"，本讲再进一步：把它升级为七字段的结构化模板，配上"迭代三板斧"，让一条调好的提示词从"一次性用品"变成可以反复填用的资产。</p>
+
+  <h2>一、本讲学习目标</h2>
+  <p>完成本讲后，你应该能够：</p>
+  <ol class="goals">
+    <li>用七字段模板【背景｜角色｜任务｜要求｜输出格式｜示例｜约束】写出结构化提示词，并说出每个字段各"防"什么；</li>
+    <li>用"迭代三板斧"——追问补充、明确纠偏、让 AI 自评后再改——在 3 轮左右把不满意的输出修改到位，并逐轮留痕；</li>
+    <li>说出"给输出样例（少样本）、设定具体步骤、用分隔符分区、引导思考"四个优化技巧各自的作用；</li>
+    <li>开始建设<strong>个人提示词库</strong>：会保存、会打标签、能复用。</li>
+  </ol>
+
+  
+<h2>二、课前准备</h2>
+  <ul>
+    <li>回顾第 4 讲的"四要素"与"提问六要素"速查卡——本讲的七字段模板就是它们的合体升级，会用到第 4 讲的每个概念。</li>
+    <li>带上第 4 讲作业《提示词改写练习表》：课堂第 2 节整理提示词库时，它就是第一批"馆藏"。</li>
+    <li>准备好个人提示词库的存放处：一个在线文档或一个 txt 文件都可以，从本讲开始"入库"。</li>
+    <li>无需任何编程基础：本讲出现的 YAML 只是一种"键：值"格式的写法，进阶挑战会用两分钟示范，照抄即可。</li>
+  </ul>
+
+  <h2>三、核心概念精讲</h2>
+
+  <h3>1. 从"一句话"到"一张卡"：为什么要结构化</h3>
+  <p>第 4 讲的四要素——要什么、给谁看、凭什么答、交付什么——解决的是"信息全不全"。本讲把四要素升级为七个固定槽位：<strong>背景、角色、任务、要求、输出格式、示例、约束</strong>。信息装进固定槽位后，提示词就从"一段话"变成了"一张卡"。</p>
+  <p>这套思路你在物理实验里早就见过：一份合格的实验记录单不会写成一段散文，而是按"日期／仪器／条件／数据"分栏填写。分栏不是形式主义——它<strong>防漏项</strong>（哪栏空着一眼看见）、<strong>便检查</strong>（每栏对着验收标准核）、<strong>利复用</strong>（下次实验照单再填一张）。结构化提示词完全同理：模板槽位保证不漏信息，字段名让 AI 一眼分清"哪句是指令、哪句是材料、哪句是底线"，固定写法让这张卡可以反复填用。还有一层账要算：<a class="term" href="../glossary.html#term-context">上下文窗口（Context Window）</a>容量有限，结构化提高的是单位容量里的有效信息密度。</p>
+
+  <h3>2. 七字段模板：逐字段拆解</h3>
+  <p>模板整体记作【背景｜角色｜任务｜要求｜输出格式｜示例｜约束】。前五个字段回答"怎么干"，后两个字段负责"防跑偏"：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>字段</th><th>它回答什么问题</th><th>填空要点（以"论文摘要总结器"为例）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>背景</strong></td><td>我是谁、材料从哪来、处在什么情境</td><td>"我是物理专业本科生，正在整理实验报告的文献摘要；待处理材料见文末【材料】区"</td></tr>
+      <tr><td><strong>角色</strong></td><td>你以什么身份、按什么水平工作</td><td>"你是学术期刊的编辑助理，熟悉物理实验报告的写作规范"——角色一具体，语气与详略自动对齐</td></tr>
+      <tr><td><strong>任务</strong></td><td>具体做什么、做成几件事</td><td>"把摘要总结为'目的—方法—结果—结论'四条"。一次只派一件事，事情多了就拆开</td></tr>
+      <tr><td><strong>要求</strong></td><td>质量标准：长度、数值、术语怎么处理</td><td>"每条不超过 50 字；保留全部数值与单位；不得添加原文没有的内容"</td></tr>
+      <tr><td><strong>输出格式</strong></td><td>交付物长什么样</td><td>"按四行输出，末尾单列一行'关键数值：……'"——格式定死，验收才有一把尺</td></tr>
+      <tr><td><strong>示例</strong></td><td>照什么样子做</td><td>附 1–2 组"输入 → 输出"样例（见下一小节"少样本提示"）</td></tr>
+      <tr><td><strong>约束</strong></td><td>底线与禁令：什么不许做</td><td>"只依据摘要原文；原文未说明的标注'原文未说明'；不要评价学术水平"——约束是兜底的安全绳</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="box box-tip">
+    <div class="box-title">💡 模板是"自选动作的清单"，不是"全项必填的表格"</div>
+    <p>两句话能办的小事（"把这句话翻译成英文"）不必套模板；一旦任务同时有"给材料"和"要成品"——总结、改写、出题、批改——就值得上卡。字段顺序可以调，但有一条铁律：<strong>指令区与材料区必须分开</strong>（第四节你会看到用分隔符怎么分）。</p>
+  </div>
+
+  <h3>3. "示例"字段：少样本提示</h3>
+  <p>在卡里附上 1–2 组"输入 → 输出"的样例，模型会主动模仿样例的格式、详略甚至语气——这就是<a class="term" href="../glossary.html#term-fewshot">少样本提示（Few-shot）</a>。两个使用要点：其一，<strong>示例要按你要的质量标准来写</strong>——示例里的错别字、坏格式同样会被照学；其二，示例选"同类但不重复"的内容（总结单摆摘要，就用电学或光学的摘要做示例），避免模型把示例当答案抄回来。</p>
+
+  <h3>4. 优化四技巧</h3>
+  <p>除了把七字段填满，还有四个立刻能用的优化动作（要点整理自 Google 提示工程解读与阿里云文生文指南）：</p>
+  <ol>
+    <li><strong>给输出样例</strong>：与其描述"要什么样的格式"，不如直接给一个样例让它照抄骨架——上一节的"示例"字段，就是把这一招制度化。</li>
+    <li><strong>设定具体步骤</strong>：把"总结这篇摘要"换成"先通读 → 列出全部数值 → 按四要素归纳 → 核对数值一致后再输出"。把复杂工作流拆成目标明确的顺序步骤，这也是技能（Skill）设计标准里对正文的一条要求。</li>
+    <li><strong>用分隔符分区</strong>：用 <code>###</code> 或 <code>===</code> 把背景、材料、任务、输出格式隔成明明白白的几块，AI 就不会把"你的要求"和"要处理的材料"搅在一起。</li>
+    <li><strong>引导思考</strong>：对推理类问题补一句"请一步步分析后再给结论"——这叫<a class="term" href="../glossary.html#term-cot">思维链（CoT）</a>。它的进阶玩法（提示链、思维树、自洽性等）见第九节拓展。</li>
+  </ol>
+
+  <h3>5. 迭代三板斧</h3>
+  <p>第一版输出不满意，才是常态。别急着推倒重写，按顺序用三招：</p>
+  <div class="box box-tip">
+    <div class="box-title">💡 迭代三板斧</div>
+    <ol>
+      <li><strong>追问补充</strong>：先弄清 AI 为什么这么答——"你总结时依据了原文哪几句？"把它的依据问出来，问题往往自己现形：是没看懂材料，还是漏读了要求。</li>
+      <li><strong>明确纠偏</strong>：点名哪里不对、只改哪里——"第 3 条把'摆长'写成了'周期'，请只改这一条，其余三行原样保留。"纠偏越具体，返工越小。</li>
+      <li><strong>让 AI 自评后再改</strong>：把"要求"字段递回去——"逐条检查你的输出是否满足这 3 条要求，先打分、列出不足，再改。"先自评再动手，常常一击即中。</li>
+    </ol>
+  </div>
+  <p>三板斧背后是一条实验纪律：<strong>一轮只改一处</strong>。做物理实验讲究控制变量，提示词迭代同理——改了哪一处、输出变了什么，一一对应，你才能真正知道每个字段在起什么作用。这也是第五节《提示词迭代记录表》要求你逐轮留痕的原因。</p>
+
+  <h3>6. 从提示词卡到提示词库，再到"技能"</h3>
+  <p><strong>建库：保存与打标签。</strong>调到满意的提示词，按"三件套"入库：<strong>卡原文</strong>（可整体复制的那一版）、<strong>适用场景</strong>（一句"什么时候用它"）、<strong>实测效果</strong>（好在哪里、翻过什么车）。再打上标签分类——#摘要总结、#翻译、#出题、#实验报告——存进一个固定文档。第 4 讲的改写练习与本讲的任务成果都应入库。这些卡不是一次性用品：期末项目会直接调用你的个人提示词库，攒得越厚，期末越省力。</p>
+  <p><strong>再进一步：卡片长成技能。</strong>当一张卡被反复验证好用，它可以升格为 <a class="term" href="../glossary.html#term-skill">技能（Skill）</a>标准里的一个文件——<a class="term" href="../glossary.html#term-skillmd">SKILL.md</a>：在 Markdown 正文前加一段 YAML 元数据（一种"键：值"格式的轻量标记，写法见拓展区），再配上可选的素材目录。整份文件的结构可以画成三层：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>层</th><th>装什么</th><th>何时被读取（类比）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>YAML 前置元数据</strong></td><td>name（名称）、description（描述）</td><td>像贴在文件夹外面的"目录卡"，始终可见</td></tr>
+      <tr><td><strong>Markdown 正文</strong></td><td>方法步骤、输入输出规范</td><td>像"文件夹里的说明书"，接到相关任务才翻开细读</td></tr>
+      <tr><td><strong>可选目录 scripts／references／assets</strong></td><td>脚本、参考资料、模板素材</td><td>像"附录柜"，需要时按需取用</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>这个"元数据常驻、正文按需加载"的设计，正是第 3 讲讲过的<a class="term" href="../glossary.html#term-pd">渐进式披露（Progressive Disclosure）</a>——AI 助理不把整个资料室背在脑子里。本讲你只需记住方向：<strong>好的提示词卡，就是技能的雏形</strong>；第 8 讲你会见到技能的真身。</p>
+
+  <h2 id="demo">四、物理场景案例演示</h2>
+  <p>课堂第 1 节，教师会现场写一个"论文摘要总结器"并当堂迭代。下面是完整过程，你可以直接复制复现。</p>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 演示材料：一篇自拟的单摆实验摘要</div>
+    <pre><code>为测定本地重力加速度，本实验采用单摆法。摆线长度 L 在 0.400 m 至 1.000 m
+之间取 6 个不同值，对每个摆长用秒表连续测量 30 个全振动的总时间并除以 30，
+得到周期 T。以 L 为横轴、T² 为纵轴绘制图线，数据点线性良好；最小二乘拟合
+直线斜率为 (4.03±0.04) s²/m。由 T² = (4π²/g)L 可得 g = 4π²/斜率 =
+(9.80±0.10) m/s²，与本地参考值 9.79 m/s² 在不确定度范围内一致。实验的
+主要误差来源为计时的人为反应时间与小角度近似的偏离。</code></pre>
+  </div>
+
+  <p><strong>第一版：一句话开局。</strong></p>
+  <pre><code>帮我总结一下这篇物理摘要。</code></pre>
+  <p>输出有四个典型翻车点：</p>
+  <ul>
+    <li>几乎把原文复述了一遍，"总结"变成了"抄写"；</li>
+    <li>没有结构，目的、方法、结论混在一团；</li>
+    <li>关键数值丢了——斜率的不确定度 ±0.04 与 g 的 ±0.10 都没了影；</li>
+    <li>还自由发挥了一句"该实验对大学物理教学很有意义"——原文里根本没有。</li>
+  </ul>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 第二版：按七字段模板上卡（可直接复制，替换【材料】区即可复用）</div>
+    <pre><code>### 背景
+我是物理专业本科生，正在整理实验报告的文献摘要。
+下面【材料】区是一篇关于"单摆测重力加速度"的实验摘要。
+
+### 角色
+你是学术期刊的编辑助理，熟悉物理实验报告的写作规范。
+
+### 任务
+把摘要总结为四条：目的、方法、结果、结论。
+
+### 要求
+1. 每条不超过 50 字；
+2. 保留摘要中的全部数值与单位，不得改写或省略；
+3. 不确定度必须与中心值成对保留，写作"（中心值±不确定度）单位"的形式，不得只写中心值；
+4. 物理量符号（如 L、T、g）首次出现时用括号注明含义；
+5. 只依据摘要原文，不添加原文没有的内容；
+6. 原文没说清楚的地方，标注"原文未说明"。
+
+### 输出格式
+按"目的／方法／结果／结论"四行输出，
+最后单独一行输出"关键数值：……"。
+
+### 示例
+输入摘要：为验证均匀带电球壳内部场强为零，先由高斯定理推得该结论，
+再用试探电荷在壳内各处检验……
+输出：
+目的：验证高斯定理推论——均匀带电球壳内部场强为零
+方法：理论推导＋试探电荷检验
+结果：壳内各处试探电荷均未受明显作用，与推论一致
+结论：高斯定理适用于球对称电荷分布
+关键数值：无（定性验证）
+
+### 约束
+- 不要评价摘要的学术水平；
+- 不要引入摘要以外的文献或知识；
+- 全文不超过 200 字。
+
+### 材料
+（在此粘贴摘要原文）</code></pre>
+    <p style="margin-top:10px;"><strong>第二版的输出示例：</strong></p>
+    <pre><code>目的：用单摆法测定本地重力加速度 g
+方法：取 6 个摆长 L（0.400–1.000 m），各测 30 个全振动取平均得周期 T，
+作 T²–L 图线性拟合
+结果：拟合斜率 (4.03±0.04) s²/m，得 g = (9.80±0.10) m/s²
+结论：g 与本地参考值 9.79 m/s² 在不确定度范围内一致
+关键数值：摆长 L 0.400–1.000 m（6 个）；斜率 (4.03±0.04) s²/m；g = (9.80±0.10) m/s²；本地参考值 9.79 m/s²</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>输出一 · 第一版一句话提示词</strong></p>
+        <pre class="result-text">这项实验用单摆来测定当地的重力加速度。实验中把摆线长度在 0.400 m 到 1.000 m 之间取了 6 个不同的值，对每个摆长都用秒表测量 30 个全振动的总时间，再除以 30 得到周期 T。之后以 L 为横轴、T² 为纵轴绘制图线，数据点线性良好，用最小二乘法拟合得到直线的斜率约为 4.03 s²/m。根据 T² = (4π²/g)L 的关系，可以由斜率算出 g 约为 9.80 m/s²，与本地的参考值 9.79 m/s² 符合得比较好。实验的主要误差来源是用秒表计时的人为反应时间，以及摆角不够小带来的近似偏差。总的来说，这个实验做法简单、现象直观，对理解简谐运动的规律很有帮助。</pre>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>输出二 · 第二版结构化卡（原卡首跑）</strong></p>
+        <pre class="result-text">目的：用单摆法测定本地重力加速度
+方法：取 6 个摆长（0.400–1.000 m），各测 30 个全振动取平均得周期 T，作 T²–L 图线性拟合
+结果：拟合斜率 (4.03±0.04) s²/m，得 g = (9.80±0.10) m/s²
+结论：g 与本地参考值 9.79 m/s² 在不确定度范围内一致
+关键数值：摆长 0.400–1.000 m（6 个）；斜率 (4.03±0.04) s²/m；g = (9.80±0.10) m/s²；本地参考值 9.79 m/s²</pre>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>输出三 · 第二版结构化卡（优化后复测）</strong></p>
+        <pre class="result-text">目的：用单摆法测定本地重力加速度 g
+方法：取 6 个摆长 L（0.400–1.000 m），各测 30 个全振动取平均得周期 T，作 T²–L 图线性拟合
+结果：拟合斜率 (4.03±0.04) s²/m，得 g = (9.80±0.10) m/s²
+结论：g 与本地参考值 9.79 m/s² 在不确定度范围内一致
+关键数值：摆长 L 0.400–1.000 m（6 个）；斜率 (4.03±0.04) s²/m；g = (9.80±0.10) m/s²；本地参考值 9.79 m/s²</pre>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+      </div>
+    </details>
+  </div>
+
+  <p>注意第二版的排版套路：<strong>指令区（背景 → 约束）在前，材料区用 <code>###</code> 单独隔开放在最后</strong>。换一篇摘要，只需替换材料区——"可复用"就体现在这里。迭代前后对比：</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>维度</th><th>第一版（一句话）</th><th>第二版（结构化卡）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>结构性</strong></td><td>无固定结构，四要素混写</td><td>目的／方法／结果／结论分行，一眼可查</td></tr>
+      <tr><td><strong>数值保真</strong></td><td>±0.04、±0.10 等关键不确定度丢失</td><td>全部数值与单位保留，并单列"关键数值"行</td></tr>
+      <tr><td><strong>忠实度</strong></td><td>自由发挥出原文没有的"意义与展望"</td><td>"只依据原文"上锁，没说的标"原文未说明"</td></tr>
+      <tr><td><strong>复用性</strong></td><td>换一篇摘要基本要从头再说</td><td>只替换【材料】区即可换题重用</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="task">五、课堂实操任务单</h2>
+  <p>本讲任务：完成"实验目的学术化改写器"——输入一段口语化的实验目的，输出学术版改写并附中英术语对照表。它与演示的"摘要总结器"共用同一副骨架，你练的是"把一张卡调到能用"的全过程。</p>
+
+  <div class="box box-demo">
+    <div class="box-title">🧪 任务材料：口语化"实验目的"（示例节选，课堂以教师发放的完整版为准）</div>
+    <pre><code>我们做单摆实验，主要就是想搞清楚摆得快慢到底跟什么有关系。老师上课说
+小角度的时候周期只跟摆长有关，跟摆锤质量没关系，我们就想自己测一测，
+顺便把 g 算出来，看看跟 9.8 差多少。我们打算量好几根不同长度的摆线，
+每根都多计几次时间取平均，最后把周期的平方对着摆长画个图，看看是不是
+一条直线，是直线就说明理论靠谱。</code></pre>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 保底任务（人人完成）</div>
+    <p>提示词起点已经搭好骨架，五个字段留给你来填：</p>
+    <pre><code>### 背景
+我是物理专业本科生，下面【材料】区是我写的单摆实验"实验目的"初稿，
+语言比较口语化。
+
+### 角色
+【你来填写：让 AI 以什么身份工作？提示：熟悉物理实验报告规范的人】
+
+### 任务
+把这段"实验目的"改写为学术表述，并附中英术语对照表。
+
+### 要求
+【你来填写：改写要保留什么？术语怎么处理？长度有限制吗？】
+
+### 输出格式
+【你来填写：先给改写稿还是先给对照表？分几部分？】
+
+### 示例
+【选做：给一组"口语句子 → 学术句子"的改写示例】
+
+### 约束
+【你来填写：哪些事不许做？例如不得虚构材料里没有的实验内容】
+
+### 材料
+（粘贴教师发放的口语化"实验目的"）</code></pre>
+    <details class="result">
+      <summary>🧪 查看运行结果（ZCode + GLM 实测）</summary>
+      <div class="result-body">
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>第 0 步 · 首跑用的完整提示词（骨架的实测填法）</strong></p>
+        <pre class="result-text">### 背景
+我是物理专业本科生，下面【材料】区是我写的单摆实验"实验目的"初稿，
+语言比较口语化。
+
+### 角色
+你是大学物理实验课的助教，熟悉物理实验报告的写作规范与常用术语。
+
+### 任务
+把这段"实验目的"改写为学术表述，并附中英术语对照表。
+
+### 要求
+1. 保留原稿的全部实验意图与信息点，一条都不能丢；
+2. 口语说法换成规范的学术术语，对应关系收进对照表；
+3. 改写稿用陈述句，长度 120–200 字。
+
+### 输出格式
+第一部分：学术化改写稿（一段成文）；
+第二部分：中英术语对照表（三列：口语原表述｜学术术语｜英文）。
+
+### 示例
+口语句子："我们想看看弹簧挂的东西越重，伸长是不是越多。"
+学术句子："本实验旨在检验弹簧的伸长量与其所受拉力之间的关系。"
+
+### 约束
+- 不得虚构材料里没有的实验内容、数据或方法；
+- 只改写，不点评原稿写得好坏。
+
+### 材料
+（此处完整粘贴上方"任务材料"原文）</pre>
+        <p><strong>第 1 版输出（改写稿 199 字，符合 120–200 字要求）</strong></p>
+        <pre class="result-text">【学术化改写稿】
+本实验旨在探究影响单摆周期的因素。理论表明，在摆角较小的条件下，单摆的周期仅与
+摆长有关，而与摆锤质量无关；本实验拟通过改变摆长对此进行检验，并在此基础上测定
+当地重力加速度 g，将其与参考值 9.8 m/s² 进行比较，以验证实验方案的可靠性。实验
+计划选取若干组不同长度的摆线，对每组摆长多次计时并取平均，以有效减小计时误差；
+随后绘制 T²–L 图线，观察其是否为一条直线——若为直线，即可证明单摆周期公式成立。
+
+【中英术语对照表】
+口语原表述｜学术术语｜英文
+摆得快慢｜周期｜period
+摆锤｜摆球｜bob
+多计几次时间取平均｜多次测量取平均｜repeated measurement and averaging
+画个图｜绘制图线｜plot
+理论靠谱｜与理论相符｜consistent with theory</pre>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <p><strong>第 1 轮 · 只改"约束"一处（明确纠偏）→ 第 2 版（节选改动句）</strong></p>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <pre class="result-text">第 1 版：……将其与参考值 9.8 m/s² 进行比较，以验证实验方案的可靠性。……随后绘制 T²–L 图线，观察其是否为一条直线——若为直线，即可证明单摆周期公式成立。
+第 2 版：……将其与参考值 9.8 m/s² 进行比较，考察偏差大小。……随后绘制 T²–L 图线，观察其是否为一条直线——若为直线，则实验结果与理论预期相符。
+（同一条规则同时清掉了"以验证实验方案的可靠性"；其余语句原样保留）</pre>
+        <p><strong>第 2 轮 · 只改"要求"一处（明确纠偏）→ 第 3 版（节选改动句）</strong></p>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <pre class="result-text">第 2 版：……对每组摆长多次计时并取平均，以有效减小计时误差；……
+第 3 版：……对每组摆长累计测量多个周期的总时间并取平均，以降低计时的相对误差；……
+（"以有效减小计时误差"被替换为可核验的具体做法；其余语句原样保留）</pre>
+        <p><strong>第 3 轮 · 让 AI 自评后再改 → 第 4 版（终版，全文）</strong></p>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+        <pre class="result-text">【学术化改写稿】（195 字，符合 120–200 字要求）
+本实验旨在探究影响单摆周期的因素，并测定当地重力加速度 g。理论表明：在小角度
+近似成立的条件下，单摆的周期 T 仅取决于摆长 L，与摆球质量无关。本实验拟选取若干
+组不同摆长的摆线，对每组摆长累计测量多个周期的总时间并取平均，以降低计时的相对
+误差；随后绘制 T²–L 图线，检验 T² 与 L 的线性关系——若图线为直线，则实验结果与
+理论预期相符。最后由实验数据求出 g，与参考值 9.8 m/s² 比较，考察偏差大小。
+
+【中英术语对照表】
+口语原表述｜学术术语｜英文
+摆得快慢｜周期 T｜period
+小角度的时候｜小角度近似成立的条件下｜small-angle approximation
+跟摆长有关｜仅取决于摆长 L｜pendulum length
+跟摆锤质量没关系｜与摆球质量无关｜independent of bob mass
+多计几次时间取平均｜累计测量多个周期的总时间并取平均｜repeated timing over multiple periods
+把 g 算出来｜测定重力加速度 g｜gravitational acceleration
+看看跟 9.8 差多少｜与参考值 9.8 m/s² 比较，考察偏差大小｜comparison with the reference value
+把周期的平方对着摆长画个图｜绘制 T²–L 图线｜plot of T² versus L
+看看是不是一条直线｜检验 T² 与 L 的线性关系｜linearity test
+是直线就说明理论靠谱｜若图线为直线，则实验结果与理论预期相符｜consistent with theory</pre>
+        <p class="result-note">AI Agent 真实执行并生成上述结果（执行环境：GLM+ZCode）。</p>
+      </div>
+    </details>
+    <p>随后按三步走，每步完成一项就打勾（勾选状态会自动保存）：</p>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t1"><label for="t1"><strong>任务①　填卡并跑通第一版</strong>：补全【角色】【要求】【输出格式】【约束】（【示例】选做），运行得到第一版输出。<br>✅ 完成标准：七字段齐全（确有理由省略的字段，在卡后注明理由）；第一版输出同时包含学术化改写稿与中英术语对照表两部分。</label></li>
+      <li><input type="checkbox" id="t2"><label for="t2"><strong>任务②　迭代 ≥3 轮并填表</strong>：每轮只改一处，逐轮填写《提示词迭代记录表》（见下）。<br>✅ 完成标准：记录表不少于 3 行，每行"改了什么／为什么改／输出变化"填写完整；你能举出最终版比第一版强在哪里（至少两处）。</label></li>
+      <li><input type="checkbox" id="t3"><label for="t3"><strong>任务③　换材料复测</strong>：与邻座交换一段新的口语化材料，不改提示词直接复测。<br>✅ 完成标准：新材料一次跑通且质量稳定（术语对照、语体风格没有跑偏）——这就是"可复用"的验收。</label></li>
+    </ul>
+    <p>《提示词迭代记录表》（第一行为示例）：</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>轮次</th><th>本轮只改了哪一处</th><th>为什么改</th><th>输出的关键变化</th><th>下一轮打算</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><em>示例</em></td><td><em>"要求"里增加"术语首次出现时给出英文"</em></td><td><em>第一版对照表外的正文漏掉了所有英文术语</em></td><td><em>正文出现 8 个中英对照术语</em></td><td><em>检查对照表与正文是否一一对应</em></td></tr>
+        <tr><td>1</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>2</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>3</td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="box box-task">
+    <div class="box-title">📋 进阶挑战（学有余力）</div>
+    <ul class="checklist">
+      <li><input type="checkbox" id="t4"><label for="t4"><strong>挑战④　升级为"提示词卡"</strong>：给最终版提示词加上 YAML 元数据头部，写法照抄第九节拓展的示例。<br>✅ 完成标准：YAML 语法正确——三横线成对、name 全小写用连字符、description 一句话说清"做什么＋何时用"。</label></li>
+      <li><input type="checkbox" id="t5"><label for="t5"><strong>挑战⑤　入库打标签</strong>：把这张卡存入个人提示词库。<br>✅ 完成标准：库中含卡原文、适用场景、标签三项，并能说出期末项目里哪个任务可以直接复用它。</label></li>
+    </ul>
+  </div>
+
+  <h2>六、常见坑与翻车案例</h2>
+  <ul>
+    <li><strong>坑①　模板当填空作业</strong>：为凑齐字段写"角色：助手"——等于没设角色。字段要填"有用信息"，不是"有字就行"；填不出区别的字段，宁缺勿滥并注明理由。</li>
+    <li><strong>坑②　示例给得潦草</strong>：随手写的示例带着错别字或坏格式，模型照样学。示例的质量就是输出质量的"上限预告"——按你要的标准写示例。</li>
+    <li><strong>坑③　一轮改五处</strong>：这轮改角色、下句改格式、顺手又改约束——好了不知道是谁的功，坏了不知道去哪回滚。<em>解法：控制变量，一轮只改一处，逐轮记录。</em></li>
+    <li><strong>坑④　满嘴"不要"</strong>：通篇"不要太啰嗦、不要太正式、不要凑字数"。第 4 讲讲过优先正面指令——<em>解法：翻成正面标准，"每条不超过 30 字，用陈述句"。</em></li>
+    <li><strong>坑⑤　火候到了不保存</strong>：调了四五轮终于满意，转头关掉对话框——下周一从零再来，前期投入全部清零。<em>解法：满意版本立即入库打标签；"迭代记录表"本身就是你的存档底稿。</em></li>
+  </ul>
+
+  <h2>七、自测</h2>
+  <div class="box box-quiz">
+    <div class="box-title">✅ 五道题检验学习目标</div>
+
+    <div class="quiz-item">
+      <p class="q">1. 在七字段模板中，"要求"与"约束"的主要区别是？</p>
+      <ul>
+        <li data-opt="A.">二者完全重复，写其中一个即可</li>
+        <li data-opt="B.">"要求"是希望做到的事（正面标准），"约束"是底线与禁令（不许做什么、边界在哪）</li>
+        <li data-opt="C.">"约束"只对程序有效，AI 看不懂</li>
+        <li data-opt="D.">"要求"只能写字数限制</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>B</strong>。"要求"给质量标尺（每条不超过 50 字、保留数值与单位），"约束"划底线（只依据原文、不引入外部知识）。一正一反，共同把输出"夹"进你想要的区间。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">2. 在卡里附上一组"输入摘要 → 输出总结"的样例，让 AI 模仿其格式与详略，这种技巧叫？</p>
+      <ul>
+        <li data-opt="A.">思维链（CoT）</li>
+        <li data-opt="B.">渐进式披露</li>
+        <li data-opt="C.">少样本提示（Few-shot）</li>
+        <li data-opt="D.">对拍</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>C</strong>。给示例让模型模仿，就是少样本提示。思维链是"引导分步思考"，渐进式披露是技能的加载机制，对拍是用独立方法核验结果——三者都不是"给样例模仿"。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">3. 迭代到第 3 轮输出仍不理想，按"三板斧"最该先做的是？</p>
+      <ul>
+        <li data-opt="A.">推倒重写整套提示词，从头再来</li>
+        <li data-opt="B.">同时改掉角色、格式、约束三处，提高效率</li>
+        <li data-opt="C.">把"要求"字段递回去，让 AI 逐条给自己的输出打分、列出不足，再决定改哪里</li>
+        <li data-opt="D.">直接换一个 AI 工具重试</li>
+      </ul>
+      <details class="answer"><summary>查看答案</summary><p><strong>C</strong>。让 AI 按"要求"字段自评，能先把"差在哪"定位出来，再动笔改——这正是三板斧的第三招"让 AI 自评后再改"。B 违反"一轮只改一处"的控制变量纪律；A、D 都放弃了定位问题的机会。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">4. 判断题："迭代时一轮把角色、格式、约束一起改掉，收敛更快。"</p>
+      <details class="answer"><summary>查看答案与解析</summary><p><strong>不对</strong>。一轮只改一处是控制变量法：改好了知道是谁的功劳，改坏了知道去哪回滚。一次改多处，效果无论好坏都说不清原因，《提示词迭代记录表》也会失去"逐轮归因"的价值。</p></details>
+    </div>
+
+    <div class="quiz-item">
+      <p class="q">5. 简答：结合"个人提示词库"，说明为什么说"提示词是资产"。</p>
+      <details class="answer"><summary>参考答案</summary><p>三个角度：①<strong>可复用</strong>——七字段卡换材料只填空，一条调好的卡能服务整个学期的同类任务；②<strong>可积累</strong>——保存＋打标签让卡片越攒越厚，个人提示词库成为你的"方法存款"；③<strong>可交接</strong>——期末项目与小组协作可以直接调用库里的卡片。就像写下来的实验方案下次照单重做，入库的每张卡都是下次任务的起点。</p></details>
+    </div>
+  </div>
+
+  <h2>八、课后作业</h2>
+  <div class="box box-task">
+    <div class="box-title">📋 《可复用提示词 + 迭代记录》（产出物：提示词卡）</div>
+    <p>为"<strong>实验报告润色助手</strong>"写一个可复用的结构化提示词：</p>
+    <ol>
+      <li>用七字段模板成卡。定位：输入口语化的实验报告片段（目的、步骤或结论均可），输出学术化改写。可以沿用课堂"改写器"的骨架，但<strong>"要求"与"约束"两个字段必须按"报告润色"重新调整</strong>——先想清楚：润色的验收标准与实验目的的改写有何不同？</li>
+      <li>从自己的真实实验报告里取材料，<strong>测试 3 次</strong>；每次记录：当轮版本、输出质量（好在哪里、坏在哪里）、发现的问题、本轮的改进。</li>
+      <li>提交三件套：最终版提示词卡（含七字段，鼓励附 YAML 头）＋迭代记录表（≥3 行）＋一句话自评："它现在能稳定复用了吗？还差什么？"</li>
+    </ol>
+  </div>
+  <div class="box box-warn">
+    <div class="box-title">⚠️ 学术诚信提醒</div>
+    <p>按课程《学术诚信与 AI 使用规范》，本作业需附<strong>《AI 使用声明》</strong>（<a class="term" href="../glossary.html#term-declaration">AI 使用声明</a>）：用了什么工具、让它做了什么、你如何核查。你在迭代记录表里留下的每一行，本身就是一次标准的<a class="term" href="../glossary.html#term-log">AI 使用日志</a>实践——过程留痕，既是方法，也是诚信。</p>
+  </div>
+
+  <h2>九、进阶拓展（选学）</h2>
+  <details class="advanced">
+    <summary>🎓 提示词卡升级为技能：SKILL.md 的元数据规范与思维链进阶玩法</summary>
+    <p>从第 4 讲的四要素模板，到今天带 name 与 description 的提示词卡，你其实已经摸到了 Agent 技能的门槛。技能开放标准规定：每个技能必备一个 SKILL.md 文件，开头是一段 YAML 前置元数据，其中 <strong>name 与 description 为必填字段</strong>，约束如下（不同实现可能略有差异，以标准文档为准）：</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>必填字段</th><th>约束条件</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>name（名称）</strong></td>
+          <td>最多 64 个字符；只能用小写字母、数字与连字符；不能以连字符开头或结尾；需与技能所在文件夹同名；建议用"动名词"形式命名（标准自带的示例如 generating-practice-questions、analyzing-time-series）</td>
+        </tr>
+        <tr>
+          <td><strong>description（描述）</strong></td>
+          <td>最多 1024 个字符；不能为空；要说清这个技能"做什么"以及"何时使用"；最好包含能帮助 Agent 识别相关任务的关键词</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p>标准还预留了可选字段（如许可证 license、兼容性说明 compatibility、任意键值对 metadata 等），初学阶段用不到，知道有即可。下面是本讲进阶挑战的参考写法——注意 name 用了动名词，description 把"做什么"和"何时用"一句话讲全：</p>
+    <pre><code>---
+name: rewriting-lab-purposes
+description: 把口语化的物理实验目的改写为学术表述，并附中英术语对照表。当输入是实验目的初稿，或需要"学术化改写实验报告用语"时使用。
+---</code></pre>
+    <p>这张带元数据的卡，就是 Agent 技能的雏形——第 8 讲你会见到技能的真身：Agent 接到任务时先扫一眼各技能的 name 与 description（那张"目录卡"），判断该翻开哪份"说明书"。</p>
+    <p><strong>思维链的进阶玩法（承接精讲第四节）：</strong></p>
+    <ul>
+      <li><strong>提示链（Prompt Chaining）</strong>：把大任务拆成一串小提示接力——先让 AI 提取数值，再把数值清单喂给下一轮让它归纳，上一轮的输出就是下一轮的输入。每一步都比"一口吃成胖子"更可验收。</li>
+      <li><strong>思维树（Tree of Thoughts）</strong>：让模型对同一问题同时长出几条思路，先摆出来比较，再选一条走下去。适合"多种解法并存"的物理题。</li>
+      <li><strong>自洽性（Self-Consistency）</strong>：同一道计算题独立运行 3–5 次，取多数一致的答案；分歧大就人工复核。这正是物理实验"多次独立测量、看结果是否自洽"的思路。</li>
+      <li><strong>变量复用</strong>：把卡里会变的部分写成占位符，如 {材料原文}、{字数上限}，每次填空即用——你的七字段卡就有了"参数"。（本条与自洽性要点整理自 Google 提示工程解读。）</li>
+    </ul>
+    <p>想看更多真实技能长什么样，可阅读 <a href="https://agentskillsdev.com/" target="_blank" rel="noopener">agentskillsdev.com</a> 的中文深度手册，作为课堂内容的延伸。</p>
+  </details>
+
+  <nav class="pagenav" aria-label="上一讲 / 下一讲">
+    <a href="../ch04/index.html"><span class="label">← 上一讲</span><span class="title">第 4 讲 · 提问的艺术：Prompt 基本功</span></a>
+    <a class="next" href="../ch06/index.html"><span class="label">下一讲 →</span><span class="title">第 6 讲 · 对话综合工作坊：物理场景实战</span></a>
+  </nav>
+</main>
+
+<style>
+.kg-fab { position: fixed; right: 26px; bottom: 26px; z-index: 90; width: 64px; height: 64px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none;
+  background: linear-gradient(135deg, #2f6fed, #8e44d3); color: #fff; box-shadow: 0 6px 18px rgba(47, 111, 237, 0.42);
+  transition: transform .15s ease, box-shadow .15s ease; }
+.kg-fab:hover { transform: scale(1.09); box-shadow: 0 9px 26px rgba(47, 111, 237, 0.55); }
+.kg-fab-icon { font-size: 23px; line-height: 1; }
+.kg-fab-label { font-size: 10px; letter-spacing: 1px; }
+@media (max-width: 700px) { .kg-fab { right: 16px; bottom: 16px; width: 56px; height: 56px; } }
+@media print { .kg-fab { display: none; } }
+</style>
+<a class="kg-fab" href="../glossary.html?focus=ch05" aria-label="本讲知识图谱" title="知识图谱：本讲概念网络与核心考点">
+  <span class="kg-fab-icon">🕸</span><span class="kg-fab-label">图谱</span>
+</a>
+<script src="../js/main.js"></script>
+</body>
+</html>

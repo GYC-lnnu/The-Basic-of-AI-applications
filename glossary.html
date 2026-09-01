@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知识图谱 · 《人工智能应用基础》课程网站</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  tr[id] { scroll-margin-top: 70px; }
+  .kg-layout { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; }
+  .kg-main { flex: 1 1 620px; min-width: 320px; }
+  .kg-side { flex: 0 0 300px; max-width: 100%; }
+  #kg-canvas { width: 100%; height: 620px; border: 1px solid #d7dce4; border-radius: 10px;
+               background: linear-gradient(180deg, #fbfcfe 0%, #f2f5fa 100%); display: block; }
+  #kg-canvas .kg-lines line { stroke: rgba(140, 150, 165, 0.30); stroke-width: 1.1; pointer-events: none; }
+  #kg-canvas.has-focus .kg-lines line { stroke: rgba(140, 150, 165, 0.12); }
+  #kg-canvas.has-focus .kg-lines line.is-related { stroke: rgba(47, 111, 237, 0.9); stroke-width: 1.8; }
+  #kg-canvas .kg-node { cursor: pointer; }
+  #kg-canvas .kg-node circle { stroke: #fff; stroke-width: 1.4; }
+  #kg-canvas .kg-node text { font: 11.5px "Microsoft YaHei", sans-serif; fill: #2a2f3a;
+                             paint-order: stroke; stroke: rgba(255, 255, 255, 0.85); stroke-width: 3px; }
+  #kg-canvas.has-focus .kg-node { opacity: 0.18; }
+  #kg-canvas.has-focus .kg-node.is-related { opacity: 1; }
+  #kg-canvas.has-focus .kg-node.is-source circle { stroke: #1b1f27; stroke-width: 3; }
+  #kg-canvas .kg-node.is-search circle { stroke: #e6852a; stroke-width: 3; }
+  #kg-detail { border: 1px solid #d7dce4; border-radius: 10px; padding: 14px 16px; background: #fff;
+               min-height: 200px; font-size: 14px; }
+  #kg-detail h3 { margin: 8px 0 6px; font-size: 17px; }
+  #kg-detail .kg-badge { display: inline-block; color: #fff; border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  #kg-detail .kg-en { color: #6b7284; font-size: 12px; margin: 0; }
+  #kg-detail .kg-rel-title { margin: 10px 0 4px; font-weight: 600; font-size: 13px; }
+  .kg-rel { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kg-chip { border: 1.4px solid #99a; background: #f7f9fc; border-radius: 16px; padding: 3px 10px;
+             font-size: 12px; cursor: pointer; }
+  .kg-chip:hover { background: #e8eefb; }
+  .kg-toolbar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 10px 0; }
+  .kg-toolbar input[type="text"] { flex: 1 1 200px; max-width: 320px; padding: 7px 10px; border: 1px solid #c6cdd8; border-radius: 8px; }
+  #kg-filters { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .kg-filter { font-size: 13px; cursor: pointer; user-select: none; }
+  .kg-filter input { vertical-align: -2px; margin-right: 3px; }
+  #kg-reset { padding: 6px 14px; border: 1px solid #c6cdd8; border-radius: 8px; background: #fff; cursor: pointer; }
+  #kg-reset:hover { background: #f0f3f8; }
+  #kg-status { font-size: 12px; color: #6b7284; }
+  .kg-locate { border: 1px solid #b9c4d6; background: #f2f6fd; border-radius: 6px; font-size: 11px;
+               padding: 1px 7px; cursor: pointer; margin-left: 4px; }
+  .kg-locate:hover { background: #e2ecfc; }
+  .kg-empty { color: #6b7284; }
+  @media (max-width: 760px) { #kg-canvas { height: 440px; } .kg-side { flex: 1 1 100%; } }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">《人工智能应用基础》课程网站</a>
+    <span class="spacer"></span>
+    <a class="navlink" href="index.html">课程首页</a>
+    <a class="navlink active" href="glossary.html">知识图谱</a>
+  </div>
+</nav>
+
+<main>
+  <div class="breadcrumb"><a href="index.html">课程首页</a> › 知识图谱</div>
+  <h1>课程知识图谱</h1>
+  <p class="lead">把全课程的<b>45 个术语、16 讲、6 个模块、5 个能力阶段、15 个物理案例任务、16 个核心考点</b>连成一张图（103 节点 / 327 条关系边）。<b>点击节点</b>看详情与相连概念；<b>拖动</b>整理布局，<b>滚轮</b>缩放；用搜索或下方分类过滤聚焦；各讲页面右下角的 🕸 悬浮按钮可一键直达本讲区域。</p>
+
+  <div class="kg-toolbar">
+    <input type="text" id="kg-search" placeholder="搜索节点，如：MCP、单摆、第 8 讲…">
+    <div id="kg-filters"></div>
+    <button id="kg-reset">重置视图</button>
+    <span id="kg-status"></span>
+  </div>
+
+  <div class="kg-layout">
+    <div class="kg-main"><svg id="kg-canvas" viewBox="0 0 2000 1400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="课程知识图谱"></svg></div>
+    <div class="kg-side"><div id="kg-detail"><p class="kg-empty">点击图中节点查看详情；拖动节点可整理布局，滚轮缩放，空白处拖动平移。</p></div></div>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 建议的用法</div>
+    <p>① 课前：按模块过滤，只看本讲相连的术语与案例；② 课后复习：从一个考点节点出发，沿边自测"它连着哪些概念、我能不能讲清楚"；③ 备考：搜索"考点"类别，把 16 个核心考点全部过一遍。每个考点都回到对应讲次的<strong>自测题</strong>里动手验证。</p>
+  </div>
+
+  <div class="module-title">术语详解表（与图谱节点一一对应）</div>
+
+  <div class="module-title" style="font-size:15px;">一 · 基础与认知（第 1–3 讲）</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>术语</th><th>一句话理解</th><th>详解见</th></tr></thead>
+      <tbody>
+        <tr id="term-aigc"><td><strong>AIGC（AI Generated Content）</strong></td><td>人工智能生成内容：用 AI 生成文本、图像、音频、视频等内容的总称。</td><td>第 1–2 讲</td></tr>
+        <tr id="term-generaltech"><td><strong>通用技术（General Purpose Technology）</strong></td><td>像电与互联网一样"几乎对每件事都有用"的技术——正因此"AI 能干什么"难以一句话答完；分界线之外，值钱的是可迁移的能力。</td><td>第 2 讲</td></tr>
+        <tr id="term-chatbot"><td><strong>Chatbot（聊天机器人）</strong></td><td>坐在你旁边的顾问：只问答、解释、写草稿，不动手执行。</td><td>第 1、8 讲</td></tr>
+        <tr id="term-llm"><td><strong>大模型（LLM）</strong></td><td>数字同事的大脑：基于海量文本训练的概率预测机器，负责理解、分析、判断和表达。</td><td>第 2–3、8 讲</td></tr>
+        <tr id="term-token"><td><strong>Token（词元）</strong></td><td>AI 处理文字的"积木"，也是按量计费的"话费"——问题、资料、对话都占 Token。</td><td>第 3 讲</td></tr>
+        <tr id="term-context"><td><strong>上下文窗口（Context Window）</strong></td><td>当前办公桌上的资料，容量有限（用 Token 计量）；塞太多，旧的会被压缩或挤出去（"吃书"）。</td><td>第 3、5 讲</td></tr>
+        <tr id="term-hallucination"><td><strong>幻觉（Hallucination）</strong></td><td>AI 输出与客观事实不符或虚构的内容（如编造文献）；可能由模型产生，也可能被用户诱导——必须人工核查。</td><td>第 3、11 讲</td></tr>
+        <tr id="term-sl"><td><strong>监督学习（Supervised Learning）</strong></td><td>AI 工具箱里"擅长贴标签"的老牌工具：给定输入 A，输出标签 B（垃圾邮件判定、语音识别等）；大模型正是用它"反复预测下一个词"造出来的。</td><td>第 3 讲</td></tr>
+        <tr id="term-pretrain"><td><strong>预训练（Pre-training）</strong></td><td>用海量无标注文本自监督地训练模型，相当于"读遍互联网"。</td><td>第 3 讲</td></tr>
+        <tr id="term-rlhf"><td><strong>人类反馈对齐（RLHF）</strong></td><td>用人类偏好数据继续调教模型，让它更有用、诚实、无害。</td><td>第 3 讲</td></tr>
+        <tr id="term-multimodal"><td><strong>多模态（Multimodal）</strong></td><td>同时处理文字、图像、音频、视频等多种输入/输出形式。</td><td>第 2、13–14 讲</td></tr>
+        <tr id="term-transformer"><td><strong>Transformer</strong></td><td>2017 年提出的神经网络架构，靠"注意力机制"加权各词的重要性，是大模型的地基。</td><td>第 2–3 讲</td></tr>
+        <tr id="term-gan"><td><strong>GAN（生成对抗网络）</strong></td><td>生成器与判别器互相"博弈"的生成模型，早期图像生成主力。</td><td>第 2–3 讲</td></tr>
+        <tr id="term-diffusion"><td><strong>扩散模型（Diffusion Model）</strong></td><td>从随机噪点逐步"去噪"出图像/视频的生成模型——当前文生图/文生视频的主流机制。</td><td>第 13–14 讲</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="module-title" style="font-size:15px;">二 · 提示词与对话（第 4–6 讲）</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>术语</th><th>一句话理解</th><th>详解见</th></tr></thead>
+      <tbody>
+        <tr id="term-prompt"><td><strong>提示词（Prompt）</strong></td><td>今天交给它的任务单：决定这一次 AI 做什么、怎么做。</td><td>第 4–5 讲</td></tr>
+        <tr id="term-instruction"><td><strong>指令（Instructions）</strong></td><td>长期遵守的岗位说明书（如写在 AGENTS.md 里的规则），管一贯的行为准则。</td><td>第 8、14 讲</td></tr>
+        <tr id="term-fewshot"><td><strong>少样本提示（Few-shot）</strong></td><td>在提示词里给一两个输入/输出示例，让模型照着模仿格式与风格。</td><td>第 4–5 讲</td></tr>
+        <tr id="term-cot"><td><strong>思维链（CoT）</strong></td><td>让模型"分步推理再给答案"的提示技巧，复杂题更稳。</td><td>第 5 讲</td></tr>
+        <tr id="term-rag"><td><strong>RAG（检索增强生成）</strong></td><td>先从资料库里检索、再让 AI 依据资料回答——有据可依、可溯源，专治幻觉。</td><td>第 6、11 讲</td></tr>
+        <tr id="term-deepresearch"><td><strong>Deep Research（深度研究）</strong></td><td>AI 像智能体一样自主检索、筛选、整合网络信息，产出一份带来源的研究报告。</td><td>第 2、6 讲</td></tr>
+        <tr id="term-knowledgebase"><td><strong>知识库</strong></td><td>多篇文档组成的可问答资料库；回答限定在资料范围内（NotebookLM、腾讯 ima 等）。</td><td>第 6、11 讲</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="module-title" style="font-size:15px;">三 · Agent 与技能（第 5、7–11 讲）</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>术语</th><th>一句话理解</th><th>详解见</th></tr></thead>
+      <tbody>
+        <tr id="term-agent"><td><strong>AI Agent（智能体）</strong></td><td>能接任务的数字同事：接任务 → 想步骤 → 调工具 → 查结果 → 交成果。与 Chatbot 的区别是"做"而不只"说"。</td><td>第 1、8 讲</td></tr>
+        <tr id="term-skill"><td><strong>技能（Skill）</strong></td><td>可复用的工作方法包（菜谱）；工具则是菜刀与炒锅。一次教会，反复使用，跨工具通用（开放标准）。</td><td>第 5、9–11 讲</td></tr>
+        <tr id="term-skillmd"><td><strong>SKILL.md</strong></td><td>技能的说明文件：YAML 元数据（名称/描述）+ 方法正文，是"提示词卡"的工程化形态。</td><td>第 5、10 讲</td></tr>
+        <tr id="term-pd"><td><strong>渐进式披露（Progressive Disclosure）</strong></td><td>资料不一次全摊开：元数据常驻（目录卡）、指令触发加载（翻文件夹）、资源按需取用（查附录），省下最贵的上下文。</td><td>第 3、8 讲</td></tr>
+        <tr id="term-tool"><td><strong>工具调用（Tool Use）</strong></td><td>AI 说"要按哪个按钮"，程序替它去按——模型决策 → 程序执行 → 结果回传。</td><td>第 9–10 讲</td></tr>
+        <tr id="term-mcp"><td><strong>MCP（Model Context Protocol）</strong></td><td>不同软件之间的"通用插座"：一套开放连接标准，让 Agent 即插即用地使用外部软件与数据。</td><td>第 8 讲</td></tr>
+        <tr id="term-subagent"><td><strong>子智能体（Subagent）</strong></td><td>主管分派的专项助手：独立工位（上下文）、有限权限，干完向主管汇报。</td><td>第 8、10 讲</td></tr>
+        <tr id="term-memory"><td><strong>记忆（Memory）</strong></td><td>长期笔记本：跨任务记住你的偏好与历史，不限于本次对话（上下文只是"当前桌面"）。</td><td>第 9–10 讲</td></tr>
+        <tr id="term-mode"><td><strong>模式（仅回答/计划/目标）</strong></td><td>数字同事的三种工作方式：只出主意、先给路线图再动手、围绕目标自主推进。</td><td>第 8 讲</td></tr>
+        <tr id="term-permission"><td><strong>权限（只读/默认/自动审批/完全访问）</strong></td><td>你愿意交出多少把"钥匙"：从只看到完全放权，决定 Agent 的行动边界。</td><td>第 9–10 讲</td></tr>
+        <tr id="term-workdir"><td><strong>工作目录（Working Directory）</strong></td><td>Agent 当前被限定操作的文件夹范围——最小授权的第一道边界。</td><td>第 9 讲</td></tr>
+        <tr id="term-sandbox"><td><strong>沙箱（Sandbox）</strong></td><td>带防护罩的实验台：资源受限、与外界隔离的代码执行环境，让 AI 放手干活也更安全。</td><td>第 14 讲</td></tr>
+        <tr id="term-filesapi"><td><strong>Files API</strong></td><td>文件的存取窗口：Agent 通过它上传素材、取回成品。</td><td>第 14 讲</td></tr>
+        <tr id="term-claudemd"><td><strong>CLAUDE.md / AGENTS.md</strong></td><td>放在项目里的长期指令文件：Agent 每次开工都会先读的"项目须知"。</td><td>第 8、14 讲</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="module-title" style="font-size:15px;">四 · 生成与多模态（第 12–15 讲）</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>术语</th><th>一句话理解</th><th>详解见</th></tr></thead>
+      <tbody>
+        <tr id="term-t2i"><td><strong>文生图（Text-to-Image）</strong></td><td>由文字提示词生成图像；基础公式"主体 + 场景 + 风格"。</td><td>第 12 讲</td></tr>
+        <tr id="term-negprompt"><td><strong>负向提示词（Negative Prompt）</strong></td><td>声明"不想要什么"（如模糊、多余人物），帮生成结果排雷。</td><td>第 12 讲</td></tr>
+        <tr id="term-t2v"><td><strong>文生视频（Text-to-Video）</strong></td><td>由文字提示词生成视频片段；基础公式"主体 + 场景 + 运动"。</td><td>第 13 讲</td></tr>
+        <tr id="term-tts"><td><strong>TTS（语音合成）</strong></td><td>文字转语音，给短视频配音的自动话筒。</td><td>第 13 讲</td></tr>
+        <tr id="term-storyboard"><td><strong>分镜（Storyboard）</strong></td><td>把脚本拆成"镜号/画面/口播/时长/生成方式"的拍摄执行表。</td><td>第 13 讲</td></tr>
+        <tr id="term-vibecoding"><td><strong>Vibe Coding（自主编程）</strong></td><td>AI 编程第三阶段：你只说目标，AI 自主规划并完成开发（Tab 补全 → 辅助编程 → 自主编程）。</td><td>第 14 讲</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="module-title" style="font-size:15px;">五 · 课程方法词（全站通用）</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>术语</th><th>一句话理解</th><th>详解见</th></tr></thead>
+      <tbody>
+        <tr id="term-baodi"><td><strong>保底任务 / 进阶挑战</strong></td><td>课堂任务的两层设计：人人完成保底，学有余力再挑战进阶。</td><td>每讲任务单</td></tr>
+        <tr id="term-taskcard"><td><strong>任务卡</strong></td><td>五栏任务分解卡：输入—AI 动作—人工动作—产出物—验收标准。</td><td>第 7–8 讲</td></tr>
+        <tr id="term-duipai"><td><strong>对拍</strong></td><td>用独立方法（如手算一组）核验 AI 结果的抽查习惯——物理学生的专业优势。</td><td>第 10–11 讲</td></tr>
+        <tr id="term-log"><td><strong>AI 使用日志</strong></td><td>记录任务、提示词、迭代次数与反思的个人过程档案，期末随作品集提交。</td><td>全站</td></tr>
+        <tr id="term-declaration"><td><strong>AI 使用声明</strong></td><td>声明用了什么工具、做了什么、如何核查的诚信附件，随作业提交——"AI 产出，人工把关"。</td><td>全站</td></tr>
+        <tr id="term-harness"><td><strong>Harness Engineering</strong></td><td>为 Agent 搭建可靠执行环境（工具、权限、上下文管理）的工程方法论，进阶方向。</td><td>第 16 讲（拓展）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 使用建议</div>
+    <p>上方图谱适合"看关系"，这张表适合"查定义"；图谱节点点开即有"查看详解表词条"直达链接，表中每行也有"🔍 定位"按钮回到图谱。</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="source">
+    《人工智能应用基础》课程知识图谱 · "数字同事"类比体系全站通用，图谱关系边由各讲页面实际引用扫描与课程设计梳理生成。
+  </div>
+</footer>
+<script src="js/kg-data.js"></script>
+<script src="js/kg-graph.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>        <tr id="term-react"><td><strong>ReAct（推理-行动循环）</strong></td><td>Agent 干活的发动机："想一想 → 动手 → 看结果"循环往复；下一步由模型看情况决定，这正是它与写死的固定流程的分界。</td><td>第 8 讲</td></tr>
+

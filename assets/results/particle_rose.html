@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>粒子玫瑰 · Particle Rose — Three.js</title>
+<style>
+  :root {
+    --bg: #0b0713; --panel-a: #140e20; --panel-b: #0e0917;
+    --line: #2b1e40; --txt: #ece4f6; --dim: #8f80a8;
+    --pink: #ff5c8a; --accent: #ffb9d0;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden; color: var(--txt);
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: radial-gradient(1100px 700px at 76% 38%, #221129 0%, #0b0713 60%);
+    display: flex; flex-direction: column;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 14px;
+    padding: 10px 18px; border-bottom: 1px solid var(--line);
+    background: rgba(10, 6, 18, 0.65);
+  }
+  .logo {
+    width: 38px; height: 38px; border-radius: 12px; flex: none;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    background: linear-gradient(135deg, #3c1631, #1b0f2e); border: 1px solid #4a2450;
+  }
+  h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: 0.5px; }
+  h1 em { color: var(--dim); font-style: normal; font-weight: 400; font-size: 13px; margin-left: 6px; }
+  header p { margin: 2px 0 0; font-size: 11.5px; color: var(--dim); }
+  .badges { margin-left: auto; display: flex; gap: 8px; flex: none; }
+  .pill {
+    font-size: 11px; color: var(--accent); white-space: nowrap;
+    border: 1px solid rgba(255, 92, 138, 0.35); background: rgba(255, 92, 138, 0.08);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  main { flex: 1; display: flex; min-height: 0; }
+
+  /* ---------- 左侧：运行代码 ---------- */
+  #codePane {
+    width: 42%; min-width: 380px; min-height: 0;
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--panel-a), var(--panel-b));
+  }
+  .code-head {
+    flex: none; display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px; border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .file { font: 600 12px/1 Consolas, monospace; color: var(--accent); margin-left: 4px; }
+  .live { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #35e08e; letter-spacing: 1px; }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: #35e08e; animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 6px #35e08e; } 50% { opacity: 0.35; box-shadow: none; } }
+  .hint { margin-left: auto; font-size: 11px; color: var(--dim); white-space: nowrap; }
+  .btn {
+    background: #1e1433; color: #d9c9ee; border: 1px solid #3b2a58;
+    padding: 4px 11px; border-radius: 7px; font-size: 12px; cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--pink); color: #fff; }
+  .btn.on { border-color: var(--pink); color: var(--accent); background: rgba(255, 92, 138, 0.12); }
+  #codeWrap { flex: 1; min-height: 0; overflow: auto; display: flex; align-items: flex-start; }
+  #gutter, #codeView {
+    margin: 0; font: 12px/1.62 "Cascadia Code", "JetBrains Mono", Consolas, "Courier New", monospace;
+    tab-size: 2;
+  }
+  #gutter {
+    flex: none; position: sticky; left: 0; z-index: 2;
+    padding: 14px 12px 45vh 16px; text-align: right;
+    color: #4e3f6b; background: #120c1f; user-select: none;
+    box-shadow: 8px 0 10px -8px rgba(0, 0, 0, 0.8);
+  }
+  #codeView { flex: none; padding: 14px 30px 45vh 16px; white-space: pre; color: #cfc4e2; }
+  .t-cm  { color: #6b5e88; font-style: italic; }
+  .t-str { color: #ffb28a; }
+  .t-num { color: #e0aaff; }
+  .t-kw  { color: #ff6f9f; font-weight: 600; }
+  .t-gl  { color: #6fd3ff; }
+  .t-fn  { color: #ffd479; }
+  #codeWrap::-webkit-scrollbar { width: 10px; height: 10px; }
+  #codeWrap::-webkit-scrollbar-thumb { background: #33244a; border-radius: 5px; }
+  #codeWrap::-webkit-scrollbar-thumb:hover { background: #4a3268; }
+  #codeWrap::-webkit-scrollbar-track, #codeWrap::-webkit-scrollbar-corner { background: transparent; }
+
+  /* ---------- 右侧：渲染画面 ---------- */
+  #viewPane { flex: 1; position: relative; min-width: 0; min-height: 0; }
+  #stage { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  .vignette {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(130% 100% at 50% 40%, transparent 55%, rgba(4, 2, 9, 0.6) 100%);
+  }
+  .corner { position: absolute; font-size: 11px; color: rgba(255, 255, 255, 0.35); pointer-events: none; letter-spacing: 0.5px; }
+  .corner.tl { top: 12px; left: 16px; }
+  .corner.br { bottom: 12px; right: 16px; }
+  .webgl-tip {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    max-width: 80%; padding: 14px 20px; border-radius: 10px; text-align: center;
+    background: rgba(30, 12, 30, 0.9); border: 1px solid rgba(255, 92, 138, 0.4);
+    color: var(--accent); font-size: 13px; line-height: 1.7;
+  }
+
+  @media (max-width: 900px) {
+    main { flex-direction: column; }
+    #viewPane { order: 0; flex: none; height: 52%; }
+    #codePane { order: 1; width: 100%; min-width: 0; height: 48%; border-right: none; border-top: 1px solid var(--line); }
+    .badges { display: none; }
+    .hint { display: none; }
+  }
+</style>
+<script src="three.min.js"></script>
+<script>
+  if (!window.THREE) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');
+  }
+</script>
+</head>
+<body>
+
+<header>
+  <div class="logo">🌹</div>
+  <div>
+    <h1>粒子玫瑰 <em>Particle Rose</em></h1>
+    <p>Three.js 粒子系统 · 自定义 GLSL 着色器发光 · 左侧为正在运行的本段源码</p>
+  </div>
+  <div class="badges">
+    <span class="pill">粒子类 Particle</span>
+    <span class="pill">GLSL 自定义着色器</span>
+    <span class="pill">加性发光</span>
+  </div>
+</header>
+
+<main>
+  <section id="codePane">
+    <div class="code-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="file">rose.js</span>
+      <span class="live"><i></i>RUNNING</span>
+      <span class="hint">悬停暂停 · 滚到底自动回卷</span>
+      <button id="btnAuto" class="btn" type="button">⏸ 暂停滚动</button>
+      <button id="btnCopy" class="btn" type="button">复制代码</button>
+    </div>
+    <div id="codeWrap">
+      <pre id="gutter"></pre>
+      <pre id="codeView"></pre>
+    </div>
+  </section>
+  <section id="viewPane">
+    <canvas id="stage"></canvas>
+    <div class="vignette"></div>
+    <span class="corner tl">THREE.Points · AdditiveBlending · GLSL Glow</span>
+    <span class="corner br">拖拽旋转视角 · 移动鼠标产生视差</span>
+  </section>
+</main>
+
+<!-- =============================================================
+     下面这段就是程序本体：它真实运行，同时被完整展示在左侧面板。
+============================================================== -->
+<script id="source">
+/* ============================================================
+   粒子玫瑰 · Particle Rose —— 本页正在运行的核心源码
+   结构：粒子类 → 粒子云 → 花束生成器 → 自定义着色器 → 场景动画
+   想折腾？改 CONF 里的参数，保存刷新即可看到变化。
+============================================================ */
+(function () {
+  'use strict';
+  if (typeof THREE === 'undefined') return;   // CDN 未加载成功时交给页面提示
+
+  /* ---------- 〇、可调参数 ---------- */
+  var CONF = {
+    spin: 0.12,        // 花束自转速度（弧度/秒）
+    cageSpin: 0.05,    // 展柜线框反向转速
+    drift: 0.045,      // 镜头自动漂移速度
+    autoCam: true      // 镜头是否自动漂移
+  };
+
+  var TAU = Math.PI * 2;
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function smooth(a, b, x) { var t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+  function v3(x, y, z) { return new THREE.Vector3(x, y, z); }
+
+  /* ---------- 一、粒子类：描述一颗粒子的全部属性 ---------- */
+  class Particle {
+    constructor(x, y, z, color, size, opt) {
+      opt = opt || {};
+      this.x = x; this.y = y; this.z = z;            // 基准位置
+      this.color = color;                            // THREE.Color 实例
+      this.size = size;                              // 基准尺寸
+      this.phase = rand(0, TAU);                     // 初相位，错开闪烁节拍
+      this.speed = opt.speed !== undefined ? opt.speed : 1;    // 个体时间流速
+      this.edge  = opt.edge  !== undefined ? opt.edge  : 0;    // 边缘系数，越大越飘
+      this.twk   = opt.twk   !== undefined ? opt.twk   : 0.35; // 闪烁强度
+      // 随机单位漂移方向
+      var th = rand(0, TAU), cp = rand(-1, 1), sp = Math.sqrt(1 - cp * cp);
+      this.dx = sp * Math.cos(th); this.dy = cp; this.dz = sp * Math.sin(th);
+    }
+  }
+
+  /* ---------- 二、粒子云：把上万颗粒子打包成一次绘制调用 ---------- */
+  class ParticleCloud {
+    constructor(capacity) {
+      this.n = 0;
+      this.pos   = new Float32Array(capacity * 3);
+      this.col   = new Float32Array(capacity * 3);
+      this.drift = new Float32Array(capacity * 3);
+      this.size  = new Float32Array(capacity);
+      this.phase = new Float32Array(capacity);
+      this.speed = new Float32Array(capacity);
+      this.edge  = new Float32Array(capacity);
+      this.twk   = new Float32Array(capacity);
+    }
+    add(p) {
+      var i = this.n, i3 = i * 3;
+      this.pos[i3] = p.x; this.pos[i3 + 1] = p.y; this.pos[i3 + 2] = p.z;
+      this.col[i3] = p.color.r; this.col[i3 + 1] = p.color.g; this.col[i3 + 2] = p.color.b;
+      this.drift[i3] = p.dx; this.drift[i3 + 1] = p.dy; this.drift[i3 + 2] = p.dz;
+      this.size[i] = p.size; this.phase[i] = p.phase;
+      this.speed[i] = p.speed; this.edge[i] = p.edge; this.twk[i] = p.twk;
+      this.n++;
+    }
+    build() {
+      var g = new THREE.BufferGeometry(), n3 = this.n * 3, n1 = this.n;
+      g.setAttribute('position', new THREE.BufferAttribute(this.pos.subarray(0, n3), 3));
+      g.setAttribute('aColor',   new THREE.BufferAttribute(this.col.subarray(0, n3), 3));
+      g.setAttribute('aDrift',   new THREE.BufferAttribute(this.drift.subarray(0, n3), 3));
+      g.setAttribute('aSize',    new THREE.BufferAttribute(this.size.subarray(0, n1), 1));
+      g.setAttribute('aPhase',   new THREE.BufferAttribute(this.phase.subarray(0, n1), 1));
+      g.setAttribute('aSpeed',   new THREE.BufferAttribute(this.speed.subarray(0, n1), 1));
+      g.setAttribute('aEdge',    new THREE.BufferAttribute(this.edge.subarray(0, n1), 1));
+      g.setAttribute('aTwk',     new THREE.BufferAttribute(this.twk.subarray(0, n1), 1));
+      return g;
+    }
+  }
+
+  /* ---------- 三、自定义着色器：发光点精灵 ---------- */
+  // 顶点着色器：负责流动、飘散、闪烁与点大小
+  var VERT = `
+    uniform float uTime;
+    uniform float uScale;
+    attribute vec3 aColor;
+    attribute vec3 aDrift;
+    attribute float aSize;
+    attribute float aPhase;
+    attribute float aSpeed;
+    attribute float aEdge;
+    attribute float aTwk;
+    varying vec3 vColor;
+    varying float vGlow;
+    void main() {
+      float ph = uTime * aSpeed + aPhase;
+      // 流动：绕基准点做微小环流，边缘粒子幅度更大
+      float amp = 0.008 + aEdge * 0.028;
+      vec3 p = position + aDrift * (sin(ph * 0.9) + 0.6 * sin(ph * 1.7 + 2.1)) * amp;
+      p.y += sin(ph * 0.7) * (0.005 + aEdge * 0.012);
+      // 飘散：边缘粒子沿随机方向缓慢往外走，走到头再回来
+      float scatter = pow(max(sin(ph * 0.27), 0.0), 2.0) * aEdge;
+      p += aDrift * scatter * 0.10;
+      // 闪烁：基础呼吸 + 偶发高光
+      float tw = 0.62 + 0.35 * sin(ph * 2.1);
+      tw += pow(max(sin(ph * 3.3 + 1.3), 0.0), 10.0) * 1.4 * aTwk;
+      vGlow = clamp(tw, 0.05, 2.2);
+      vColor = aColor;
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      gl_PointSize = max(aSize * (1.0 + 0.30 * tw) * uScale / -mv.z, 1.2);
+      gl_Position = projectionMatrix * mv;
+    }`;
+
+  // 片元着色器：高斯亮核 + 柔和光晕，中心提白，加性混合叠加成辉光
+  var FRAG = `
+    varying vec3 vColor;
+    varying float vGlow;
+    void main() {
+      float d = length(gl_PointCoord - 0.5) * 2.0;
+      if (d > 1.0) discard;
+      float core = exp(-d * d * 7.0);
+      float halo = exp(-d * d * 2.2) * 0.10;
+      float a = (core * 1.0 + halo) * vGlow;
+      vec3 col = mix(vColor, vec3(1.0, 0.93, 0.96), core * 0.15);
+      gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }`;
+
+  /* ---------- 四、花束生成器 ---------- */
+  var C = {
+    bloomIn:  '#ffd9c4',   // 花心：暖奶油
+    bloomMid: '#e8604f',   // 花瓣中段：珊瑚红
+    bloomOut: '#c22f35',   // 花瓣外缘：正红
+    rim:      '#ffc9b8',   // 瓣缘亮边：暖桃色高光
+    fillA:    '#c93a44',   // 花团缝隙：深红
+    fillB:    '#ff9d8a',   // 花团缝隙：浅珊瑚
+    spray:    '#ffdcd2',   // 轮廓消散雾粒：淡粉白
+    stem:     '#f3e3d8',   // 花茎：奶白（收拢的花束柄）
+    stemRed:  '#c96a5e'    // 花茎下部：泛红
+  };
+  function col(hex) { return new THREE.Color(hex); }
+
+  // 一朵玫瑰花头：同心环上的花瓣弧线，环环错位成螺旋螺纹；
+  // 每条弧最外一排提亮成瓣缘高光，弧间留暗缝，俯视即见清晰玫瑰螺纹。
+  function addRoseHead(cloud, opt) {
+    var R = opt.R, pos = opt.pos, J = opt.rings;
+    var q = new THREE.Quaternion();
+    if (opt.quat) q.copy(opt.quat);
+    else if (opt.tilt) q.setFromAxisAngle(opt.axis, opt.tilt);
+    var tmp = new THREE.Vector3();
+    var phase = opt.phase || 0;
+    var sizeK = 0.65 + 0.50 * R / 0.4;
+    var oIn = opt.cIn || C.bloomIn, oMid = opt.cMid || C.bloomMid, oOut = opt.cOut || C.bloomOut;
+    var hueTint = rand(-0.035, 0.035), litTint = rand(-0.05, 0.02);   // 每朵花色调微差
+
+    // 花心：一小簇暖粉
+    var nCore = Math.round(80 * R / 0.4);
+    for (var ci = 0; ci < nCore; ci++) {
+      var cx = rand(-1, 1), cy = rand(-1, 1), cz = rand(-1, 1);
+      if (cx * cx + cy * cy + cz * cz > 1) { ci--; continue; }
+      var cs = R * 0.08 * (0.3 + 0.7 * Math.cbrt(Math.random()));
+      tmp.set(cx * cs, Math.abs(cy) * cs * 0.6 + R * 0.14, cz * cs)
+         .applyQuaternion(q).add(pos);
+      var c0 = col(C.bloomIn).lerp(col(C.bloomMid), 0.7 + Math.random() * 0.3);
+      cloud.add(new Particle(tmp.x, tmp.y, tmp.z, c0,
+        rand(0.012, 0.020) * sizeK, { twk: 0.35 }));
+    }
+
+    // 同心花瓣环：由内到外铺开
+    for (var j = 0; j < J; j++) {
+      var jn = J > 1 ? j / (J - 1) : 1;                        // 0 花心 → 1 外缘
+      var rj = R * (0.15 + 0.85 * jn);                         // 环半径（环间隙要远大于粒子光斑）
+      var y0 = R * (0.30 * Math.pow(1 - jn, 1.7) - 0.26 * jn * jn);  // 穹顶 → 外垂
+      var petals = 4 + 2 * j;                                  // 每环瓣数渐增
+      for (var pj = 0; pj < petals; pj++) {
+        var a0 = phase + pj / petals * TAU + j * 0.55;         // 环间错位 → 螺旋
+        var span = TAU / petals * rand(0.55, 0.80);            // 弧不满整圈，留暗缝
+        var nA = Math.round(16 + rj * span * 420 * R);
+        // 本瓣基色：内环少量奶白 → 主体珊瑚红 → 外环正红
+        var baseC;
+        if (jn < 0.08) baseC = col(oIn).lerp(col(oMid), jn / 0.08 * 0.85);
+        else baseC = col(oMid).lerp(col(oOut), Math.pow((jn - 0.08) / 0.92, 0.9));
+        var yPet = rand(-1, 1) * R * 0.03;                     // 每瓣高低微差
+
+        for (var i = 0; i < nA; i++) {
+          var frac = i / nA;
+          var th = a0 + span * frac;
+          // 径向厚度：外环更厚，最外一排是亮瓣缘
+          var rr = rj + (Math.random() - 0.5) * R * 0.048;
+          var isRim = rr > rj + R * 0.012;
+          var tipDrop = smooth(0.60, 1, frac) * R * (0.05 + 0.22 * jn);  // 瓣尖下垂
+          var py = y0 + yPet - tipDrop + rand(-1, 1) * R * 0.012;
+          tmp.set(rr * Math.cos(th), py, rr * Math.sin(th))
+             .applyQuaternion(q).add(pos);
+          var rimF = (isRim ? 0.30 : 0.05) + smooth(0.7, 1, frac) * 0.14;
+          var c = baseC.clone().lerp(col(C.rim), rimF)
+                      .offsetHSL(hueTint, 0, litTint + rand(-0.03, 0.03));
+          var edge = clamp(0.2 + jn * 0.5 + (isRim ? 0.25 : 0) + frac * 0.15, 0, 1);
+          cloud.add(new Particle(tmp.x, tmp.y, tmp.z, c,
+            rand(0.022, 0.033) * sizeK * (isRim ? 1.10 : 1.0),
+            { edge: edge * 0.85, twk: 0.42 }));
+        }
+      }
+    }
+  }
+
+  // 二次贝塞尔取点（花茎用）
+  function bez(o, m, e, t) {
+    var a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, c = t * t;
+    return new THREE.Vector3(
+      o.x * a + m.x * b + e.x * c,
+      o.y * a + m.y * b + e.y * c,
+      o.z * a + m.z * b + e.z * c);
+  }
+
+  // 整束花：一座茂密的花冠 —— 几十朵小玫瑰沿穹顶填塞成团（模拟表面采样式花束的观感），
+  // 缝隙补密、轮廓向外消散成雾，底部收拢成一束奶白花柄
+  function buildBouquet(cloud) {
+    var C0 = new THREE.Vector3(0, 0.34, 0);          // 花冠中心
+    var RX = 1.00, RY = 0.80;                        // 花冠横 / 纵半径
+    var UP = new THREE.Vector3(0, 1, 0);
+
+    // 随机方向：略压扁的穹顶，底部收口留给花柄
+    function domeDir(yMin) {
+      var v = new THREE.Vector3();
+      do { v.set(rand(-1, 1), rand(-1, 1), rand(-1, 1)); } while (v.lengthSq() > 1 || v.lengthSq() < 1e-4);
+      v.normalize();
+      if (v.y < yMin) v.y = yMin + rand(0, 0.12);
+      return v.normalize();
+    }
+
+    // 一、花冠上的小玫瑰：由内向外铺，越靠表层越多、越大
+    var nBloom = 64;
+    for (var i = 0; i < nBloom; i++) {
+      var dir = domeDir(-0.62);
+      var depth = Math.pow(Math.random(), 0.45);             // 0 花冠内心 → 1 表层
+      var reach = 0.30 + 0.70 * depth;
+      var pos = new THREE.Vector3(
+        C0.x + dir.x * RX * reach, C0.y + dir.y * RY * reach, C0.z + dir.z * RX * reach);
+      var R = rand(0.16, 0.27) * (0.75 + 0.45 * depth);
+      // 花面朝外，带随机歪斜
+      var out = dir.clone(); out.y += rand(-0.3, 0.3); out.normalize();
+      var q = new THREE.Quaternion().setFromUnitVectors(UP, out);
+      // 色调：偏高偏表层 → 奶白粉；偏矮偏内 → 珊瑚正红
+      var warm = clamp((pos.y - C0.y) / RY * 0.55 + rand(-0.3, 0.3), -0.5, 0.5);
+      var cMid = col(C.bloomMid).lerp(col(C.bloomOut), clamp(0.5 - warm, 0, 1)).getStyle();
+      var cIn  = col(C.bloomIn).lerp(col(C.bloomMid), clamp(0.45 - warm * 0.5, 0.08, 0.9)).getStyle();
+      var cOut = col(C.bloomOut).lerp(col('#a8282e'), clamp(0.35 - warm * 0.5, 0, 0.85)).getStyle();
+      addRoseHead(cloud, { pos: pos, R: R, rings: 3 + ((Math.random() * 2) | 0),
+        quat: q, phase: rand(0, TAU), cIn: cIn, cMid: cMid, cOut: cOut });
+    }
+
+    // 二、缝隙补密：贴着穹顶再撒一层细粒，让花球读起来茂密无缝
+    var nFill = 7000;
+    for (var f = 0; f < nFill; f++) {
+      var d2 = domeDir(-0.55);
+      var rr = 0.88 + Math.random() * 0.13;
+      var cf = col(Math.random() < 0.5 ? C.fillA : C.fillB)
+        .lerp(col(C.rim), Math.random() < 0.15 ? 0.5 : rand(0, 0.18));
+      cloud.add(new Particle(
+        C0.x + d2.x * RX * rr + rand(-0.02, 0.02),
+        C0.y + d2.y * RY * rr + rand(-0.02, 0.02),
+        C0.z + d2.z * RX * rr + rand(-0.02, 0.02),
+        cf, rand(0.015, 0.026), { twk: 0.28, speed: rand(0.7, 1.1) }));
+    }
+
+    // 三、内部体积填充：花冠中心不再透光空洞
+    var nVol = 6500;
+    for (var v2 = 0; v2 < nVol; v2++) {
+      var d4 = domeDir(-0.55);
+      var rv = 0.15 + Math.random() * 0.75;
+      var cv = col(Math.random() < 0.6 ? C.fillA : C.fillB).offsetHSL(0, 0, rand(-0.08, 0.02));
+      cloud.add(new Particle(
+        C0.x + d4.x * RX * rv, C0.y + d4.y * RY * rv, C0.z + d4.z * RX * rv,
+        cv, rand(0.012, 0.022), { twk: 0.2, speed: rand(0.7, 1.1) }));
+    }
+
+    // 四、轮廓消散：贴着花冠往外的雾状 spray，越远越稀，如花粉飘散
+    var nSpray = 3400;
+    for (var s = 0; s < nSpray; s++) {
+      var d3 = domeDir(-0.62);
+      var shell = 1.0 + Math.pow(Math.random(), 2.6) * 0.40;
+      // 限制在展柜内壁之内
+      var hLen = Math.sqrt(d3.x * d3.x + d3.z * d3.z) * RX;
+      if (hLen > 0) shell = Math.min(shell, 1.40 / hLen);
+      if (d3.y > 0.05) shell = Math.min(shell, (1.28 - C0.y) / (d3.y * RY));
+      if (d3.y < -0.05) shell = Math.min(shell, (1.42 + C0.y) / (-d3.y * RY));
+      var cs = col(C.spray).offsetHSL(0, 0, rand(-0.05, 0.05));
+      cloud.add(new Particle(
+        C0.x + d3.x * RX * shell + rand(-0.02, 0.02),
+        C0.y + d3.y * RY * shell + rand(-0.02, 0.02),
+        C0.z + d3.z * RX * shell + rand(-0.02, 0.02),
+        cs, rand(0.008, 0.017), { twk: rand(0.3, 0.7), speed: rand(0.6, 1.2), edge: rand(0.5, 1) }));
+    }
+  }
+
+  // 花柄：奶白色花茎从底部收拢成束（约在束口处最亮，向下渐泛红）
+  function addStems(cloud) {
+    var C0 = new THREE.Vector3(0, 0.34, 0);
+    var RY = 0.80;
+    var nStem = 15;
+    for (var s = 0; s < nStem; s++) {
+      var a = s / nStem * TAU + rand(-0.2, 0.2);
+      var from = new THREE.Vector3(rand(-0.05, 0.05), -1.34 + rand(-0.02, 0.01), rand(-0.05, 0.05));
+      var to = new THREE.Vector3(
+        Math.cos(a) * rand(0.10, 0.42), C0.y - RY * rand(0.55, 0.95), Math.sin(a) * rand(0.10, 0.42));
+      var mid = from.clone().lerp(to, 0.5);
+      mid.x += rand(-0.05, 0.05); mid.z += rand(-0.05, 0.05);
+      for (var i = 0; i < 150; i++) {
+        var t = (i + 0.5) / 150;
+        var p = bez(from, mid, to, t);
+        var c = col(p.y < -1.0 ? C.stemRed : C.stem).offsetHSL(0, 0, rand(-0.05, 0.05));
+        var w = 0.5 + t * 1.4;                         // 越往上越散
+        cloud.add(new Particle(
+          p.x + rand(-0.012, 0.012) * w, p.y + rand(-0.012, 0.012) * w, p.z + rand(-0.012, 0.012) * w,
+          c, rand(0.028, 0.046), { twk: 0.45, speed: rand(0.7, 1.0) }));
+      }
+    }
+    // 束口亮簇：花束被"握住"的位置
+    for (var k = 0; k < 240; k++) {
+      var a2 = rand(0, TAU), r2 = 0.10 * Math.sqrt(Math.random());
+      var c2 = col(C.stem).offsetHSL(0, 0, rand(-0.04, 0.06));
+      cloud.add(new Particle(Math.cos(a2) * r2, -0.96 + rand(-0.09, 0.05), Math.sin(a2) * r2,
+        c2, rand(0.016, 0.028), { twk: 0.45 }));
+    }
+  }
+
+  /* ---------- 五、场景：展柜线框 + 花束粒子 ---------- */
+  var canvas = document.getElementById('stage');
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x050308, 1);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 60);
+
+  // 立方体线框展柜：外框 + 一只旋转 45 度的极淡内框
+  var cage = new THREE.Group();
+  function cubeEdge(size, color, opacity, rotY) {
+    var m = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(size, size, size)),
+      new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: opacity }));
+    m.rotation.y = rotY;
+    return m;
+  }
+  cage.add(cubeEdge(2.95, 0xd8c8d8, 0.55, 0));
+  cage.add(cubeEdge(2.95 * 0.56, 0xcfc0d0, 0.10, Math.PI / 4));
+  cage.position.set(0, -0.12, 0);
+  scene.add(cage);
+
+  // 生成花束：约五万五千颗粒子，一次绘制调用
+  var cloud = new ParticleCloud(64000);
+  buildBouquet(cloud);
+  addStems(cloud);
+  console.info('[粒子玫瑰] 已生成花束粒子：', cloud.n);
+
+  var material = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uScale: { value: 500 } },
+    vertexShader: VERT,
+    fragmentShader: FRAG,
+    blending: THREE.AdditiveBlending,
+    transparent: true,
+    depthWrite: false
+  });
+  var bouquet = new THREE.Points(cloud.build(), material);
+  bouquet.frustumCulled = false;
+  scene.add(bouquet);
+
+  /* ---------- 六、镜头：自动漂移 + 鼠标视差 + 拖拽环绕 ---------- */
+  var focus = new THREE.Vector3(0, 0.05, 0);
+  var azimuth = 0.85, elevation = 0.62, radius = 4.7;
+  var parX = 0, parY = 0, dragging = false, lastX = 0, lastY = 0;
+
+  window.addEventListener('pointermove', function (e) {
+    parX = e.clientX / window.innerWidth * 2 - 1;
+    parY = e.clientY / window.innerHeight * 2 - 1;
+    if (dragging) {
+      azimuth -= (e.clientX - lastX) * 0.006;
+      elevation = clamp(elevation + (e.clientY - lastY) * 0.005, -0.5, 1.05);
+      lastX = e.clientX; lastY = e.clientY;
+    }
+  });
+  canvas.addEventListener('pointerdown', function (e) {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    canvas.style.cursor = 'grabbing';
+  });
+  window.addEventListener('pointerup', function () {
+    dragging = false; canvas.style.cursor = 'grab';
+  });
+
+  function resize() {
+    var w = canvas.parentElement.clientWidth, h = canvas.parentElement.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    radius = Math.max(4.7, 6.4 / camera.aspect);   // 屏幕旋转/窗口变窄时自动拉远，框体始终完整在画面内
+    camera.updateProjectionMatrix();
+    material.uniforms.uScale.value = renderer.domElement.height * 0.80;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  /* ---------- 七、动画循环 ---------- */
+  var clock = new THREE.Clock();
+  (function tick() {
+    requestAnimationFrame(tick);
+    var dt = Math.min(clock.getDelta(), 0.05);
+    var t = clock.elapsedTime;
+    material.uniforms.uTime.value = t;        // 时间推进着色器里的流动与闪烁
+    bouquet.rotation.y = t * CONF.spin;       // 花束缓慢自转
+    cage.rotation.y = -t * CONF.cageSpin;     // 展柜反向慢转
+    cage.rotation.x = Math.sin(t * 0.13) * 0.06;
+    cage.rotation.z = Math.cos(t * 0.10) * 0.05;
+    if (CONF.autoCam && !dragging) azimuth += dt * CONF.drift;
+    var az = azimuth + parX * 0.18;
+    var el = clamp(elevation - parY * 0.10, -0.5, 1.05);
+    camera.position.set(
+      focus.x + radius * Math.cos(el) * Math.cos(az),
+      focus.y + radius * Math.sin(el),
+      focus.z + radius * Math.cos(el) * Math.sin(az));
+    camera.lookAt(focus);
+    renderer.render(scene, camera);
+  })();
+})();
+</script>
+
+<!-- 页面装配脚本：读取上面的源码，高亮展示到左侧，并驱动自动滚动 -->
+<script>
+(function () {
+  var srcEl = document.getElementById('source');
+  var view = document.getElementById('codeView');
+  var gutter = document.getElementById('gutter');
+  var wrap = document.getElementById('codeWrap');
+  var btnAuto = document.getElementById('btnAuto');
+  var btnCopy = document.getElementById('btnCopy');
+  var src = srcEl.textContent.replace(/^\r?\n/, '');
+
+  /* ---- 轻量语法高亮：字符串 → 注释 → 数字 → 关键字 → GLSL → 函数调用 ---- */
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function highlight(text) {
+    var re = /(`(?:\\[\s\S]|[^`\\])*`|'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*")|(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|\b(0x[\da-fA-F]+|\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\b|\b(const|let|var|function|class|new|return|if|else|for|while|do|break|continue|switch|case|default|typeof|instanceof|in|of|this|super|extends|static|get|set|try|catch|finally|throw|async|await|yield|import|export|from|delete|void|null|undefined|true|false)\b|\b(uniform|varying|attribute|precision|highp|mediump|lowp|vec[234]|mat[234]|float|int|bool|sampler2D|gl_Position|gl_PointSize|gl_PointCoord|gl_FragColor)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g;
+    var out = '', last = 0, m;
+    while ((m = re.exec(text)) !== null) {
+      out += esc(text.slice(last, m.index));
+      var cls = m[1] ? 'str' : m[2] ? 'cm' : m[3] ? 'num' : m[4] ? 'kw' : m[5] ? 'gl' : 'fn';
+      out += '<span class="t-' + cls + '">' + esc(m[0]) + '</span>';
+      last = m.index + m[0].length;
+    }
+    return out + esc(text.slice(last));
+  }
+  view.innerHTML = highlight(src);
+  gutter.textContent = Array.from({ length: src.split('\n').length }, function (_, i) { return i + 1; }).join('\n');
+
+  /* ---- Three.js 加载失败的兜底提示 ---- */
+  if (!window.THREE) {
+    var tip = document.createElement('div');
+    tip.className = 'webgl-tip';
+    tip.textContent = 'Three.js 未能从 CDN 加载（首次运行需联网），请检查网络后刷新页面。';
+    document.getElementById('viewPane').appendChild(tip);
+  }
+
+  /* ---- 自动滚动：悬停/拖拽/滚轮时暂停，滚到底停一停再回卷 ---- */
+  var auto = true, hover = false, dragging = false, pause = 0, atBottom = false, bottomWait = 0;
+  var SPEED = 42;
+  wrap.addEventListener('mouseenter', function () { hover = true; });
+  wrap.addEventListener('mouseleave', function () { hover = false; });
+  wrap.addEventListener('pointerdown', function () { dragging = true; });
+  window.addEventListener('pointerup', function () { dragging = false; pause = performance.now() + 1200; });
+  wrap.addEventListener('wheel', function () { pause = performance.now() + 1500; }, { passive: true });
+
+  function setBtn() {
+    btnAuto.textContent = auto ? '⏸ 暂停滚动' : '▶ 自动滚动';
+    btnAuto.classList.toggle('on', auto);
+  }
+  btnAuto.addEventListener('click', function () { auto = !auto; setBtn(); });
+  setBtn();
+
+  btnCopy.addEventListener('click', function () {
+    function done() {
+      btnCopy.textContent = '✓ 已复制';
+      setTimeout(function () { btnCopy.textContent = '复制代码'; }, 1400);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = src;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btnCopy.textContent = '复制失败'; }
+      ta.remove();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(src).then(done, fallback);
+    } else { fallback(); }
+  });
+
+  var prev = performance.now();
+  (function loop(now) {
+    requestAnimationFrame(loop);
+    var dt = Math.min((now - prev) / 1000, 0.05);
+    prev = now;
+    if (!auto || hover || dragging || now < pause) return;
+    var max = wrap.scrollHeight - wrap.clientHeight;
+    if (max <= 0) return;
+    if (atBottom) {
+      if (now >= bottomWait) { atBottom = false; wrap.scrollTop = 0; }
+      return;
+    }
+    if (wrap.scrollTop >= max - 0.5) { atBottom = true; bottomWait = now + 1600; return; }
+    wrap.scrollTop += SPEED * dt;
+  })(performance.now());
+})();
+</script>
+</body>
+</html>
